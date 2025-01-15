@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: haidarijlal/mediasi_backend
+    container_name: haidarijlal-mediasi_backend
+    ports:
+      - "8001:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - laravel_network
+    environment:
+      - APP_ENV=local
+
+networks:
+  laravel_network:
+    driver: bridge
