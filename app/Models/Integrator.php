@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Repositories\DBRepository;
 use App\Repositories\JMTORepository;
 use App\Repositories\MIYRepository;
-use App\Repositories\MMSRepository;
+use App\Repositories\DEVRepository;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -31,7 +31,7 @@ class Integrator
         switch ($integrator->integrator) {
             case 1:
                 // Panggil MMSRepository
-                $repository = app(MMSRepository::class);
+                $repository = app(DEVRepository::class);
                 break;
             
             case 2:

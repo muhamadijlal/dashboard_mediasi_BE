@@ -28,6 +28,8 @@ class DatabaseConfig
                 $credentials['password'],
                 database: $credentials['database']
             );
+
+            return response()->json(['message' => "Connection changed"], 200);
         } catch (InvalidArgumentException $e) {
             // Now return the response with the error message
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 400);

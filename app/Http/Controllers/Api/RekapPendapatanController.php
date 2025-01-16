@@ -13,9 +13,9 @@ class RekapPendapatanController extends Controller
      */
     public function __invoke(FilterRequest $request)
     {
-        $perPage = $request->perPage ?? 10;
+        $limit = $request->limit ?? 10;
 
         $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
-        return $repository->getDataRekapPendapatan($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $perPage);
+        return $repository->getDataRekapPendapatan($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $limit);
     }
 }
