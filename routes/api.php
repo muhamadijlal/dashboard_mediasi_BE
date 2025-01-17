@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DataCompareController;
 use App\Http\Controllers\Api\RekapAT4Controller;
 use App\Http\Controllers\Api\TransaksiDetailController;
 use App\Http\Controllers\Api\RekapPendapatanController;
@@ -16,6 +17,10 @@ Route::prefix("rekap_at4")->group(function(){
 
 Route::prefix("rekap_pendapatan")->group(function(){
     Route::post("/getData",RekapPendapatanController::class);
+});
+
+Route::prefix("data_compare")->group(function(){
+    Route::post("/getData",DataCompareController::class);
 });
 
 Route::prefix("select")->group(function(){
