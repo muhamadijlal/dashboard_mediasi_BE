@@ -50,7 +50,7 @@ class Integrator
                         ->first();
 
         // Pastikan integrator ditemukan
-        if (!$integrator) {
+        if ($integrator === null) {
             throw new \Exception('Integrator not found!');
         }
 

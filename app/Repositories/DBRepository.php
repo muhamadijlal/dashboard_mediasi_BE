@@ -15,17 +15,16 @@ class DBRepository implements RekapDataInterface
     public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null, ?int $limit = 10)
     {
         try {
-                DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
+            DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
-                // buat handling error connection sql like base table or view not found etc.
-                $query = DB::connection('mediasi')
-                            ->table("jid_transaksi_deteksi_db")
-                            ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_id", "notran_id_sah", "etoll_hash", "tarif")
-                            ->whereBetween('tgl_lap', [$start_date, $end_date]);
+            $query = DB::connection('mediasi')
+                        ->table("jid_transaksi_deteksi")
+                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah as gol", "metoda_bayar_sah as metoda_bayar", "validasi_notran as notran", "etoll_hash", "tarif")
+                        ->whereBetween('tgl_lap', [$start_date, $end_date]);
 
-                $data = $query->paginate($limit);
+            $data = $query->paginate($limit);
 
-           return $this->success("Get data success!", $data);
+            return $this->success("Get data success!", $data);
         } catch (\Exception $e) {
             return $this->error("Error: " . $e->getMessage()); // You can customize the error code if needed
         }
@@ -73,16 +72,14 @@ class DBRepository implements RekapDataInterface
                 DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id);
                 $sourceName = Integrator::sourceConnection($ruas_id, $gerbang_id);
 
-                dd($sourceName);
-
                 // buat handling error connection sql like base table or view not found etc.
                 $query = DB::connection('mediasi')
-                            ->table("jid_transaksi_deteksi_db")
+                            ->table("jid_transaksi_deteksi")
                             ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_id", "notran_id_sah", "etoll_hash", "tarif")
                             ->whereBetween('tgl_lap', [$start_date, $end_date]);
 
                 $query = DB::connection($sourceName)
-                        ->table("jid_transaksi_deteksi_db")
+                        ->table("jid_transaksi_deteksi")
                         ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_id", "notran_id_sah", "etoll_hash", "tarif")
                         ->whereBetween('tgl_lap', [$start_date, $end_date]);
 

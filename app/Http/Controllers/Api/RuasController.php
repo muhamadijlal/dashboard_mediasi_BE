@@ -15,9 +15,9 @@ class RuasController extends Controller
         try{
             $ruas = DB::connection('mysql')
                 ->table("tbl_ruas")
-                ->select("ruas_id as value")
+                ->select("ruas_id as value","ruas_nama as label")
                 ->where("status", 1)
-                ->groupBy("ruas_id")
+                ->groupBy("ruas_id","ruas_nama")
                 ->get();
 
             return $this->success("Get data success!", $ruas);
@@ -31,14 +31,15 @@ class RuasController extends Controller
         try{
             $gerbang = DB::connection('mysql')
                 ->table("tbl_ruas")
-                ->select("gerbang_id as value")
+                ->select("gerbang_id as value","gerbang_nama as label")
                 ->where("status", 1)
                 ->where("ruas_id", $request->ruas_id)
-                ->groupBy("gerbang_id")
+                ->groupBy("gerbang_id","gerbang_nama")
                 ->get();
             
             return $this->success("Get data success!", $gerbang);
         } catch(\Exception $e) {
+
             return $this->error("Get data failed!", $e->getMessage());
         }
     }

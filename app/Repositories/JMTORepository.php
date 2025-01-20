@@ -20,7 +20,7 @@ class JMTORepository implements RekapDataInterface
 
                 $query = DB::connection('mediasi')
                             ->table("jid_transaksi_deteksi")
-                            ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_id", "notran_id_sah", "etoll_hash", "tarif")
+                            ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah as gol", "metoda_bayar_sah as metoda_bayar", "validasi_notran as notran", "etoll_hash", "tarif")
                             ->whereBetween('tgl_lap', [$start_date, $end_date]);
 
                 $data = $query->paginate($limit);
@@ -81,7 +81,7 @@ class JMTORepository implements RekapDataInterface
                 // Query untuk tabel source
                 $query_source = DB::connection('source')
                                     ->table("jid_transaksi_deteksi")
-                                    ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data_source'))
+                                    ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data_integrator'))
                                     ->whereBetween('tgl_lap', [$start_date, $end_date])
                                     ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");
 
@@ -104,8 +104,8 @@ class JMTORepository implements RekapDataInterface
                     });
 
                     // Jika data source ditemukan, hitung selisih, jika tidak, anggap source = 0
-                    $jumlah_data_source = $source_data ? $source_data->jumlah_data_source : 0;
-                    $selisih = $jumlah_data_source - $mediasi->jumlah_data_mediasi;
+                    $jumlah_data_integrator = $source_data ? $source_data->jumlah_data_integrator : 0;
+                    $selisih = $jumlah_data_integrator - $mediasi->jumlah_data_mediasi;
 
                     // Simpan hasil dalam final_results
                     $final_results[] = [
@@ -114,7 +114,7 @@ class JMTORepository implements RekapDataInterface
                         'gardu_id' => $mediasi->gardu_id,
                         'shift' => $mediasi->shift,
                         'jumlah_data_mediasi' => $mediasi->jumlah_data_mediasi,
-                        'jumlah_data_source' => $jumlah_data_source,
+                        'jumlah_data_integrator' => $jumlah_data_integrator,
                         'selisih' => $selisih
                     ];
                 }

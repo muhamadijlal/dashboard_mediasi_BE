@@ -19,8 +19,8 @@ class MIYRepository implements RekapDataInterface
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
             $query = DB::connection('mediasi')
-                        ->table("jid_transaksi_deteksi_miy")
-                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_id", "notran_id_sah", "etoll_hash", "tarif")
+                        ->table("jid_transaksi_deteksi")
+                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah as gol", "metoda_bayar_sah as metoda_bayar", "jenis_notran as notran", "etoll_hash", "tarif")
                         ->whereBetween('tgl_lap', [$start_date, $end_date]);
             
             $data = $query->paginate($limit);
@@ -74,14 +74,14 @@ class MIYRepository implements RekapDataInterface
 
                 // Query untuk tabel mediasi
                 $query_mediasi = DB::connection('mediasi')
-                                    ->table("jid_transaksi_deteksi_miy")
+                                    ->table("jid_transaksi_deteksi")
                                     ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data_mediasi'))
                                     ->whereBetween('tgl_lap', [$start_date, $end_date])
                                     ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");
 
                 // Query untuk tabel source
                 $query_source = DB::connection('source')
-                                    ->table("jid_transaksi_deteksi_miy")
+                                    ->table("jid_transaksi_deteksi")
                                     ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data_source'))
                                     ->whereBetween('tgl_lap', [$start_date, $end_date])
                                     ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");

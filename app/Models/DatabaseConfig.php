@@ -67,6 +67,8 @@ class DatabaseConfig
                 $credentials->source['password'],
                 database: $credentials->source['database']
             );
+
+            return response()->json(['message' => "Multi Connection changed"], 200);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
         }
@@ -82,24 +84,31 @@ class DatabaseConfig
     public static function getCredentialsFromDB($ruas_id, $gerbang_id)
     {
         try{
+            $mediasi = [];
+            $source = [];
+
             $credentialMediasi = Self::getCredentialMediasi($ruas_id, $gerbang_id);
             $credentialSource = Self::getCredentialSource($ruas_id, $gerbang_id);
 
-            $mediasi = [
-                'host' => $credentialMediasi->host,
-                'port' => $credentialMediasi->port,
-                'username' => $credentialMediasi->user,
-                'password' => $credentialMediasi->pass,
-                'database' => $credentialMediasi->database,
-            ];
+            if($credentialMediasi) {
+                $mediasi = [
+                    'host' => $credentialMediasi->host,
+                    'port' => $credentialMediasi->port,
+                    'username' => $credentialMediasi->user,
+                    'password' => $credentialMediasi->pass,
+                    'database' => $credentialMediasi->database,
+                ];
+            }
 
-            $source = [
-                'host' => $credentialSource->host,
-                'port' => $credentialSource->port,
-                'username' => $credentialSource->user,
-                'password' => $credentialSource->pass,
-                'database' => $credentialSource->database,
-            ];
+            if($credentialSource){
+                $source = [
+                    'host' => $credentialSource->host,
+                    'port' => $credentialSource->port,
+                    'username' => $credentialSource->user,
+                    'password' => $credentialSource->pass,
+                    'database' => $credentialSource->database,
+                ];
+            }
 
            return (object) [
             'mediasi' => $mediasi,
@@ -125,10 +134,6 @@ class DatabaseConfig
                         ->where('status', 1)
                         ->first();
 
-        if (!$credential) {
-            throw new \Exception("Database confign : Credential mediasi not found!");
-        }
-
         return $credential;
     }
 
@@ -139,10 +144,6 @@ class DatabaseConfig
                         ->where('gerbang_id', $gerbang_id)
                         ->where('status', 1)
                         ->first();
-
-        if (!$credential) {
-            throw new \Exception("Database confign : Credential source not found!");
-        }
 
         return $credential;
     }
