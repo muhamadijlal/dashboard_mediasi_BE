@@ -54,10 +54,10 @@
                 if(isConfirmed) {
                     $.ajax({
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // If you're sending a POST request
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: '{{ route("sync.syncData") }}', // The URL you want to send the request to
-                        type: 'POST', // The HTTP method (GET, POST, etc.)
+                        url: '{{ route("sync.syncData") }}',
+                        type: 'POST',
                         data: {
                             ruas_id: params.ruas_id,
                             tanggal: params.tanggal,
@@ -67,7 +67,8 @@
                             shift: params.shift
                         },
                         success: function(response) {
-                            // Handle success response here
+                            localStorage.setItem('params', JSON.stringify(params));
+                            location.href = "{{ route('data_compare.transaction_detail.dashboard') }}";
                         },
                         error: function(xhr, status, error) {
                             // Handle errors in AJAX response

@@ -140,33 +140,33 @@ class JMTORepository
 
     public function syncData($request)
     {
-        DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
-        DB::connection('mediasi')->beginTransaction();
+        // DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
+        // DB::connection('mediasi')->beginTransaction();
 
         try {
-            $newArr = [];
-            $data = $this->getDataSync($request);
-            $result = $data->get();
+            // $newArr = [];
+            // $data = $this->getDataSync($request);
+            // $result = $data->get();
 
-            foreach($result as $index => $data) {
-                $newArr[$index]['ruas_id'] = $data->ruas_id;
-                $newArr[$index]['gerbang_id'] = $data->gerbang_id;
-                $newArr[$index]['gardu_id'] = $data->gardu_id;
-                $newArr[$index]['gol_sah'] = $data->gol_sah;
-                $newArr[$index]['tgl_lap'] = $data->tgl_lap;
-                $newArr[$index]['shift'] = $data->shift;
-                $newArr[$index]['no_resi'] = $data->no_resi;
-                $newArr[$index]['tgl_transaksi'] = $data->tgl_transaksi;
-            }
+            // foreach($result as $index => $data) {
+            //     $newArr[$index]['ruas_id'] = $data->ruas_id;
+            //     $newArr[$index]['gerbang_id'] = $data->gerbang_id;
+            //     $newArr[$index]['gardu_id'] = $data->gardu_id;
+            //     $newArr[$index]['gol_sah'] = $data->gol_sah;
+            //     $newArr[$index]['tgl_lap'] = $data->tgl_lap;
+            //     $newArr[$index]['shift'] = $data->shift;
+            //     $newArr[$index]['no_resi'] = $data->no_resi;
+            //     $newArr[$index]['tgl_transaksi'] = $data->tgl_transaksi;
+            // }
 
-            DB::connection('mediasi')
-                ->table('jid_transaksi_deteksi')
-                ->upsert($newArr, 
-                ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift'], 
-                ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift']);
+            // DB::connection('mediasi')
+            //     ->table('jid_transaksi_deteksi')
+            //     ->upsert($newArr, 
+            //     ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift'], 
+            //     ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift']);
 
-            // Jika semua operasi berhasil, commit transaksi
-            DB::connection('mediasi')->commit();
+            // // Jika semua operasi berhasil, commit transaksi
+            // DB::connection('mediasi')->commit();
 
             return response()->json(['message' => "Syncronize data success!"], 201);
         } catch (\Exception $e) {
