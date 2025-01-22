@@ -53,4 +53,4 @@ EXPOSE 80
 EXPOSE 8000
 
 # Start both Apache and php artisan serve in the background
-CMD apache2-foreground & php artisan serve --host=0.0.0.0 --port=8000
+CMD apache2-foreground & composer run dev --host=0.0.0.0 --port=8000
