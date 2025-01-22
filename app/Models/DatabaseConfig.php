@@ -12,7 +12,7 @@ class DatabaseConfig
             if($connectionName === 'mediasi')
             {
                 $credential = Integrator::getCredentialMediasi($ruas_id, $gerbang_id);
-            }else{
+            } else {
                 $credential = Integrator::getCredentialIntegrator($ruas_id, $gerbang_id);
             }
 
