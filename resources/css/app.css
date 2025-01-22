@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+  
+* {
+  @apply outline-none box-border;
+}
+
+@layer components {
+  ::selection {
+    background-color: #facc15; /* Warna latar belakang */
+  }
+}
+
+.sidebar-active {
+  @apply left-0;
+}
+
+details[open] > summary{
+  @apply bg-yellow-400;
+}
+
+details[open] > summary > i:nth-child(2) {
+  /* Add styles for the second li when details is open */
+  @apply rotate-180 ;  /* Example of adding text color */
+}
+
+
+/*  ======= SELECT 2 STYLE ======= */
+/* Apply Tailwind classes to Select2 */
+.select2-container .select2-selection--single {
+  @apply px-3 py-2 border border-gray-300 rounded-lg text-gray-300 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10;
+}
+
+.select2.select2-container.select2-container--default {
+  @apply !w-full;
+}
+
+/* Option text styling */
+.select2-results__option {
+  @apply text-gray-800;
+}
+
+span.select2-selection__rendered {
+  @apply -mt-[3px];
+}
+
+span.select2-selection__arrow {
+  @apply mt-[6px];
+}
+
+/* Focus styling */
+.select2-container--open .select2-selection--single {
+  @apply focus:ring-2 focus:ring-blue-950 focus:text-blue-950;
+}
+
+/*  ======= SELECT 2 STYLE ======= */
+
+/*  ======= Datatable STYLE ======= */
+table.dataTable > tbody > tr > td.dt-empty {
+  @apply py-5 text-center;
+}
+/*  ======= Datatable STYLE ======= */

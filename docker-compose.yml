@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: haidarijlal/mediasi_backend
+    container_name: haidarijlal-mediasi_backend
+    ports:
+      - "8001:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - laravel_network
+    environment:
+      - APP_ENV=local
+
+  node:
+    image: node:16  # Choose the appropriate version of Node.js
+    container_name: node-container
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    command: npm run dev  # Or use `npm run watch` or any script you need
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
