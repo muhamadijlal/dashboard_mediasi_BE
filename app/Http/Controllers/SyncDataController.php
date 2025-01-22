@@ -44,7 +44,7 @@ class SyncDataController extends Controller
                 ],
                 [
                     'title' => 'Golongan',
-                    'data' => 'gol',
+                    'data' => 'gol_sah',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -56,7 +56,7 @@ class SyncDataController extends Controller
                 ],
                 [
                     'title' => 'Jenis Notran',
-                    'data' => 'notran_id_sah',
+                    'data' => 'jenis_notran',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -109,5 +109,22 @@ class SyncDataController extends Controller
             return response()->json(['message' => $e->getMessage(), 'error' => true], 500);
         }
     }
-    public function syncData() {}
+    public function syncData(Request $request) {
+        try{
+
+            $request->validate([
+                'ruas_id' => 'required|string',
+                'tanggal' => 'required|date|date_format:Y-m-d',
+                'gerbang_id' => 'required|string',
+                'golongan' => 'required|string',
+                'gardu_id' => 'required|string',
+                'shift' => 'required|string',
+            ]);
+
+            $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
+            return $repository->syncData($request);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage()); 
+        }
+    }
 }

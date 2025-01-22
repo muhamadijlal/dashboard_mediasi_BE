@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Sync Data Page") }}
+        {{ __("Sync Data Dashboard") }}
     </x-slot>
 
     <x-slot name="script">
@@ -45,8 +45,46 @@
                     }
                 });
             });
+
+            function handleSync(e)
+            {
+                e.preventDefault();
+                const isConfirmed = confirm("Apakah anda yakin akan melakukan sync ?");
+
+                if(isConfirmed) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // If you're sending a POST request
+                        },
+                        url: '{{ route("sync.syncData") }}', // The URL you want to send the request to
+                        type: 'POST', // The HTTP method (GET, POST, etc.)
+                        data: {
+                            ruas_id: params.ruas_id,
+                            tanggal: params.tanggal,
+                            gerbang_id: params.gerbang_id,
+                            golongan: params.golongan,
+                            gardu_id: params.gardu_id,
+                            shift: params.shift
+                        },
+                        success: function(response) {
+                            // Handle success response here
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle errors in AJAX response
+                            console.error('Request failed:', status, error);
+                        }
+                    });
+                }
+            }
         </script>
     </x-slot>
+
+    <form onsubmit="handleSync(event)">
+        <button class="px-6 py-1 bg-yellow-400 border-2 border-blue-950 rounded-lg font-bold">
+            <i class="fa-solid fa-play"></i>
+            Sync
+        </button>
+    </form>
 
     <h4 class="h-10"></h4>
 
