@@ -46,11 +46,13 @@ RUN composer install --no-interaction --optimize-autoloader
 # Install Node.js dependencies (e.g., TailwindCSS, Laravel Mix)
 RUN npm install
 
+RUN npm install vite@6.0.8
+
 # Expose port 80 (standard HTTP port) for Apache
 EXPOSE 80
 
 # Expose an additional port for Artisan serve (default: 8000)
-EXPOSE 8000
+EXPOSE 8001
 
 # Start both Apache and php artisan serve in the background
 CMD apache2-foreground & composer run dev --host=0.0.0.0 --port=8000

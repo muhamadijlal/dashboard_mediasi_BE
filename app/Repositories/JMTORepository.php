@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class JMTORepository
