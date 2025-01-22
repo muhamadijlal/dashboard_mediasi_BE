@@ -24,10 +24,10 @@
         @include('layouts.sidebar')
     
         <!-- content -->
-        <div class="pt-14 ml-[300px] p-10">
+        <div class="pt-14 md:ml-[300px] p-10">
             @isset($header)
                 <header class="py-14">
-                    <h1 class="text-3xl font-bold">{{ $header }}</h1>
+                    <h1 class="text-lg md:text-2xl uppercase font-bold">{{ $header }}</h1>
                 </header>
             @endisset
 
