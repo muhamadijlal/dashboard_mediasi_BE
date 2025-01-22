@@ -46,8 +46,11 @@ RUN composer install --no-interaction --optimize-autoloader
 # Install Node.js dependencies (e.g., TailwindCSS, Laravel Mix)
 RUN npm install
 
-# Expose port 80 (standard HTTP port)
+# Expose port 80 (standard HTTP port) for Apache
 EXPOSE 80
 
-# Start the Apache server
-CMD ["apache2-foreground"]
+# Expose an additional port for Artisan serve (default: 8000)
+EXPOSE 8000
+
+# Start both Apache and php artisan serve in the background
+CMD apache2-foreground & php artisan serve --host=0.0.0.0 --port=8000
