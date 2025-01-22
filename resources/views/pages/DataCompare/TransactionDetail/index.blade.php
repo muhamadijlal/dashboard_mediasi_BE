@@ -5,12 +5,20 @@
 
     <x-slot name="script">
         <script>
-            let tblRekapAT4;
+            let tblCompare;
 
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
                 let columns = @json($columns);
+                let params = JSON.parse(localStorage.getItem("params"));
+                stateParams = {
+                    ruas_id: params?.ruas_id ?? "",
+                    gerbang_id: params?.gerbang_id ?? "",
+                    start_date: params?.tanggal ?? "",
+                    end_date: params?.tanggal ?? "",
+                    selisih: "*",
+                };
 
                 ruas_id.select2({
                     ajax: {
@@ -79,8 +87,7 @@
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
-
-                tblRekapAT4 = new DataTable('#tblRekapAT4', {
+                tblCompare = new DataTable('#tblCompare', {
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -88,11 +95,11 @@
                         url: "{{ route('data_compare.transaction_detail.getData') }}",
                         type: 'POST',
                         data: function (d) {
-                            d.ruas_id = $('#ruas_id').val();
-                            d.gerbang_id = $('#gerbang_id').val();
-                            d.start_date = $('#start_date').val();
-                            d.end_date = $('#end_date').val();
-                            d.selisih = $('#selisih').val();
+                            d.ruas_id = stateParams.ruas_id;
+                            d.gerbang_id = stateParams.gerbang_id;
+                            d.start_date = stateParams.start_date;
+                            d.end_date = stateParams.end_date;
+                            d.selisih = stateParams.selisih;
                         },
                         error: function (xhr, error, code) {
                             console.log(xhr, error, code)
@@ -112,14 +119,25 @@
                         emptyTable: "Empty",
                         processing: "Loading...",
                     },
-                    deferLoading: 0,
+                    deferLoading: 0, 
                 });
+
+                params && tblCompare.draw();
             });
 
             function handleSubmit(e)
             {
                 e.preventDefault();
-                tblRekapAT4.draw();
+
+                stateParams.ruas_id = $('#ruas_id').val();
+                stateParams.gerbang_id = $('#gerbang_id').val();
+                stateParams.start_date = $('#start_date').val();
+                stateParams.end_date = $('#end_date').val();
+                stateParams.selisih = $('#selisih').val();
+
+                // Save the updated parameters to localStorage
+                localStorage.setItem("params", JSON.stringify(stateParams));
+                tblCompare.draw();
             }
         </script>
     </x-slot>
@@ -182,7 +200,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <table id="tblRekapAT4" class="display" style="width:100%">
+        <table id="tblCompare" class="display" style="width:100%">
             <thead>
                 <tr>
                     @foreach($columns as $column)
