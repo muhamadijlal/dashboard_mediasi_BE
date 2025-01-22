@@ -44,7 +44,7 @@ class SyncDataController extends Controller
                 ],
                 [
                     'title' => 'Golongan',
-                    'data' => 'gol_sah',
+                    'data' => 'gol',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -56,7 +56,7 @@ class SyncDataController extends Controller
                 ],
                 [
                     'title' => 'Jenis Notran',
-                    'data' => 'jenis_notran',
+                    'data' => 'notran_id_sah',
                     'orderable' => true,
                     'searchable' => true,
                 ],

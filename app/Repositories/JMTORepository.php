@@ -120,16 +120,14 @@ class JMTORepository
         try {
             DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id, 'integrator');
 
-            dd(Config::get("database.connections.integrator"));
-
             $query = DB::connection('integrator')
-                        ->table('jid_transaksi_deteksi')
-                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah", "metoda_bayar_sah", "jenis_notran", "etoll_hash", "tarif")
+                        ->table('tbl_transaksi_deteksi')
+                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol", "metoda_bayar_sah", "notran_id_sah", "etoll_hash", "tarif")
                         ->where('tgl_lap', $request->tanggal)
                         ->where('ruas_id', $request->ruas_id)
                         ->where("gerbang_id", $request->gerbang_id)
-                        ->where("gol_sah", $request->golongan)
-                        ->where("gardu_id", $request->gardu_id)
+                        ->where("gol", $request->golongan)
+                        ->where("gardu_id", $request->gerbang_id.$request->gardu_id)
                         ->where("shift", $request->shift);
 
             return $query;
