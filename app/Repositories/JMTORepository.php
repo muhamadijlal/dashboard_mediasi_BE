@@ -88,7 +88,7 @@ class JMTORepository
                         });
 
                 // Hitung jumlah integrator dan selisih
-                $jumlah_data = $index !== false ? $max->jumlah_data : 0;
+                $jumlah_data = $max->jumlah_data;
                 $selisih = ($index !== false) ? $jumlah_data - $minResults[$index]->jumlah_data : 0;
 
                 // Membuat objek stdClass untuk hasil
