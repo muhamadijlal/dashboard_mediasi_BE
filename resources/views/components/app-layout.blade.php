@@ -13,7 +13,7 @@
   <link href="https://cdn.datatables.net/2.2.1/css/dataTables.tailwindcss.css" rel="stylesheet" />
 
   <!-- Scripts -->
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @vite(['resources/css/app.css', 'resources/css/app.js'])
 </head>
 <body class="font-sans text-blue-950 antialiased">
     <div class="min-h-screen bg-gray-100">
@@ -45,7 +45,7 @@
     <!-- Datatables -->
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.tailwindcss.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.tailwindcss.com" defer></script>
     @isset($script)
      {{ $script }}
     @endisset
