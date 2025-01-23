@@ -89,7 +89,7 @@ class JMTORepository
 
                 // Hitung jumlah integrator dan selisih
                 $jumlah_data = $max->jumlah_data;
-                $selisih = ($index !== false) ? $jumlah_data - $minResults[$index]->jumlah_data : 0;
+                $selisih = $jumlah_data - (($index !== false) ? $minResults[$index]->jumlah_data : 0);
 
                 // Membuat objek stdClass untuk hasil
                 $final_result = new \stdClass();
@@ -144,26 +144,25 @@ class JMTORepository
         DB::connection('mediasi')->beginTransaction();
 
         try {
-            $newArr = [];
             $data = $this->getDataSync($request);
             $result = $data->get();
 
-            foreach($result as $index => $data) {
-                $newArr[$index]['ruas_id'] = $data->ruas_id;
-                $newArr[$index]['gerbang_id'] = $data->gerbang_id;
-                $newArr[$index]['gardu_id'] = $data->gardu_id;
-                $newArr[$index]['gol_sah'] = $data->gol_sah;
-                $newArr[$index]['tgl_lap'] = $data->tgl_lap;
-                $newArr[$index]['shift'] = $data->shift;
-                $newArr[$index]['no_resi'] = $data->no_resi;
-                $newArr[$index]['tgl_transaksi'] = $data->tgl_transaksi;
-            }
+            foreach ($result as $data) {
+                $query = "INSERT INTO jid_transaksi_deteksi (ruas_id, gerbang_id, gardu_id, gol_sah, tgl_lap, shift, no_resi, tgl_transaksi) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE 
+                        ruas_id = VALUES(ruas_id), 
+                        gerbang_id = VALUES(gerbang_id),
+                        gardu_id = VALUES(gardu_id),
+                        gol_sah = VALUES(gol_sah),
+                        tgl_lap = VALUES(tgl_lap),
+                        shift = VALUES(shift),
+                        no_resi = VALUES(no_resi),
+                        tgl_transaksi = VALUES(tgl_transaksi)";
 
-            DB::connection('mediasi')
-                ->table('jid_transaksi_deteksi')
-                ->upsert($newArr, 
-                ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift'], 
-                ['ruas_id', 'tgl_lap', 'gerbang_id', 'gol_sah', 'gardu_id', 'shift']);
+                // Execute the statement
+                DB::connection("mediasi")->statement($query, [$data->ruas_id, $data->gerbang_id, $data->gardu_id, $data->gol_sah, $data->tgl_lap, $data->shift, $data->no_resi, $data->tgl_transaksi]);              
+            }
 
             // Jika semua operasi berhasil, commit transaksi
             DB::connection('mediasi')->commit();
