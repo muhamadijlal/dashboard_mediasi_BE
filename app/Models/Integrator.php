@@ -31,6 +31,32 @@ class Integrator
         return $repository;
     }
 
+    public static function type($ruas_id, $gerbang_id)
+    {
+        // Ambil nilai integrator dari tbl_ruas
+        $integrator = DB::connection('mysql')
+                        ->table("tbl_integrator")
+                        ->select("tipe_gerbang")
+                        ->where("ruas_id", operator: $ruas_id)
+                        ->where('gerbang_id', operator: $gerbang_id)
+                        ->where('status', 1)
+                        ->first();
+
+        switch($integrator->tipe_gerbang) {
+            case 1:
+            case 3:
+                $tableName = "lalin_settlement";
+                break;
+            case 2:
+                $tableName =  "lalin_entrance";
+                break;
+            default:
+                throw new \Exception(message: 'Invalid Type');
+        }
+
+        return $tableName;
+    }
+
     public static function getCredentialIntegrator($ruas_id, $gerbang_id)
     {
         $credential = DB::table('tbl_integrator')
