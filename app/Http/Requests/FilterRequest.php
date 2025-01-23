@@ -32,17 +32,17 @@ class FilterRequest extends FormRequest
     public function messages()
     {
         return [
-            'ruas_id.required'   => 'Ruas ID is required.',
-            'ruas_id.string'     => 'Ruas ID must be a string.',
-            'gerbang_id.required' => 'Gerbang ID is required.',
-            'gerbang_id.string'   => 'Gerbang ID must be a string.',
-            'start_date.required' => 'Start date is required.',
-            'start_date.date'     => 'Start date must be a valid date.',
-            'start_date.date_format' => 'Start date format must be Y-m-d.',
-            'end_date.required'   => 'End date is required.',
-            'end_date.date'       => 'End date must be a valid date.',
-            'end_date.date_format' => 'End date format must be Y-m-d.',
-            'end_date.after_or_equal' => 'End date must be greater than or equal to start date.',
+            'ruas_id.required'   => __('Ruas ID is required.'),
+            'ruas_id.string'     => __('Ruas ID must be a string.'),
+            'gerbang_id.required' => __('Gerbang ID is required.'),
+            'gerbang_id.string'   => __('Gerbang ID must be a string.'),
+            'start_date.required' => __('Start date is required.'),
+            'start_date.date'     => __('Start date must be a valid date.'),
+            'start_date.date_format' => __('Start date format must be Y-m-d.'),
+            'end_date.required'   => __('End date is required.'),
+            'end_date.date'       => __('End date must be a valid date.'),
+            'end_date.date_format' => __('End date format must be Y-m-d.'),
+            'end_date.after_or_equal' => __('End date must be greater than or equal to start date.'),
         ];
     }
 }

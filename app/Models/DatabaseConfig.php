@@ -16,6 +16,7 @@ class DatabaseConfig
                 $credential = Integrator::getCredentialIntegrator($ruas_id, $gerbang_id);
             }
 
+
             self::setCredentials(
                 $connectionName,
                 $credential->host,
