@@ -10,7 +10,13 @@ class MIYExit
     {
         $query = DB::connection('integrator')
                                 ->table('lalin_settlement')
-                                ->select("TanggalLaporan as tgl_lap", "GerbangId as gerbang_id", "GarduId as gardu_id", "Golongan as golongan", "Shift as shift",  DB::raw('COUNT(*) as jumlah_data'))
+                                ->select("TanggalLaporan as tgl_lap",
+                                    "GerbangId as gerbang_id",
+                                    "GarduId as gardu_id",
+                                    "Golongan as golongan",
+                                    "Shift as shift",
+                                    DB::raw('COUNT(*) as jumlah_data')
+                                )
                                 ->whereBetween('TanggalLaporan', [$start_date, $end_date])
                                 ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
 
@@ -21,7 +27,46 @@ class MIYExit
     {
         $query = DB::connection('integrator')
                     ->table("lalin_settlement")
-                    ->select('TanggalLaporan as tgl_lap', 'GerbangId as gerbang_id', 'GarduId as gardu_id', 'Golongan as gol_sah', 'Shift as shift', 'NoResi as no_resi', 'WaktuTransaksiExit as tgl_transaksi', 'Tarif as tarif', 'Perioda as perioda', 'MetodeTransaksi as metoda_bayar_sah','JenisNotran as jenis_notran','EtollHash as etoll_hash')
+                    ->select('TanggalLaporan as tgl_lap',
+                        'AsalGerbangId as asal_gerbang_id',
+                        'GerbangId as gerbang_id',
+                        'GarduId as gardu_id',
+                        'Golongan as gol_sah',
+                        'NomorKartu',
+                        'Shift as shift',
+                        'NoResi as no_resi',
+                        'WaktuTransaksiExit as tgl_transaksi',
+                        'Tarif as tarif',
+                        'Perioda as perioda',
+                        'KsptId',
+                        'Saldo',
+                        'PLTId',
+                        'WaktuTransaksiEntrance',
+                        'MetodeTransaksi as metoda_bayar_sah',
+                        'JenisNotran as jenis_notran',
+                        'EtollHash as etoll_hash',
+                        'KodeInvestor1',
+                        'TarifInvestor1',
+                        'KodeInvestor2',
+                        'TarifInvestor2',
+                        'KodeInvestor3',
+                        'TarifInvestor3',
+                        'KodeInvestor4',
+                        'TarifInvestor4',
+                        'KodeInvestor5',
+                        'TarifInvestor5',
+                        'KodeInvestor6',
+                        'TarifInvestor6',
+                        'KodeInvestor7',
+                        'TarifInvestor7',
+                        'KodeInvestor8',
+                        'TarifInvestor8',
+                        'KodeInvestor9',
+                        'TarifInvestor9',
+                        'KodeInvestor10',
+                        'TarifInvestor10',
+                        DB::raw('" " as KodeIntegrator')
+                    )
                     ->where('TanggalLaporan', $request->tanggal)
                     ->where('GerbangId', $request->gerbang_id)
                     ->where('Golongan', $request->golongan)

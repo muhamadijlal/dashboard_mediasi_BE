@@ -180,8 +180,7 @@ class JMTORepository
 
             foreach ($result as $dataItem) {
                 // Define the SQL query with placeholders for parameterized queries
-                $query = "
-                    INSERT INTO jid_transaksi_deteksi (
+                $query = "INSERT INTO jid_transaksi_deteksi (
                         ruas_id,
                         asal_gerbang_id,
                         gerbang_id,
@@ -237,7 +236,7 @@ class JMTORepository
 
                 // Bind the data for the prepared statement
                 $params = [
-                    $dataItem->ruas_id, 
+                    $request->ruas_id, 
                     $dataItem->asal_gerbang_id, 
                     $dataItem->gerbang_id, 
                     $dataItem->gardu_id, 
