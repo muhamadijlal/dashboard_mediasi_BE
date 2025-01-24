@@ -61,3 +61,38 @@ table.dataTable > tbody > tr > td.dt-empty {
   @apply py-5 text-center;
 }
 /*  ======= Datatable STYLE ======= */
+
+/* Initially set opacity to 0, make it invisible */
+#modal, #backdrop-modal {
+  @apply fixed inset-0 opacity-0 pointer-events-none;  /* Hidden by default */
+  transition: opacity 0.3s ease-out, z-index 0s ease-in 0.3s;  /* Smooth fade-in/out */
+}
+
+/* When the modal is open */
+#modal[open], #backdrop-modal[open] {
+  @apply opacity-100 pointer-events-auto z-[99];  /* Visible and interactive */
+  transition: opacity 0.3s ease-in, z-index 0s ease-in 0s;  /* Smooth fade-in */
+}
+
+/* Modal content transition */
+#modal[open] #modal-content {
+  @apply opacity-100;  /* Ensure the modal content fades in too */
+  transition: opacity 0.3s ease-in;
+}
+
+#modal:not([open]) #modal-content {
+  @apply opacity-0;  /* Modal content fades out */
+  transition: opacity 0.3s ease-out;
+}
+
+/* Backdrop specific transition */
+#backdrop-modal[open] {
+  @apply opacity-100;  /* Fade-in effect for backdrop */
+  transition: opacity 0.3s ease-in;
+}
+
+#backdrop-modal:not([open]) {
+  @apply opacity-0;  /* Fade-out effect for backdrop */
+  transition: opacity 0.3s ease-out;
+}
+
