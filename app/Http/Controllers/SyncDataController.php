@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Integrator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
 
 class SyncDataController extends Controller
@@ -123,6 +122,7 @@ class SyncDataController extends Controller
 
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
             return $repository->syncData($request);
+
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
         }

@@ -40,7 +40,6 @@
                                 })
                             }
                         },
-                        cache: true,
                         beforeSend: function() {
                            // Disable gerbang_id secara default
                             gerbang_id.val(null).trigger('change');
@@ -76,7 +75,6 @@
                                 })
                             }
                         },
-                        cache: false,
                     },
                     placeholder: "-- Pilih Gerbang --",
                 });

@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
+use App\Models\Integrator;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class DBRepository
@@ -42,7 +44,10 @@ class DBRepository
     public function getDataCompare(string $ruas_id, string $gerbang_id, string $start_date=null, string $end_date=null, string $isSelisih)
     {
         try {
-            DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator');
+            DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator_pgsql');
+            $services = Integrator::services($ruas_id, $gerbang_id);
+            $database_schema = Integrator::schema($ruas_id, $gerbang_id);
+
 
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
@@ -52,54 +57,39 @@ class DBRepository
                                 ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
 
             // Query untuk tabel integrator
-            $query_integrator = DB::connection('integrator_pgsql')
-                                ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "gardu_id", DB::raw("gol_sah as golongan"), "shift", DB::raw('COUNT(id) as jumlah_data'))
-                                ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+            $query_integrator = $services->getSourceCompare($start_date, $end_date, $database_schema);
 
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            // Menghitung panjang masing-masing koleksi
-            $length_mediasi = $results_mediasi->count();
-            $length_integrator = $results_integrator->count();
-
-            // Memilih koleksi dengan panjang terbesar
-            if ($length_mediasi > $length_integrator) {
-                $maxResults = $results_mediasi;
-                $minResults = $results_integrator;
-            } else {
-                $maxResults = $results_integrator;
-                $minResults = $results_mediasi;
-            }
-
             // Gabungkan hasilnya
             $final_results = [];
 
-            foreach($maxResults as $max) {
-                $index = $minResults->search(function($data) use($max) {
-                            return $data->tgl_lap == $max->tgl_lap && 
-                                    $data->gerbang_id == $max->gerbang_id &&
-                                    $data->gardu_id == $max->gardu_id &&
-                                    $data->shift == $max->shift &&
-                                    $data->golongan == $max->golongan;
+            foreach($results_integrator as $integrator)
+            {
+                $index = $results_mediasi->search(function($mediasi) use($integrator) {
+                            return $mediasi->tgl_lap == $integrator->tgl_lap && 
+                                $mediasi->gerbang_id == $integrator->gerbang_id &&
+                                $mediasi->gardu_id == $integrator->gardu_id &&
+                                $mediasi->shift == $integrator->shift &&
+                                $mediasi->golongan == $integrator->golongan;
                         });
 
                 // Hitung jumlah integrator dan selisih
-                $jumlah_data = $index !== false ? $max->jumlah_data : 0;
-                $selisih = ($index !== false) ? $jumlah_data - $minResults[$index]->jumlah_data : 0;
+                $jumlah_data = $integrator->jumlah_data;
+                $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
+        
 
                 // Membuat objek stdClass untuk hasil
                 $final_result = new \stdClass();
-                $final_result->tanggal = $max->tgl_lap ?? 0;
-                $final_result->gerbang_id = $max->gerbang_id ?? 0;
-                $final_result->golongan = $max->golongan ?? 0;
-                $final_result->gardu_id = $max->gardu_id ?? 0;
-                $final_result->shift = $max->shift ?? 0;
+                $final_result->tanggal = $integrator->tgl_lap;
+                $final_result->gerbang_id = $integrator->gerbang_id;
+                $final_result->golongan = $integrator->golongan;
+                $final_result->gardu_id = $integrator->gardu_id;
+                $final_result->shift = $integrator->shift;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
-                $final_result->jumlah_data_mediasi = ($index !== false) ? $minResults[$index]->jumlah_data : 0;
+                $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
                 $final_result->selisih = $selisih;
 
                 if ($isSelisih === '*') {
@@ -113,6 +103,56 @@ class DBRepository
 
             return $final_results;
         } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function getDataSync($request)
+    {
+        try {
+            DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id, 'integrator_pgsql');
+            $services = Integrator::services($request->ruas_id, $request->gerbang_id);
+            $database_schema = Integrator::schema($request->ruas_id, $request->gerbang_id);
+            $query = $services->getSourceSync($request, $database_schema);
+
+            return $query;
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage()); 
+        }
+    }
+
+    public function syncData($request)
+    {
+        DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
+        DB::connection('mediasi')->beginTransaction();
+
+        try {
+            $data = $this->getDataSync($request);
+            $result = $data->get();
+
+            foreach ($result as $data) {
+                $query = "INSERT INTO jid_transaksi_deteksi (ruas_id, gerbang_id, gardu_id, gol_sah, tgl_lap, shift, no_resi, tgl_transaksi) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE 
+                        ruas_id = VALUES(ruas_id), 
+                        gerbang_id = VALUES(gerbang_id),
+                        gardu_id = VALUES(gardu_id),
+                        gol_sah = VALUES(gol_sah),
+                        tgl_lap = VALUES(tgl_lap),
+                        shift = VALUES(shift),
+                        no_resi = VALUES(no_resi),
+                        tgl_transaksi = VALUES(tgl_transaksi)";
+
+                // Execute the statement
+                DB::connection("mediasi")->statement($query, [$request->ruas_id, $data->gerbang_id, $data->gardu_id, $data->gol_sah, $data->tgl_lap, $data->shift, $data->no_resi, $data->tgl_transaksi]);              
+            }
+
+            // Jika semua operasi berhasil, commit transaksi
+            DB::connection('mediasi')->commit();
+
+            return response()->json(['message' => "Syncronize data success!"], 201);
+        } catch (\Exception $e) {
+            DB::connection('mediasi')->rollBack();
             throw new \Exception($e->getMessage());
         }
     }

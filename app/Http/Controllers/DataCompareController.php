@@ -72,14 +72,13 @@ class DataCompareController extends Controller
     public function transaction_detail_getData(FilterRequest $request){
         try {
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
-
             $query = $repository->getDataCompare($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->selisih);
 
             return DataTables::of($query)
                             ->addIndexColumn()
                             ->addColumn('link', function ($row) use($request) {
                                 if ($row->selisih > 0) {
-                                    return '<a class="text-yellow-400" href="/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->golongan .'/'. $row->gardu_id .'/'. $row->shift .'">'. $row->selisih .'</a>';
+                                    return '<a target="_blank" class="text-yellow-400" href="/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->golongan .'/'. $row->gardu_id .'/'. $row->shift .'">'. $row->selisih .'</a>';
                                 }else if($row->selisih < 0) {
                                     return '<span class="text-red-500">'.$row->selisih.'</span>';
                                 }else {
