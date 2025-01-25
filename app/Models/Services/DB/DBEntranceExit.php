@@ -9,7 +9,7 @@ class DBEntranceExit
     public function getSourceCompare($start_date, $end_date, $schema)
     {
         $tbltransaksi_entrance = DB::connection('integrator_pgsql')
-                                    ->table($schema.'.tbltransaksi_entry')
+                                    ->table((string)$schema.'.tbltransaksi_entry')
                                     ->select("tanggal_siklus as tgl_lap",
                                         "idgerbang as gerbang_id",
                                         "gardu as gardu_id",
@@ -22,7 +22,7 @@ class DBEntranceExit
                                     ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
-                                    ->table($schema.'.tbltransaksi_exit')
+                                    ->table((string)$schema.'.tbltransaksi_exit')
                                     ->select("tanggal_siklus as tgl_lap",
                                         "gerbang_keluar as gerbang_id",
                                         "gardu as gardu_id",

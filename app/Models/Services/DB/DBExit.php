@@ -9,7 +9,7 @@ class DBExit
     public function getSourceCompare($start_date, $end_date, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table($schema.'.tbltransaksi_exit')
+                    ->table((string)$schema.'.tbltransaksi_exit')
                     ->select("tanggal_siklus as tgl_lap",
                         "gerbang_keluar as gerbang_id",
                         "gardu as gardu_id",
@@ -27,7 +27,7 @@ class DBExit
     public function getSourceSync($request, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table($schema.".tbltransaksi_exit")
+                    ->table((string)$schema.".tbltransaksi_exit")
                     ->select(
                         'tanggal_siklus as tgl_lap',
                         'gardu as gardu_id',
