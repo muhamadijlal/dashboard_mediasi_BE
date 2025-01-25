@@ -9,7 +9,7 @@ class DBEntrance
     public function getSourceCompare($start_date, $end_date, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table($schema.'.tbltransaksi_entry')
+                    ->table((string)$schema.'.tbltransaksi_entry')
                     ->select(
                         "tanggal_siklus as tgl_lap",
                         "idgerbang as gerbang_id",
@@ -28,7 +28,7 @@ class DBEntrance
     public function getSourceSync($request, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table($schema.".tbltransaksi_entry")
+                    ->table((string)$schema.".tbltransaksi_entry")
                     ->select(
                         'tanggal_siklus as tgl_lap', 
                         'gardu as gardu_id',
