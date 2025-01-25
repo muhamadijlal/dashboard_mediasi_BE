@@ -38,7 +38,7 @@ class DBEntranceExit
     public function getSourceSync($request, $schema)
     {
         $tbltransaksi_entrance = DB::connection('integrator_pgsql')
-                                    ->table($schema.".tbltransaksi_entry")
+                                    ->table((string)$schema.".tbltransaksi_entry")
                                     ->select(
                                         'tanggal_siklus as tgl_lap', 
                                         'gardu as gardu_id',
@@ -53,12 +53,12 @@ class DBEntranceExit
                                         'jenis_dinas',
                                         'no_card as etoll_id',
                                         DB::raw('0 as saldo'), 
-                                        DB::raw('NULL as etoll_hash'),
-                                        DB::raw('"" as gerbang_masuk'),
+                                        DB::raw('NULL as etoll_hash'),  // Replacing empty string with NULL
+                                        DB::raw('idgerbang as gerbang_masuk'),
                                         'idgerbang as gerbang_id',
                                         'idkspt as KsptId',
                                         'idpultol as PLTId',
-                                        DB::raw('NULL as jenis_notran'), 
+                                        DB::raw('NULL as jenis_notran'),  // Replacing empty string with NULL
                                     )
                                     ->where('tanggal_siklus', $request->tanggal)
                                     ->where('idgerbang', $request->gerbang_id)
@@ -67,7 +67,7 @@ class DBEntranceExit
                                     ->where('shift', $request->shift);
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
-                                ->table($schema.".tbltransaksi_exit")
+                                ->table((string)$schema.".tbltransaksi_exit")
                                 ->select(
                                     'tanggal_siklus as tgl_lap',
                                     'gardu as gardu_id',
@@ -87,7 +87,7 @@ class DBEntranceExit
                                     'gerbang_keluar as gerbang_id',
                                     'idkspt as KsptId',
                                     'idpultol as PLTId',
-                                    DB::raw('NULL as jenis_notran')
+                                    DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
                                 )
                                 ->where('tanggal_siklus', $request->tanggal)
                                 ->where('gerbang_keluar', $request->gerbang_id)
@@ -96,7 +96,8 @@ class DBEntranceExit
                                 ->where('shift', $request->shift);
 
         $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);
-        
+
+
         return $query;
     }
 }

@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\DatabaseConfig;
 use App\Models\Integrator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class DBRepository
 {
@@ -162,7 +161,6 @@ class DBRepository
 
             foreach ($result as $dataItem) {
                 $query = "INSERT INTO jid_transaksi_deteksi(
-                    asal_gerbang_id,
                     gerbang_id,
                     gardu_id,
                     tgl_lap,
@@ -181,7 +179,7 @@ class DBRepository
                     tarif,
                     sisa_saldo
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     gerbang_id = VALUES(gerbang_id),
                     gardu_id = VALUES(gardu_id),
@@ -192,7 +190,7 @@ class DBRepository
                     tgl_transaksi = VALUES(tgl_transaksi)
                 ";
 
-                $result = $this->metoda_bayar_sah($dataItem->jenis_transaksi, $dataItem->jenis_dinas);
+                $result = $this->metoda_bayar_sah($dataItem->metoda_bayar_sah, $dataItem->jenis_dinas);
 
                 // Bind the data for the prepared statement
                 $params = [
