@@ -10,7 +10,13 @@ class MIYEntrance
     {
         $query = DB::connection('integrator')
                                 ->table('lalin_entrance')
-                                ->select("TanggalLaporan as tgl_lap", "GerbangId as gerbang_id", "GarduId as gardu_id", "Golongan as golongan", "Shift as shift",  DB::raw('COUNT(*) as jumlah_data'))
+                                ->select("TanggalLaporan as tgl_lap",
+                                    "GerbangId as gerbang_id",
+                                    "GarduId as gardu_id",
+                                    "Golongan as golongan",
+                                    "Shift as shift",
+                                    DB::raw('COUNT(*) as jumlah_data')
+                                )
                                 ->whereBetween('TanggalLaporan', [$start_date, $end_date])
                                 ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
 
@@ -21,7 +27,24 @@ class MIYEntrance
     {
         $query = DB::connection('integrator')
                     ->table("lalin_entrance")
-                    ->select('TanggalLaporan as tgl_lap', 'GerbangId as gerbang_id', 'GarduId as gardu_id', 'Golongan as gol_sah', 'Shift as shift', 'NoResi as no_resi', 'WaktuTransaksiEntrance as tgl_transaksi', DB::raw('0 as tarif'), 'Perioda as perioda', 'MetodeTransaksi as metoda_bayar_sah','JenisNotran as jenis_notran',DB::raw('"-" as etoll_hash'))
+                    ->select('TanggalLaporan as tgl_lap',
+                        'GerbangId as gerbang_id',
+                        'GarduId as gardu_id',
+                        'Golongan as gol_sah',
+                        'NomorKartu',
+                        'Shift as shift',
+                        'NoResi as no_resi',
+                        'WaktuTransaksiEntrance as tgl_transaksi',
+                        'WaktuTransaksiEntrance as tgl_entrance',
+                        DB::raw('0 as tarif'), 
+                        'Perioda as perioda',
+                        'KsptId',
+                        'Saldo',
+                        'PLTId',
+                        'MetodeTransaksi as metoda_bayar_sah',
+                        'JenisNotran as jenis_notran',
+                        DB::raw('"" as etoll_hash')
+                    )
                     ->where('TanggalLaporan', $request->tanggal)
                     ->where('GerbangId', $request->gerbang_id)
                     ->where('Golongan', $request->golongan)

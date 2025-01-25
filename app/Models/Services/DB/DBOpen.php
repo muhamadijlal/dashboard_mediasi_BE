@@ -10,8 +10,15 @@ class DBOpen
     {
         $query = DB::connection('integrator_pgsql')
                     ->table($schema.'.tbltransaksi_open')
-                    ->select("tanggal_siklus as tgl_lap", "idgerbang as gerbang_id", "gardu as gardu_id", "gol as golongan", "shift",  DB::raw('COUNT(*) as jumlah_data'))
+                    ->select("tanggal_siklus as tgl_lap",
+                        "idgerbang as gerbang_id",
+                        "gardu as gardu_id",
+                        "gol as golongan",
+                        "shift",
+                        DB::raw('COUNT(*) as jumlah_data')
+                    )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
 
         return $query;
@@ -21,7 +28,28 @@ class DBOpen
     {
         $query = DB::connection('integrator_pgsql')
                     ->table($schema.".tbltransaksi_open")
-                    ->select('tanggal_siklus as tgl_lap', 'idgerbang as gerbang_id', 'gardu as gardu_id', 'gol as gol_sah', 'shift', 'resi as no_resi', 'waktu_transaksi as tgl_transaksi', 'tarif', 'periode as perioda', 'jenis_transaksi as metoda_bayar_sah','jenis_dinas as jenis_notran','etoll_hash')
+                    ->select(
+                        'tanggal_siklus as tgl_lap',
+                        'gardu as gardu_id',
+                        'shift',
+                        'periode as perioda',
+                        'jenis_transaksi as metoda_bayar_sah',
+                        'resi as no_resi',
+                        'gol as gol_sah',
+                        'tarif',
+                        'waktu_trans_exit as tgl_transaksi',
+                        'waktu_trans_entry as tgl_entrance',
+                        'jenis_dinas',
+                        'no_card as etoll_id',
+                        'saldo',
+                        'etoll_hash',
+                        'gerbang_masuk',
+                        'gerbang_keluar as gerbang_id',
+                        'idkspt as KsptId',
+                        'idpultol as PLTId',
+                        DB::raw('NULL as jenis_notran')
+                    )
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->where('tanggal_siklus', $request->tanggal)
                     ->where('idgerbang', $request->gerbang_id)
                     ->where('gol', $request->golongan)

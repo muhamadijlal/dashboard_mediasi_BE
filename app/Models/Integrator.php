@@ -20,7 +20,6 @@ class Integrator
     public static function get($ruas_id, $gerbang_id)
     {
         $integrator = Self::integrator($ruas_id, $gerbang_id);
-
         switch ($integrator) {
             case 2:
                 $repository = app(MIYRepository::class);
