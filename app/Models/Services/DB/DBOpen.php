@@ -18,6 +18,7 @@ class DBOpen
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
 
         return $query;
@@ -48,6 +49,7 @@ class DBOpen
                         'idpultol as PLTId',
                         DB::raw('NULL as jenis_notran')
                     )
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->where('tanggal_siklus', $request->tanggal)
                     ->where('idgerbang', $request->gerbang_id)
                     ->where('gol', $request->golongan)

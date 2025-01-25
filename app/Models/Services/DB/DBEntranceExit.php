@@ -14,9 +14,11 @@ class DBEntranceExit
                                         "idgerbang as gerbang_id",
                                         "gardu as gardu_id",
                                         "gol as golongan",
-                                        "shift",  DB::raw('COUNT(*) as jumlah_data')
+                                        "shift",
+                                        DB::raw('COUNT(*) as jumlah_data')
                                     )
                                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                                     ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
@@ -28,6 +30,7 @@ class DBEntranceExit
                                         "shift",  DB::raw('COUNT(*) as jumlah_data')
                                     )
                                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                                     ->groupBy("tanggal_siklus", "gerbang_keluar", "gardu", "shift", "gol");
 
         $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);
@@ -60,6 +63,7 @@ class DBEntranceExit
                                         'idpultol as PLTId',
                                         DB::raw('NULL as jenis_notran'),  // Replacing empty string with NULL
                                     )
+                                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                                     ->where('tanggal_siklus', $request->tanggal)
                                     ->where('idgerbang', $request->gerbang_id)
                                     ->where('gol', $request->golongan)
@@ -89,6 +93,7 @@ class DBEntranceExit
                                     'idpultol as PLTId',
                                     DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
                                 )
+                                ->whereNotIn('jenis_transaksi', ['91', '92'])
                                 ->where('tanggal_siklus', $request->tanggal)
                                 ->where('gerbang_keluar', $request->gerbang_id)
                                 ->where('gol', $request->golongan)

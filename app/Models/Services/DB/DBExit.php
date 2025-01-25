@@ -18,6 +18,7 @@ class DBExit
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->groupBy("tanggal_siklus", "gerbang_keluar", "gardu", "shift", "gol");
 
         return $query;
@@ -46,8 +47,9 @@ class DBExit
                         'gerbang_keluar as gerbang_id',
                         'idkspt as KsptId',
                         'idpultol as PLTId',
-                        DB::raw('NULL as jenis_notran')
-                    )             
+                        DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
+                    )
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->where('tanggal_siklus', $request->tanggal)
                     ->where('gerbang_keluar', $request->gerbang_id)
                     ->where('gol', $request->golongan)

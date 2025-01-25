@@ -19,6 +19,7 @@ class DBEntrance
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
 
         return $query;
@@ -42,13 +43,14 @@ class DBEntrance
                         'jenis_dinas',
                         'no_card as etoll_id',
                         DB::raw('0 as saldo'), 
-                        DB::raw('NULL as etoll_hash'),
-                        DB::raw('"" as gerbang_masuk'),
+                        DB::raw('NULL as etoll_hash'),  // Replacing empty string with NULL
+                        DB::raw('idgerbang as gerbang_masuk'),
                         'idgerbang as gerbang_id',
                         'idkspt as KsptId',
                         'idpultol as PLTId',
-                        DB::raw('NULL as jenis_notran'), 
-                    )                 
+                        DB::raw('NULL as jenis_notran'),  // Replacing empty string with NULL
+                    )
+                    ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->where('tanggal_siklus', $request->tanggal)
                     ->where('idgerbang', $request->gerbang_id)
                     ->where('gol', $request->golongan)
