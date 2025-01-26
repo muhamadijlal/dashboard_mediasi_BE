@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataCompareController;
 use App\Http\Controllers\RekapAT4Controller;
@@ -53,5 +54,12 @@ Route::middleware(["revalidateHistory","authenticated"])->group(function () {
     Route::prefix("select2")->name("select2.")->group(function() {
         Route::post("/getRuas", [Select2Controller::class, "getRuas"])->name("getRuas");
         Route::post("/getGerbang", [Select2Controller::class, "getGerbang"])->name("getGerbang");
+    });
+
+    Route::prefix("profile")->name("profile.")->group(function(){
+        Route::get("/dashboard", [ProfileController::class, 'dashboard'])->name("dashboard");
+        Route::patch("/update", [ProfileController::class, 'update'])->name("update");
+        Route::patch("/reset_password", [ProfileController::class, 'reset_password'])->name("reset_password");
+        Route::delete("/delete_account", [ProfileController::class, 'delete_account'])->name("delete_account");
     });
 });

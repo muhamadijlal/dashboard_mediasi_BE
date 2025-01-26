@@ -13,7 +13,7 @@
             <div class="w-10 overflow-hidden rounded-full">
                 <img
                     alt="username"
-                    src="https://ui-avatars.com/api/?name=John+Doe&background=FACC15"
+                    src="https://ui-avatars.com/api/?name={{ str_replace(" ", "+", auth()->user()->name) }}&background=FACC15"
                 />
             </div>
         </button>
@@ -21,8 +21,8 @@
         <nav class="bg-white absolute max-w-[150px] w-full top-16 shadow-lg right-10 rounded-lg hidden">
             <ul class="flex flex-col">
                 <li class="my-2 px-4 group hover:bg-gray-200">
-                    <a href="#" class="font-normal text-base lg:text-base md:text-base flex gap-2 items-center">
-                    <i class="fa-solid fa-user text-xs md:text-md "></i> Profile
+                    <a href="{{ route("profile.dashboard") }}" class="font-normal text-base lg:text-base md:text-base flex gap-2 items-center">
+                        <i class="fa-solid fa-user text-xs md:text-md "></i> Profile
                     </a>
                 </li>
                 <hr>
