@@ -29,37 +29,16 @@
                 <header class="py-14">
                     <h1 class="text-lg md:text-2xl uppercase font-bold">{{ $header }}</h1>
                 </header>
-                <x-button type="button" onclick="toggleModal()">
-                    Show Modal
-                </x-button>
             @endisset
 
             {{ $slot }}
         </div>
     </div>
-    <x-alert 
-        title="Deactivate account" 
-        message="Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone." 
-        actionText="Deactivate" 
-        cancelText="Cancel"
-    />
-    </div>
+
     <!-- Scripts -->
-    <!-- Add jQuery in the head or before closing the body -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Use the modal component -->
-    <x-alert 
-        title="Deactivate account" 
-        message="Are you sure you want to deactivate your account? All of your data will be permanently removed. This action cannot be undone." 
-        actionText="Deactivate" 
-        cancelText="Cancel"
-    />
-
-    <!-- Add jQuery to show and hide the modal -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="{{ asset('assets/js/myJs.js') }}"></script>
-    <script src="{{ asset('assets/js/alert.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- fontawesome -->
     <script src="https://kit.fontawesome.com/aa873de9f0.js" crossorigin="anonymous"></script>
     <!-- Select2 -->
@@ -68,6 +47,15 @@
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.tailwindcss.js"></script>
     <script type="text/javascript" src="https://cdn.tailwindcss.com" defer></script>
+    <script>
+        const loading = (isActive) => {
+            if (isActive) {
+                $("#loading").removeClass("hidden"); // Show the spinner
+            } else {
+                $("#loading").addClass("hidden"); // Hide the spinner
+            }
+        };
+    </script>
     @isset($script)
      {{ $script }}
     @endisset

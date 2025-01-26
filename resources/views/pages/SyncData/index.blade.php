@@ -5,9 +5,86 @@
 
     <x-slot name="script">
         <script>
+            function showConfirmModal() {
+                Swal.fire({
+                    html: `<x-alert
+                                title="Attention!"
+                                message="Are you sure want to sync data ?"
+                                actionText="Sync data"
+                            />`,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    customClass: {
+                        popup: 'hide-bg-swal',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '{{ route("sync.syncData") }}',
+                            type: 'POST',
+                            data: {
+                                ruas_id: params.ruas_id,
+                                start_date: params.start_date,
+                                end_date: params.end_date,
+                                gerbang_id: params.gerbang_id,
+                                golongan: params.golongan,
+                                gardu_id: params.gardu_id,
+                                shift: params.shift
+                            },
+                            beforeSend: function() {
+                                Swal.fire({
+                                    html: `<x-alert-loading />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                })
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    html: `<x-alert-success
+                                            title="Success!"
+                                            message="Sync data success!"
+                                        />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    timer: 1500,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                                localStorage.setItem('params', JSON.stringify(params));
+                                location.href = "{{ route('data_compare.transaction_detail.dashboard') }}";
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire({
+                                    html: `<x-alert-error
+                                            title="${status.toUpperCase()}!"
+                                            message="${error}!"
+                                        />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+        <script>
             let tblSync;
             let columns = @json($columns);
             let params = @json($params);
+
+            console.log(params)
 
             $(document).ready(function() {
                 tblSync = new DataTable('#tblSync', {
@@ -17,17 +94,51 @@
                         },
                         url: "{{ route('sync.getData') }}",
                         type: 'POST',
+                        beforeSend: function() {
+                            Swal.fire({
+                                html: `<x-alert-loading />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            })
+                        },
                         data: function (d) {
                             // Add parameters from URL
                             d.ruas_id = params.ruas_id;
-                            d.tanggal = params.tanggal;
+                            d.start_date = params.start_date;
+                            d.end_date = params.end_date;
                             d.gerbang_id = params.gerbang_id;
                             d.golongan = params.golongan;
                             d.gardu_id = params.gardu_id;
                             d.shift = params.shift;
                         },
                         error: function (xhr, error, code) {
-                            console.log(xhr, error, code)
+                            Swal.fire({
+                                html: `<x-alert-error
+                                        title="${status.toUpperCase()}!"
+                                        message="${error}!"
+                                    />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            });
+                        },
+                        xhr: function() {
+                            // Anda bisa menambahkan tambahan penanganan di sini, jika perlu
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    // Proses bisa dilanjutkan jika data sudah selesai
+                                    // Swal.close() akan dipanggil setelah request selesai
+                                    Swal.close();
+                                }
+                            };
+                            return xhr;
                         }
                     },
                     columns: columns,
@@ -46,36 +157,9 @@
                 });
             });
 
-            function handleSync(e)
-            {
+            function handleSync(e) {
                 e.preventDefault();
-                const isConfirmed = confirm("Apakah anda yakin akan melakukan sync ?");
-
-                if(isConfirmed) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '{{ route("sync.syncData") }}',
-                        type: 'POST',
-                        data: {
-                            ruas_id: params.ruas_id,
-                            tanggal: params.tanggal,
-                            gerbang_id: params.gerbang_id,
-                            golongan: params.golongan,
-                            gardu_id: params.gardu_id,
-                            shift: params.shift
-                        },
-                        success: function(response) {
-                            localStorage.setItem('params', JSON.stringify(params));
-                            location.href = "{{ route('data_compare.transaction_detail.dashboard') }}";
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle errors in AJAX response
-                            console.error('Request failed:', status, error);
-                        }
-                    });
-                }
+                showConfirmModal();
             }
         </script>
     </x-slot>
@@ -102,5 +186,5 @@
             </thead>
             <tbody></tbody>
         </table>
-    </div> 
+    </div>
 </x-app-layout>

@@ -64,7 +64,7 @@ class DBEntranceExit
                                         DB::raw('NULL as jenis_notran'),  // Replacing empty string with NULL
                                     )
                                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                                    ->where('tanggal_siklus', $request->tanggal)
+                                    ->where('tanggal_siklus', [$request->start_date, $request->end_date])
                                     ->where('idgerbang', $request->gerbang_id)
                                     ->where('gol', $request->golongan)
                                     ->where('gardu', $request->gardu_id)
@@ -94,7 +94,7 @@ class DBEntranceExit
                                     DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
                                 )
                                 ->whereNotIn('jenis_transaksi', ['91', '92'])
-                                ->where('tanggal_siklus', $request->tanggal)
+                                ->where('tanggal_siklus', [$request->start_date, $request->end_date])
                                 ->where('gerbang_keluar', $request->gerbang_id)
                                 ->where('gol', $request->golongan)
                                 ->where('gardu', $request->gardu_id)

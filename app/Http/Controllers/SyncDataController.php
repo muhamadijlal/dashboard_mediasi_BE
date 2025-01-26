@@ -74,7 +74,8 @@ class SyncDataController extends Controller
             ],
             'params' => [
                 'ruas_id' => $ruas_id, 
-                'tanggal' => $tanggal,
+                'start_date' => $tanggal,
+                'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
                 'golongan' => $golongan,
                 'gardu_id' => $gardu_id,
@@ -84,10 +85,12 @@ class SyncDataController extends Controller
     }
 
     public function getData(Request $request) {
+
         try {
             $request->validate([
                 'ruas_id' => 'required|string',
-                'tanggal' => 'required|date|date_format:Y-m-d',
+                'start_date' => 'required|date|date_format:Y-m-d',
+                'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
                 'golongan' => 'required|string',
                 'gardu_id' => 'required|string',
@@ -113,7 +116,8 @@ class SyncDataController extends Controller
 
             $request->validate([
                 'ruas_id' => 'required|string',
-                'tanggal' => 'required|date|date_format:Y-m-d',
+                'start_date' => 'required|date|date_format:Y-m-d',
+                'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
                 'golongan' => 'required|string',
                 'gardu_id' => 'required|string',

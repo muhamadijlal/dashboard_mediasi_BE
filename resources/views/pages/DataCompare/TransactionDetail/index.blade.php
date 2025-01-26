@@ -12,11 +12,12 @@
                 const gerbang_id = $('#gerbang_id');
                 let columns = @json($columns);
                 let params = JSON.parse(localStorage.getItem("params"));
+
                 stateParams = {
                     ruas_id: params?.ruas_id ?? "",
                     gerbang_id: params?.gerbang_id ?? "",
-                    start_date: params?.tanggal ?? "",
-                    end_date: params?.tanggal ?? "",
+                    start_date: params?.start_date ?? "",
+                    end_date: params?.end_date ?? "",
                     selisih: "*",
                 };
 
@@ -41,7 +42,7 @@
                             }
                         },
                         beforeSend: function() {
-                           // Disable gerbang_id secara default
+                            // Disable gerbang_id secara default
                             gerbang_id.val(null).trigger('change');
                             gerbang_id.attr("disabled", true);
                         },
@@ -92,6 +93,17 @@
                         },
                         url: "{{ route('data_compare.transaction_detail.getData') }}",
                         type: 'POST',
+                        beforeSend: function() {
+                            Swal.fire({
+                                html: `<x-alert-loading />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            })
+                        },
                         data: function (d) {
                             d.ruas_id = stateParams.ruas_id;
                             d.gerbang_id = stateParams.gerbang_id;
@@ -99,13 +111,34 @@
                             d.end_date = stateParams.end_date;
                             d.selisih = stateParams.selisih;
                         },
-                        error: function (xhr, error, code) {
-                            console.log(xhr, error, code)
+                        error: function (response) {
+                            Swal.fire({
+                                html: `<x-alert-error
+                                        title="Error!"
+                                        message="${response.responseJSON.message}!"
+                                />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            });
+                        },
+                        xhr: function() {
+                            // Anda bisa menambahkan tambahan penanganan di sini, jika perlu
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    // Proses bisa dilanjutkan jika data sudah selesai
+                                    // Swal.close() akan dipanggil setelah request selesai
+                                    Swal.close();
+                                }
+                            };
+                            return xhr;
                         }
                     },
                     columns: columns,
                     serverSide: true,
-                    processing: true,
                     scrollX: true,
                     scrollCollapse: true,
                     orderCellsTop: true,
@@ -115,12 +148,11 @@
                     ],
                     language: {
                         emptyTable: "Empty",
-                        processing: "Loading...",
                     },
-                    deferLoading: 0, 
+                    deferLoading: 0,
                 });
 
-                params && tblCompare.draw();
+                params && tblCompare.draw()
             });
 
             function handleSubmit(e)

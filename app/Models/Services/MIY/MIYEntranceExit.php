@@ -85,11 +85,11 @@ class MIYEntranceExit
                                     'TarifInvestor10',
                                     DB::raw('NULL as KodeIntegrator')
                                 )
-                                ->where('TanggalLaporan', $request->tanggal)
-                                ->where('GerbangId', $request->gerbang_id)
-                                ->where('Golongan', $request->golongan)
-                                ->where('GarduId', $request->gardu_id)
-                                ->where('Shift', $request->shift);
+                                ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
+                                ->where('GerbangId', $request['gerbang_id'])
+                                ->where('Golongan', $request['golongan'])
+                                ->where('GarduId', $request['gardu_id'])
+                                ->where('Shift', $request['shift']);
 
         $lalin_entrance = DB::connection('integrator')
                             ->table("lalin_entrance")
@@ -134,11 +134,11 @@ class MIYEntranceExit
                                 DB::raw('NULL as TarifInvestor10'),
                                 DB::raw('NULL as KodeIntegrator')
                             )
-                            ->where('TanggalLaporan', $request->tanggal)
-                            ->where('GerbangId', $request->gerbang_id)
-                            ->where('Golongan', $request->golongan)
-                            ->where('GarduId', $request->gardu_id)
-                            ->where('Shift', $request->shift);
+                            ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
+                            ->where('GerbangId', $request['gerbang_id'])
+                            ->where('Golongan', $request['golongan'])
+                            ->where('GarduId', $request['gardu_id'])
+                            ->where('Shift', $request['shift']);
 
         // Menggabungkan keduanya dengan unionAll
         $query = $lalin_settlement->unionAll($lalin_entrance);

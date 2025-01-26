@@ -67,11 +67,11 @@ class MIYOpen
                         'TarifInvestor10',
                         DB::raw('" " as KodeIntegrator')
                     )
-                    ->where('TanggalLaporan', $request->tanggal)
-                    ->where('GerbangId', $request->gerbang_id)
-                    ->where('Golongan', $request->golongan)
-                    ->where('GarduId', $request->gardu_id)
-                    ->where('Shift', $request->shift);
+                    ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
+                    ->where('GerbangId', $request['gerbang_id'])
+                    ->where('Golongan', $request['golongan'])
+                    ->where('GarduId', $request['gardu_id'])
+                    ->where('Shift', $request['shift']);
 
         return $query;
     }

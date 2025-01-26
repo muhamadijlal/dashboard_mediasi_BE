@@ -50,7 +50,7 @@ class DBOpen
                         DB::raw('NULL as jenis_notran')
                     )
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->where('tanggal_siklus', $request->tanggal)
+                    ->whereBetween('tanggal_siklus', [$request->start_date, $request->end_date])
                     ->where('idgerbang', $request->gerbang_id)
                     ->where('gol', $request->golongan)
                     ->where('gardu', $request->gardu_id)

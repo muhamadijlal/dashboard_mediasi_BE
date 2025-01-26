@@ -96,3 +96,8 @@ table.dataTable > tbody > tr > td.dt-empty {
   transition: opacity 0.3s ease-out;
 }
 
+.hide-bg-swal {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+

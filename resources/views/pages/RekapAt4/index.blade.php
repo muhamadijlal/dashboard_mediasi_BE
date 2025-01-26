@@ -85,14 +85,47 @@
                         },
                         url: "{{ route('recap_at4.getData') }}",
                         type: 'POST',
+                        beforeSend: function() {
+                            Swal.fire({
+                                html: `<x-alert-loading />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                allowOutsideClick: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            })
+                        },
                         data: function (d) {
                             d.ruas_id = $('#ruas_id').val();
                             d.gerbang_id = $('#gerbang_id').val();
                             d.start_date = $('#start_date').val();
                             d.end_date = $('#end_date').val();
                         },
-                        error: function (xhr, error, code) {
-                            console.log(xhr, error, code)
+                        error: function (response) {
+                            Swal.fire({
+                                html: `<x-alert-error
+                                        title="Error!"
+                                        message="${response.responseJSON.message}!"
+                                />`,
+                                showConfirmButton: false,
+                                showCancelButton: false,
+                                customClass: {
+                                    popup: 'hide-bg-swal',
+                                }
+                            });
+                        },
+                        xhr: function() {
+                            // Anda bisa menambahkan tambahan penanganan di sini, jika perlu
+                            var xhr = new XMLHttpRequest();
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    // Proses bisa dilanjutkan jika data sudah selesai
+                                    // Swal.close() akan dipanggil setelah request selesai
+                                    Swal.close();
+                                }
+                            };
+                            return xhr;
                         }
                     },
                     columns: columns,
@@ -107,7 +140,6 @@
                     ],
                     language: {
                         emptyTable: "Empty",
-                        processing: "Loading...",
                     },
                     deferLoading: 0,
                 });

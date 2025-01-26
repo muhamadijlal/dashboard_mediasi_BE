@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
     links.forEach(link => {
-        link.addEventListener('click', function(event) {
+        link.addEventListener('click', function() {
             details.open = !details.open;
         });
     });

@@ -33,6 +33,8 @@ class JMTORepository
                     ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra" ,"RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
                     ->whereBetween('Tanggal', [$start_date, $end_date]);
 
+            dd($query);
+
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
@@ -152,7 +154,7 @@ class JMTORepository
                             'inv10',
                             'KodeIntegrator'
                         )
-                        ->where('tgl_lap', $request->tanggal)
+                        ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
                         ->where('ruas_id', $request->ruas_id)
                         ->where("gerbang_id", $request->gerbang_id)
                         ->where("gol_sah", $request->golongan)
@@ -181,7 +183,6 @@ class JMTORepository
             foreach ($result as $dataItem) {
                 // Define the SQL query with placeholders for parameterized queries
                 $query = "INSERT INTO jid_transaksi_deteksi (
-                        ruas_id,
                         asal_gerbang_id,
                         gerbang_id,
                         gardu_id,
@@ -222,7 +223,7 @@ class JMTORepository
                         inv10,
                         KodeIntegrator
                     ) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
                         ruas_id = VALUES(ruas_id),
                         gerbang_id = VALUES(gerbang_id),
@@ -236,7 +237,6 @@ class JMTORepository
 
                 // Bind the data for the prepared statement
                 $params = [
-                    $request->ruas_id, 
                     $dataItem->asal_gerbang_id, 
                     $dataItem->gerbang_id, 
                     $dataItem->gardu_id, 
