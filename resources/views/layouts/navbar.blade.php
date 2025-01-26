@@ -27,11 +27,11 @@
                 </li>
                 <hr>
                 <li class="my-2 px-4 group hover:bg-gray-200">
-                    <form action="" method="POST">
+                    <form action="{{ route('auth.logout') }}" method="POST">
                     @csrf
-                    <button class="text-base font-normal flex gap-2 items-center">
-                        <i class="fa-solid fa-power-off text-red-500 text-xs md:text-md"></i> Logout
-                    </button>
+                        <button class="text-base font-normal flex gap-2 items-center">
+                            <i class="fa-solid fa-power-off text-red-500 text-xs md:text-md"></i> Logout
+                        </button>
                     </form>
                 </li>
             </ul>
