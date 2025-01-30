@@ -2,48 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\DatabaseConfig;
+use App\Models\DigitalReceipt;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class JMTORepository
+class DigitalReceiptRepository
 {
-    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
-    {
+   public static function getDataCompare(string $start_date=null, string $end_date=null, string $isSelisih)
+   {
         try {
-            DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
-
-            $query = DB::connection('mediasi')
-                        ->table("jid_transaksi_deteksi")
-                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah", "metoda_bayar_sah", "validasi_notran", "etoll_hash", "tarif")
-                        ->whereBetween('tgl_lap', [$start_date, $end_date]);
-
-            return $query;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
-        }
-    }
-
-    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
-    {
-        try {
-            DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
-
-            $query = DB::connection('mediasi')
-                    ->table("jid_rekap_at4")
-                    ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra" ,"RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
-                    ->whereBetween('Tanggal', [$start_date, $end_date]);
-
-            return $query;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
-        }
-    }
-
-    public function getDataCompare(string $ruas_id, string $gerbang_id, string $start_date=null, string $end_date=null, string $isSelisih)
-    {
-        try {
-            DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator');
-
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
@@ -104,10 +71,10 @@ class JMTORepository
         }
     }
 
-    public function getDataSync($request)
+    public static function getDataSync($request)
     {
         try {
-            DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id, 'integrator');
+            DigitalReceipt::switchDB($request->ruas_id, $request->gerbang_id);
 
             $query = DB::connection('integrator')
                         ->table('jid_transaksi_deteksi')
@@ -167,17 +134,16 @@ class JMTORepository
         }
     }
 
-    public function syncData($request)
+    public static function syncData($request)
     {
-        // Switch to the correct database connection based on the request parameters
-        DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
+        DigitalReceipt::switchDB($request->ruas_id, $request->gerbang_id);
         
         // Begin a transaction on the "mediasi" connection
         DB::connection('mediasi')->beginTransaction();
 
         try {
             // Fetch the data to be synced
-            $data = $this->getDataSync($request);
+            $data = self::getDataSync($request);
             $result = $data->get();
 
             foreach ($result as $dataItem) {

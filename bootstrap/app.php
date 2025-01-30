@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AuthenticatedMiddleware;
+use App\Http\Middleware\NotAuthenticatedMiddleware;
 use App\Http\Middleware\RevalidateBackHistory;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -15,7 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'authenticated' => AuthenticatedMiddleware::class,
-            'revalidateHistory' => RevalidateBackHistory::class
+            'revalidateHistory' => RevalidateBackHistory::class,
+            'NotAuthenticated' => NotAuthenticatedMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

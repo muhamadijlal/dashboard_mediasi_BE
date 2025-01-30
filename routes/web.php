@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SyncDataDigitalReceiptController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataCompareController;
 use App\Http\Controllers\RekapAT4Controller;
@@ -11,7 +12,7 @@ use App\Http\Controllers\TransactionDetailController;
 
 Route::redirect("/","/auth/login");
 
-Route::middleware(["guest"])->group(function () {
+Route::middleware(["NotAuthenticated"])->group(function () {
     Route::prefix("auth")->name("auth.")->group(function(){
         Route::get("/login", [AuthController::class, "login"])->name("login");
         Route::post("/login", [AuthController::class, "authenticate"])->name("authenticate");
@@ -39,21 +40,30 @@ Route::middleware(["revalidateHistory","authenticated"])->group(function () {
             Route::post("/getData", [DataCompareController::class, "transaction_detail_getData"])->name("getData");
         });
 
-        // Route::prefix("digital_receipt")->name('digital_receipt.')->group(function(){
-        //     Route::get("/dashboard", [DataCompareController::class, "digital_receipt_dashboard"])->name("dashboard");
-        //     Route::post("/getData", [DataCompareController::class, "digital_receipt_getData"])->name("getData");
-        // });
+        Route::prefix("digital_receipt")->name('digital_receipt.')->group(function(){
+            Route::get("/dashboard", [DataCompareController::class, "digital_receipt_dashboard"])->name("dashboard");
+            Route::post("/getData", [DataCompareController::class, "digital_receipt_getData"])->name("getData");
+        });
     });
 
     Route::prefix("sync")->name("sync.")->group(function(){
         Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{golongan?}/{gardu_id?}/{shift?}", [SyncDataController::class, "dashboard"])->name("dashboard");
         Route::post("/getData", [SyncDataController::class, "getData"])->name("getData");
         Route::post("/syncData", [SyncDataController::class, "syncData"])->name("syncData");
+
+        Route::prefix("digital_receipt")->name("digital_receipt.")->group(function(){
+            Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{golongan?}/{gardu_id?}/{shift?}", [SyncDataDigitalReceiptController::class, "dashboard"])->name("dashboard");
+            Route::post("/getData", [SyncDataDigitalReceiptController::class, "getData"])->name("getData");
+            Route::post("/syncData", [SyncDataDigitalReceiptController::class, "syncData"])->name("syncData");
+       });
     });
 
     Route::prefix("select2")->name("select2.")->group(function() {
         Route::post("/getRuas", [Select2Controller::class, "getRuas"])->name("getRuas");
         Route::post("/getGerbang", [Select2Controller::class, "getGerbang"])->name("getGerbang");
+
+        Route::post("/getRuas/resi", [Select2Controller::class, "getRuasResi"])->name("getRuasResi");
+        Route::post("/getGerbang/resi", [Select2Controller::class, "getGerbangResi"])->name("getGerbangResi");
     });
 
     Route::prefix("profile")->name("profile.")->group(function(){
