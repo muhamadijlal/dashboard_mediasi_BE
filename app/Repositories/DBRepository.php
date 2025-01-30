@@ -76,14 +76,14 @@ class DBRepository
 
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
-                                ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap",
-                                    "gerbang_id", DB::raw("gol_sah as golongan"),
-                                    "gardu_id",
-                                    "shift", DB::raw('COUNT(id) as jumlah_data')
+                                ->table('jid_transaksi_deteksi')
+                                ->select('tgl_lap',
+                                    'gerbang_id', DB::raw('gol_sah as golongan'),
+                                    'gardu_id',
+                                    'shift', DB::raw('COUNT(id) as jumlah_data')
                                 )
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+                                ->groupBy('tgl_lap', 'gerbang_id', 'gardu_id', 'shift', 'gol_sah');
 
             // Query untuk tabel integrator
             $query_integrator = $services->getSourceCompare($start_date, $end_date, $database_schema);

@@ -10,16 +10,16 @@ class DBExit
     {
         $query = DB::connection('integrator_pgsql')
                     ->table((string)$schema.'.tbltransaksi_exit')
-                    ->select("tanggal_siklus as tgl_lap",
-                        "gerbang_keluar as gerbang_id",
-                        "gardu as gardu_id",
-                        "gol as golongan",
-                        "shift",
+                    ->select('tanggal_siklus as tgl_lap',
+                        'gerbang_keluar as gerbang_id',
+                        'gardu as gardu_id',
+                        'gol as golongan',
+                        'shift',
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->groupBy("tanggal_siklus", "gerbang_keluar", "gardu", "shift", "gol");
+                    ->groupBy('tanggal_siklus', 'gerbang_keluar', 'gardu', 'shift', 'gol');
 
         return $query;
     }
@@ -27,7 +27,7 @@ class DBExit
     public function getSourceSync($request, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table((string)$schema.".tbltransaksi_exit")
+                    ->table((string)$schema.'.tbltransaksi_exit')
                     ->select(
                         'tanggal_siklus as tgl_lap',
                         'gardu as gardu_id',

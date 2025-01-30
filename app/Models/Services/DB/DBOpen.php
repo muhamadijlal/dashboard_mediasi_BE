@@ -10,16 +10,16 @@ class DBOpen
     {
         $query = DB::connection('integrator_pgsql')
                     ->table((string)$schema.'.tbltransaksi_open')
-                    ->select("tanggal_siklus as tgl_lap",
-                        "idgerbang as gerbang_id",
-                        "gardu as gardu_id",
-                        "gol as golongan",
-                        "shift",
+                    ->select('tanggal_siklus as tgl_lap',
+                        'idgerbang as gerbang_id',
+                        'gardu as gardu_id',
+                        'gol as golongan',
+                        'shift',
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     ->whereBetween('tanggal_siklus', [$start_date, $end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->groupBy("tanggal_siklus", "idgerbang", "gardu", "shift", "gol");
+                    ->groupBy('tanggal_siklus', 'idgerbang', 'gardu', 'shift', 'gol');
 
         return $query;
     }
@@ -27,7 +27,7 @@ class DBOpen
     public function getSourceSync($request, $schema)
     {
         $query = DB::connection('integrator_pgsql')
-                    ->table((string)$schema.".tbltransaksi_open")
+                    ->table((string)$schema.'.tbltransaksi_open')
                     ->select(
                         'tanggal_siklus as tgl_lap',
                         'gardu as gardu_id',
@@ -37,14 +37,14 @@ class DBOpen
                         'resi as no_resi',
                         'gol as gol_sah',
                         'tarif',
-                        'waktu_trans_exit as tgl_transaksi',
-                        'waktu_trans_entry as tgl_entrance',
+                        'waktu_transaksi as tgl_transaksi',
+                        'waktu_transaksi as tgl_entrance',
                         'jenis_dinas',
                         'no_card as etoll_id',
                         'saldo',
                         'etoll_hash',
-                        'gerbang_masuk',
-                        'gerbang_keluar as gerbang_id',
+                        'idgerbang as gerbang_masuk',
+                        'idgerbang as gerbang_id',
                         'idkspt as KsptId',
                         'idpultol as PLTId',
                         DB::raw('NULL as jenis_notran')
