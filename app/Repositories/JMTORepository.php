@@ -33,8 +33,6 @@ class JMTORepository
                     ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra" ,"RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
                     ->whereBetween('Tanggal', [$start_date, $end_date]);
 
-            dd($query);
-
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
