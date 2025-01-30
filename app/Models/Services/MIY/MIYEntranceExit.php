@@ -54,7 +54,7 @@ class MIYEntranceExit
                                     'Shift as shift',
                                     'NoResi as no_resi',
                                     'WaktuTransaksiEntrance as tgl_transaksi',
-                                    DB::raw('NULL as tgl_entrance'),
+                                    'WaktuTransaksiEntrance as tgl_entrance',
                                     'Tarif as tarif',
                                     'Perioda as perioda',
                                     'KsptId',

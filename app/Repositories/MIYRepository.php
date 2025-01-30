@@ -201,7 +201,7 @@ class MIYRepository
                     $dataItem->tgl_transaksi,
                     $dataItem->KsptId, 
                     $dataItem->PLTId,
-                    $dataItem->tgl_entrance ?? NULL,
+                    $dataItem->tgl_entrance,
                     $dataItem->etoll_hash, 
                     $dataItem->tarif, 
                     $dataItem->Saldo, 

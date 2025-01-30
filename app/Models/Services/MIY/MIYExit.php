@@ -41,7 +41,7 @@ class MIYExit
                         'KsptId',
                         'Saldo',
                         'PLTId',
-                        'WaktuTransaksiEntrance',
+                        'WaktuTransaksiEntrance as tgl_entrance',
                         'MetodeTransaksi as metoda_bayar_sah',
                         'JenisNotran as jenis_notran',
                         'EtollHash as etoll_hash',
