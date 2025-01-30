@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('database');
             $table->string('database_schema')->nullable();
             $table->enum('integrator', [1, 2, 3, 4]);
+            $table->enum('tipe_gerbang', [1, 2, 3, 4]);
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

@@ -63,6 +63,7 @@ class RuasIntegratorSeeder extends Seeder
                 'pass' => 'jmto2024',
                 'database' => 'jago_lattol_77_source',
                 'database_schema' => '',
+                'tipe_gerbang' => 1,
                 'integrator' => 2,
             ],
             [
@@ -76,6 +77,7 @@ class RuasIntegratorSeeder extends Seeder
                 'pass' => 'jmto2024',
                 'database' => 'miy_source',
                 'database_schema' => '',
+                'tipe_gerbang' => 1,
                 'integrator' => 2,
             ],
             [
@@ -89,6 +91,7 @@ class RuasIntegratorSeeder extends Seeder
                 'pass' => 'password',
                 'database' => 'dbsahrejmto',
                 'database_schema' => 'karawaci1',
+                'tipe_gerbang' => 1,
                 'integrator' => 2,
             ],
         ];
