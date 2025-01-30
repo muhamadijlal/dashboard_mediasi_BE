@@ -17,8 +17,8 @@ class DBExit
                         'shift',
                         DB::raw('COUNT(*) as jumlah_data')
                     )
-                    ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
-                    ->whereNotIn('jenis_transaksi', [(string)'91', (string)'92'])
+                    ->whereBetween('tanggal_siklus', [(string)"'$start_date'", (string)"'$end_date'"])
+                    ->whereNotIn('jenis_transaksi', [(string)"'91'", (string)"'92'"])
                     ->groupBy('tanggal_siklus', 'gerbang_keluar', 'gardu', 'shift', 'gol');
 
         return $query;
@@ -49,12 +49,12 @@ class DBExit
                         'idpultol as PLTId',
                         DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
                     )
-                    ->whereNotIn('jenis_transaksi', [(string)'91', (string)'92'])
-                    ->where('tanggal_siklus', [(string)$request->start_date, (string)$request->end_date])
-                    ->where('gerbang_keluar', (string)$request->gerbang_id)
-                    ->where('gol', (string)$request->golongan)
-                    ->where('gardu', (string)$request->gardu_id)
-                    ->where('shift', (string)$request->shift);
+                    ->whereNotIn('jenis_transaksi', [(string)"'91'", (string)"'92'"])
+                    ->where('tanggal_siklus', [(string)"'$request->start_date'", (string)"'$request->end_date'"])
+                    ->where('gerbang_keluar', (string)"'$request->gerbang_id'")
+                    ->where('gol', (string)"'$request->golongan'")
+                    ->where('gardu', (string)"'$request->gardu_id'")
+                    ->where('shift', (string)"'$request->shift'");
 
         return $query;
     }
