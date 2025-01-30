@@ -26,7 +26,7 @@
 
         <li>
             <details {{ request()->routeIs('data_compare.transaction_detail.*') ? "open" : ""}}>
-                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('data_compare.*') ? "bg-yellow-400" : "" }}">
+                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('data_compare.transaction_detail.*') ? "bg-yellow-400" : "" }}">
                     <a href="#" class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
                         <i class="fa-solid fa-code-compare text-yellow-400"></i>
