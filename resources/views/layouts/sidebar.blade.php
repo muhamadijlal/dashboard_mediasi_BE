@@ -50,7 +50,7 @@
                 <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('data_compare.digital_receipt.*') ? "bg-yellow-400" : "" }}">
                     <a href="#" class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
-                        <i class="fa-solid fa-file-invoice text-yellow-400"></i>
+                        <i class="fa-solid fa-code-compare text-yellow-400"></i>
                         </div>
                         {{ __("Digital Receipt") }}
                     </a>
@@ -59,8 +59,8 @@
                 </summary>
 
                 <ul id="submenu" class="ml-5 border-l-[1.5px] border-slate-200 mt-3 space-y-2">
-                    <li>
-                        <a href="{{ route("data_compare.digital_receipt.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px] text-gray-400 hover:text-blue-950 hover:border-blue-950{{ request()->routeIs('data_compare.digital_receipt.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
+                    <li>  
+                        <a href="{{ route("data_compare.digital_receipt.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('data_compare.digital_receipt.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
                     </li>
                 </ul>
             </details>
