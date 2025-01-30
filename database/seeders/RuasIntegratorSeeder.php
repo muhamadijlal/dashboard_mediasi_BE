@@ -34,7 +34,7 @@ class RuasIntegratorSeeder extends Seeder
                 'port' => 3306,
                 'user' => 'dbdev',
                 'pass' => 'jmto2024',
-                'database' => 'miy_source',
+                'database' => 'miy_dest',
                 'integrator' => 2,
             ],
             [
