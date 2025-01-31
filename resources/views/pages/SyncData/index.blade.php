@@ -61,19 +61,19 @@
                                 localStorage.setItem('params', JSON.stringify(params));
                                 location.href = "{{ route('data_compare.transaction_detail.dashboard') }}";
                             },
-                            error: function(xhr, status, error) {
+                            error: function (response) {
                                 Swal.fire({
                                     html: `<x-alert-error
-                                            title="${status.toUpperCase()}!"
-                                            message="${error}!"
-                                        />`,
+                                            title="Error!"
+                                            message="${response.responseJSON.message}!"
+                                    />`,
                                     showConfirmButton: false,
                                     showCancelButton: false,
                                     customClass: {
                                         popup: 'hide-bg-swal',
                                     }
                                 });
-                            }
+                            },
                         });
                     }
                 });

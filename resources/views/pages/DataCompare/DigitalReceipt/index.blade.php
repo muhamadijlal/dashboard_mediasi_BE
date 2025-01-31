@@ -91,7 +91,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('data_compare.digital_receipt.getData') }}",
+                        url: "{{ route('digital_receipt.data_compare.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({

@@ -66,7 +66,7 @@ class Select2Controller extends Controller
             ]);
 
             $gerbang = DB::connection('mysql')
-                ->table("tbl_resi_mediasi")
+                ->table("tbl_resi_digital")
                 ->select("gerbang_id as value","gerbang_nama as label")
                 ->where("status", 1)
                 ->where("ruas_id", $request->ruas_id)

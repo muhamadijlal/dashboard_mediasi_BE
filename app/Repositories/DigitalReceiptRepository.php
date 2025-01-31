@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\DigitalReceipt;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class DigitalReceiptRepository
@@ -123,11 +122,16 @@ class DigitalReceiptRepository
                         )
                         ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
                         ->where('ruas_id', $request->ruas_id)
-                        ->where("gerbang_id", $request->gerbang_id)
-                        ->where("gol_sah", $request->golongan)
-                        ->where("gardu_id", $request->gardu_id)
-                        ->where("shift", $request->shift);
+                        ->where("gerbang_id", $request->gerbang_id);
 
+                $query->when($request->has('card_num'), function ($query) use ($request) {
+                    $query->where('etoll_id', 'LIKE', "%{$request->card_num}%");
+                }, function ($query) use($request) {
+                    $query->where("gol_sah", $request->golongan);
+                    $query->where("gardu_id", $request->gardu_id);
+                    $query->where("shift", $request->shift);
+                });
+                        
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
@@ -137,6 +141,7 @@ class DigitalReceiptRepository
     public static function syncData($request)
     {
         DigitalReceipt::switchDB($request->ruas_id, $request->gerbang_id);
+        $query = Self::getDataSync($request);
         
         // Begin a transaction on the "mediasi" connection
         DB::connection('mediasi')->beginTransaction();

@@ -165,7 +165,7 @@ class DataCompareController extends Controller
                             ->addIndexColumn()
                             ->addColumn('link', function ($row) use($request) {
                                 if ($row->selisih > 0) {
-                                    return '<a target="_blank" class="text-yellow-400" href="/sync/digital_receipt/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->golongan .'/'. $row->gardu_id .'/'. $row->shift .'">'. $row->selisih .'</a>';
+                                    return '<a target="_blank" class="text-yellow-400" href="/sync/digital_receipt/data_compare/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->golongan .'/'. $row->gardu_id .'/'. $row->shift .'">'. $row->selisih .'</a>';
                                 }else if($row->selisih < 0) {
                                     return '<span class="text-red-500">'.$row->selisih.'</span>';
                                 }else {

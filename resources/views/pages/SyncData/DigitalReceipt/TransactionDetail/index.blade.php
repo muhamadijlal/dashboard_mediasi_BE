@@ -1,12 +1,85 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Transaction Detail Dashboard") }}
+        {{ __("Sync Data Transaction Detail Dashboard") }}
     </x-slot>
 
     <x-slot name="script">
         <script>
-            let tblTransaksiDetail;
-
+            function showConfirmModal() {
+                Swal.fire({
+                    html: `<x-alert
+                                title="Attention!"
+                                message="Are you sure want to sync data ?"
+                                actionText="Sync data"
+                            />`,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    customClass: {
+                        popup: 'hide-bg-swal',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '{{ route("sync.digital_receipt.transaction_detail.syncData") }}',
+                            type: 'POST',
+                            data: {
+                                ruas_id: $('#ruas_id').val(),
+                                start_date: $('#start_date').val(),
+                                end_date: $('#end_date').val(),
+                                gerbang_id: $('#gerbang_id').val(),
+                                card_num: $('#card_num').val(),
+                            },
+                            beforeSend: function() {
+                                Swal.fire({
+                                    html: `<x-alert-loading />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                })
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    html: `<x-alert-success
+                                        title="Success!"
+                                        message="Sync data success!"
+                                    />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    timer: 1500,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                                localStorage.setItem('params_resi', JSON.stringify(params));
+                                tblSync.draw();
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire({
+                                    html: `<x-alert-error
+                                            title="${status.toUpperCase()}!"
+                                            message="${error}!"
+                                        />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        </script>
+        <script>
+            let tblSync;
+            
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
@@ -17,7 +90,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('select2.getRuas') }}",
+                        url: "{{ route('select2.getRuasResi') }}",
                         type: 'POST',
                         dataType: 'json',
                         processResults: function (data) {
@@ -33,7 +106,8 @@
                             }
                         },
                         beforeSend: function() {
-                           // Disable gerbang_id secara default
+                            // Disable gerbang_id secara default
+                            gerbang_id.val(null).trigger('change');
                             gerbang_id.attr("disabled", true);
                         },
                     },
@@ -45,12 +119,11 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('select2.getGerbang') }}",
+                        url: "{{ route('select2.getGerbangResi') }}",
                         type: 'POST',
                         dataType: 'json',
-                        data: function (params) {
+                        data: function () {
                             return {
-                                query: params.term,
                                 ruas_id: ruas_id.val()
                             };
                         },
@@ -76,13 +149,12 @@
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
-
-                tblTransaksiDetail = new DataTable('#tblTransaksiDetail', {
+                tblSync = new DataTable('#tblSync', {
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('transaction_detail.getData') }}",
+                        url: "{{ route('sync.digital_receipt.transaction_detail.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({
@@ -97,9 +169,10 @@
                         },
                         data: function (d) {
                             d.ruas_id = $('#ruas_id').val();
-                            d.gerbang_id = $('#gerbang_id').val();
                             d.start_date = $('#start_date').val();
                             d.end_date = $('#end_date').val();
+                            d.gerbang_id = $('#gerbang_id').val();
+                            d.card_num = $('#card_num').val();
                         },
                         error: function (response) {
                             Swal.fire({
@@ -140,25 +213,38 @@
                     language: {
                         emptyTable: "Empty",
                     },
-                    deferLoading: 0,
+                    deferLoading: 0
                 });
             });
 
-            function handleSubmit(e)
-            {
+            function handleSync(e) {
                 e.preventDefault();
-                tblTransaksiDetail.draw();
+                showConfirmModal();
+            }
+
+            function handleSubmit(e) {
+                e.preventDefault();
+                tblSync.draw();
             }
         </script>
     </x-slot>
 
+    <form onsubmit="handleSync(event)">
+        <button class="px-6 py-1 bg-yellow-400 border-2 border-blue-950 rounded-lg font-bold">
+            <i class="fa-solid fa-play"></i>
+            Sync
+        </button>
+    </form>
+
+    <h4 class="h-10"></h4>
+    
     <form class="bg-white rounded-lg shadow-md flex flex-col items-end gap-5 p-5" onsubmit="handleSubmit(event)">
         <!-- Filter Component -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 place-content-between w-full">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-5 place-content-between w-full">
             <!-- Ruas -->
             <div>
                 <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
-                <select name="ruas_id[]" multp id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
             </div>
         
             <!-- Gerbang -->
@@ -190,6 +276,19 @@
                     value="{{ date('Y-m-d') }}"
                 >
             </div>
+
+            <!-- card number -->
+            <div class="col-span-2 lg:col-span-1">
+                <label class="mb-2 block font-medium text-sm text-blue-950" for="card_num">{{ __("Card Number") }}</label>
+                <input
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                    type="text" 
+                    name="card_num"
+                    id="card_num"
+                    placeholder="Input Card Number"
+                >
+            </div>
+            
         </div>
 
         <x-button>
@@ -200,11 +299,11 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <table id="tblTransaksiDetail" class="display" style="width:100%">
+        <table id="tblSync" class="display" style="width:100%">
             <thead>
                 <tr>
                     @foreach($columns as $column)
-                        <th class="text-center {!! $column['title'] === 'Etoll Hash' ? 'max-w-16' : '' !!}">
+                        <th>
                             {!! $column['title'] !!}
                         </th>
                     @endforeach
@@ -212,5 +311,5 @@
             </thead>
             <tbody></tbody>
         </table>
-    </div> 
+    </div>
 </x-app-layout>

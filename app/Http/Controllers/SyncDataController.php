@@ -113,7 +113,6 @@ class SyncDataController extends Controller
     }
     public function syncData(Request $request) {
         try{
-
             $request->validate([
                 'ruas_id' => 'required|string',
                 'start_date' => 'required|date|date_format:Y-m-d',
