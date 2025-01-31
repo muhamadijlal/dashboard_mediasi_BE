@@ -73,7 +73,6 @@ class DBRepository
             $services = Integrator::services($ruas_id, $gerbang_id);
             $database_schema = Integrator::schema($ruas_id, $gerbang_id);
 
-
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table('jid_transaksi_deteksi')
