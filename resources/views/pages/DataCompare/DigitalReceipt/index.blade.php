@@ -114,8 +114,8 @@
                         error: function (response) {
                             Swal.fire({
                                 html: `<x-alert-error
-                                        title="Error!"
-                                        message="${response.responseJSON.message}!"
+                                title="Error!"
+                                message="${response?.responseJSON?.message}!"
                                 />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,
@@ -123,6 +123,8 @@
                                     popup: 'hide-bg-swal',
                                 }
                             });
+
+                            localStorage.removeItem('params_resi');
                         },
                         xhr: function() {
                             // Anda bisa menambahkan tambahan penanganan di sini, jika perlu

@@ -123,6 +123,8 @@
                                     popup: 'hide-bg-swal',
                                 }
                             });
+
+                            localStorage.removeItem("params")
                         },
                         xhr: function() {
                             // Anda bisa menambahkan tambahan penanganan di sini, jika perlu

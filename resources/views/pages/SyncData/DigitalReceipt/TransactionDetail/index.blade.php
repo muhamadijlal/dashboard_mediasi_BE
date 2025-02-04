@@ -56,7 +56,7 @@
                                         popup: 'hide-bg-swal',
                                     }
                                 });
-                                localStorage.setItem('params_resi', JSON.stringify(params));
+
                                 tblSync.draw();
                             },
                             error: function(xhr, status, error) {
