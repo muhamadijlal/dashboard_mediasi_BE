@@ -44,8 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
     links.forEach(link => {
-        link.addEventListener('click', function() {
-            details.open = !details.open;
+        link.addEventListener('click', function(event) {
+            // Memeriksa apakah link memiliki atribut 'href' dan jika ya, lanjutkan dengan navigasi
+            if (link.getAttribute('href')) {
+                // Menghentikan event default hanya jika kita mengklik link yang mengarahkan ke halaman
+                event.preventDefault();
+    
+                // Menemukan elemen details terdekat
+                const details = link.closest('details');
+                
+                // Membalikkan status terbuka/tertutup elemen details
+                details.open = !details.open;
+    
+                // Setelah itu, baru lakukan navigasi ke URL di href
+                window.location.href = link.getAttribute('href');
+            }
         });
     });
 });
