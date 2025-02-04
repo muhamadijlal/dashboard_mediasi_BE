@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const backdrop = document.getElementById('backdrop');
   const hamburger = document.getElementById('hamburger');
   const sidebar = document.getElementById('sidebar');
-  const details = document.querySelector('details');
   const links = document.querySelectorAll('details a');
 
   // hamburger
