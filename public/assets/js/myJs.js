@@ -44,7 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
     links.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function(event) {
+            // Menghentikan event default dari link
+            event.preventDefault();
+            
+            // Menemukan elemen details terdekat yang membungkus link yang diklik
+            const details = link.closest('details');
+            
+            // Membalikkan status terbuka/tertutup elemen details
             details.open = !details.open;
         });
     });
