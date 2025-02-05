@@ -59,11 +59,11 @@
 
                                 tblSync.draw();
                             },
-                            error: function(xhr, status, error) {
+                            error: function (xhr, error, code) {
                                 Swal.fire({
                                     html: `<x-alert-error
-                                            title="${status.toUpperCase()}!"
-                                            message="${error}!"
+                                            title="Error!"
+                                            message="${xhr.responseJSON.message || error}!"
                                         />`,
                                     showConfirmButton: false,
                                     showCancelButton: false,
@@ -71,7 +71,7 @@
                                         popup: 'hide-bg-swal',
                                     }
                                 });
-                            }
+                            },
                         });
                     }
                 });
@@ -107,7 +107,6 @@
                         },
                         beforeSend: function() {
                             // Disable gerbang_id secara default
-                            gerbang_id.val(null).trigger('change');
                             gerbang_id.attr("disabled", true);
                         },
                     },

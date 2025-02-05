@@ -151,6 +151,10 @@ class DigitalReceiptRepository
             $data = self::getDataSync($request);
             $result = $data->get();
 
+            if (count($result) === 0) {
+                throw new \Exception("Data empty cannot sync");
+            }            
+
             foreach ($result as $dataItem) {
                 // Define the SQL query with placeholders for parameterized queries
                 $query = "INSERT INTO jid_transaksi_deteksi (

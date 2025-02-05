@@ -106,7 +106,7 @@
                             Swal.fire({
                                 html: `<x-alert-error
                                         title="Error!"
-                                        message="${response.responseJSON.message}!"
+                                        message="${response?.responseJSON?.message}!"
                                 />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,

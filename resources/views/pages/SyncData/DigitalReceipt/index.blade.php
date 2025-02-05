@@ -58,6 +58,7 @@
                                         popup: 'hide-bg-swal',
                                     }
                                 });
+
                                 localStorage.setItem('params_resi', JSON.stringify(params));
                                 location.href = "{{ route('digital_receipt.data_compare.dashboard') }}";
                             },
@@ -116,8 +117,8 @@
                         error: function (xhr, error, code) {
                             Swal.fire({
                                 html: `<x-alert-error
-                                        title="${status.toUpperCase()}!"
-                                        message="${error}!"
+                                        title="Error!"
+                                        message="${xhr.responseJSON.message || error}!"
                                     />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,

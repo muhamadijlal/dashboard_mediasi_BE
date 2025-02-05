@@ -116,8 +116,8 @@
                         error: function (xhr, error, code) {
                             Swal.fire({
                                 html: `<x-alert-error
-                                        title="${status.toUpperCase()}!"
-                                        message="${error}!"
+                                        title="Error!"
+                                        message="${xhr.responseJSON.message || error}!"
                                     />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,

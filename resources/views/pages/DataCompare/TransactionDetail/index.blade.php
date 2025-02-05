@@ -14,10 +14,10 @@
                 let params = JSON.parse(localStorage.getItem("params"));
 
                 stateParams = {
-                    ruas_id: params?.ruas_id ?? "",
-                    gerbang_id: params?.gerbang_id ?? "",
-                    start_date: params?.start_date ?? "",
-                    end_date: params?.end_date ?? "",
+                    ruas_id: params?.ruas_id ?? null,
+                    gerbang_id: params?.gerbang_id ?? null,
+                    start_date: params?.start_date ?? null,
+                    end_date: params?.end_date ?? null,
                     selisih: "*",
                 };
 
@@ -43,7 +43,6 @@
                         },
                         beforeSend: function() {
                             // Disable gerbang_id secara default
-                            gerbang_id.val(null).trigger('change');
                             gerbang_id.attr("disabled", true);
                         },
                     },
@@ -105,17 +104,17 @@
                             })
                         },
                         data: function (d) {
-                            d.ruas_id = stateParams.ruas_id;
-                            d.gerbang_id = stateParams.gerbang_id;
-                            d.start_date = stateParams.start_date;
-                            d.end_date = stateParams.end_date;
-                            d.selisih = stateParams.selisih;
+                            d.ruas_id = stateParams.ruas_id ?? $('#ruas_id').val();
+                            d.gerbang_id = stateParams.gerbang_id ?? $('#gerbang_id').val();
+                            d.start_date = stateParams.start_date ?? $('#start_date').val();
+                            d.end_date = stateParams.end_date ?? $('#end_date').val();
+                            d.selisih = stateParams.selisih ?? $('#selisih').val();
                         },
                         error: function (response) {
                             Swal.fire({
                                 html: `<x-alert-error
                                         title="Error!"
-                                        message="${response.responseJSON.message}!"
+                                        message="${response?.responseJSON?.message}!"
                                 />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,
@@ -191,15 +190,6 @@
             function handleSubmit(e)
             {
                 e.preventDefault();
-
-                stateParams.ruas_id = $('#ruas_id').val();
-                stateParams.gerbang_id = $('#gerbang_id').val();
-                stateParams.start_date = $('#start_date').val();
-                stateParams.end_date = $('#end_date').val();
-                stateParams.selisih = $('#selisih').val();
-
-                // Save the updated parameters to localStorage
-                localStorage.setItem("params", JSON.stringify(stateParams));
                 tblCompare.draw();
             }
         </script>

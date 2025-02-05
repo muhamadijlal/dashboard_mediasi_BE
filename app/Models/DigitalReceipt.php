@@ -44,14 +44,14 @@ class DigitalReceipt
         $mediasi = DB::connection('mysql')
                         ->table('tbl_resi_digital')
                         ->where('ruas_id', $ruas_id)
-                        ->where('gerbang_id', $gerbang_id)
+                        ->where('gerbang_id', $gerbang_id*1)
                         ->where('status', 1)
                         ->first();
 
         $integrator = DB::connection('mysql')
                         ->table('tbl_resi_mediasi')
                         ->where('ruas_id', $ruas_id)
-                        ->where('gerbang_id', $gerbang_id)
+                        ->where('gerbang_id', $gerbang_id*1)
                         ->where('status', 1)
                         ->first();
 

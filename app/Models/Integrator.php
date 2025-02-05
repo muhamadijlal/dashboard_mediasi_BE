@@ -20,6 +20,7 @@ class Integrator
     public static function get($ruas_id, $gerbang_id)
     {
         $integrator = Self::integrator($ruas_id, $gerbang_id);
+
         switch ($integrator) {
             case 2:
                 $repository = app(MIYRepository::class);
@@ -45,7 +46,7 @@ class Integrator
                         ->table("tbl_integrator")
                         ->select("tipe_gerbang", "integrator")
                         ->where("ruas_id", $ruas_id)
-                        ->where('gerbang_id', $gerbang_id)
+                        ->where('gerbang_id', $gerbang_id * 1)
                         ->where('status', 1)
                         ->first();
 
@@ -85,7 +86,7 @@ class Integrator
     {
         $credential = DB::table('tbl_integrator')
                         ->where('ruas_id', $ruas_id)
-                        ->where('gerbang_id', $gerbang_id)
+                        ->where('gerbang_id', $gerbang_id * 1)
                         ->where('status', 1)
                         ->first();
 
@@ -96,7 +97,7 @@ class Integrator
     {
         $credential = DB::table('tbl_ruas')
                         ->where('ruas_id', $ruas_id)
-                        ->where('gerbang_id', $gerbang_id)
+                        ->where('gerbang_id', $gerbang_id * 1)
                         ->where('status', 1)
                         ->first();
 
@@ -110,7 +111,7 @@ class Integrator
                         ->table("tbl_ruas")
                         ->select("integrator")
                         ->where("ruas_id", $ruas_id)
-                        ->where('gerbang_id', operator: $gerbang_id)
+                        ->where('gerbang_id', operator: $gerbang_id * 1)
                         ->where('status', 1)
                         ->first();
 
@@ -129,7 +130,7 @@ class Integrator
                         ->table("tbl_integrator")
                         ->select("database_schema")
                         ->where("ruas_id", $ruas_id)
-                        ->where('gerbang_id', operator: $gerbang_id)
+                        ->where('gerbang_id', operator: $gerbang_id * 1)
                         ->where('status', 1)
                         ->first();
 

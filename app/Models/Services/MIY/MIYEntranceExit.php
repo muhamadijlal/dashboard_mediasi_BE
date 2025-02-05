@@ -86,7 +86,7 @@ class MIYEntranceExit
                                     DB::raw('NULL as KodeIntegrator')
                                 )
                                 ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
-                                ->where('GerbangId', $request['gerbang_id'])
+                                ->where('GerbangId', $request['gerbang_id']*1)
                                 ->where('Golongan', $request['golongan'])
                                 ->where('GarduId', $request['gardu_id'])
                                 ->where('Shift', $request['shift']);
@@ -135,7 +135,7 @@ class MIYEntranceExit
                                 DB::raw('NULL as KodeIntegrator')
                             )
                             ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
-                            ->where('GerbangId', $request['gerbang_id'])
+                            ->where('GerbangId', $request['gerbang_id']*1)
                             ->where('Golongan', $request['golongan'])
                             ->where('GarduId', $request['gardu_id'])
                             ->where('Shift', $request['shift']);

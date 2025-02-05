@@ -85,7 +85,6 @@ class SyncDataController extends Controller
     }
 
     public function getData(Request $request) {
-
         try {
             $request->validate([
                 'ruas_id' => 'required|string',

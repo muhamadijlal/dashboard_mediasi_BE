@@ -130,6 +130,10 @@ class MIYRepository
             $data = $this->getDataSync($request);
             $result = $data->get();
 
+            if (count($result) === 0) {
+                throw new \Exception("Data empty cannot sync");
+            } 
+
             foreach ($result as $dataItem) {
                 $query = "INSERT INTO jid_transaksi_deteksi(
                             asal_gerbang_id,
