@@ -6,6 +6,8 @@
     <x-slot name="script">
         <script>
             let tblTransaksiDetail;
+            $('#ruas_id').val('').trigger('change');
+            $('#gerbang_id').val('').trigger('change');
 
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
@@ -21,19 +23,19 @@
                         type: 'POST',
                         dataType: 'json',
                         processResults: function (data) {
-                            const {data: ruas} = data;
+                            const { data: ruas } = data;
 
                             return {
-                                results: $.map((ruas), function(item) {
+                                results: $.map(ruas, function(item) {
                                     return {
                                         id: item.value,
                                         text: item.label
                                     };
                                 })
-                            }
+                            };
                         },
                         beforeSend: function() {
-                           // Disable gerbang_id secara default
+                            // Disable gerbang_id secara default
                             gerbang_id.attr("disabled", true);
                         },
                     },

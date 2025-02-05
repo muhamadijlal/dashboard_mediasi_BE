@@ -122,8 +122,9 @@
                         url: "{{ route('select2.getGerbangResi') }}",
                         type: 'POST',
                         dataType: 'json',
-                        data: function () {
+                        data: function (params) {
                             return {
+                                query: params.term,
                                 ruas_id: ruas_id.val()
                             };
                         },

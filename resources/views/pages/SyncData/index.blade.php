@@ -84,8 +84,6 @@
             let columns = @json($columns);
             let params = @json($params);
 
-            console.log(params)
-
             $(document).ready(function() {
                 tblSync = new DataTable('#tblSync', {
                     ajax: {
