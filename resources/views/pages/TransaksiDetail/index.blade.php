@@ -39,7 +39,7 @@
                             gerbang_id.attr("disabled", true);
                         },
                     },
-                    placeholder: "-- Pilih Ruas --",
+                    placeholder: "-- Pilih Ruas --"
                 });
 
                 gerbang_id.select2({

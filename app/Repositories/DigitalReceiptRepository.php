@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\DigitalReceipt;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class DigitalReceiptRepository
@@ -11,7 +12,7 @@ class DigitalReceiptRepository
    {
         try {
             // Query untuk tabel mediasi
-            $query_mediasi = DB::connection('mediasi')
+            $query_mediasi = DB::connection(name: 'mediasi')
                                 ->table("jid_transaksi_deteksi")
                                 ->select("tgl_lap", "gerbang_id", DB::raw("gol_sah as golongan"), "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
@@ -122,7 +123,7 @@ class DigitalReceiptRepository
                         )
                         ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
                         ->where('ruas_id', $request->ruas_id)
-                        ->where("gerbang_id", $request->gerbang_id);
+                        ->where("gerbang_id", $request->gerbang_id*1);
 
                 $query->when($request->has('card_num'), function ($query) use ($request) {
                     $query->where('etoll_id', 'LIKE', "%{$request->card_num}%");

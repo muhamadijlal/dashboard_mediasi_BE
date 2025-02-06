@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Integrator;
+use App\Models\Utils;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class SyncDataController extends Controller
 {
     public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $golongan = null, $gardu_id = null, $shift = null) {
+
+        $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
+
         return view("pages.SyncData.index", [
             'columns' => [
                 [
@@ -73,10 +77,12 @@ class SyncDataController extends Controller
                 ],
             ],
             'params' => [
-                'ruas_id' => $ruas_id, 
+                'ruas_id' => $ruas_id,
+                'ruas_nama' => $filter->ruas_nama,
                 'start_date' => $tanggal,
                 'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
+                'gerbang_nama' => $filter->gerbang_nama,
                 'golongan' => $golongan,
                 'gardu_id' => $gardu_id,
                 'shift' => $shift,

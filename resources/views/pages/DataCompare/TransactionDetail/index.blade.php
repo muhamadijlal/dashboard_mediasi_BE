@@ -21,7 +21,15 @@
                     selisih: "*",
                 };
 
+                let defaultRuas = params ? [{ id: params.ruas_id, text: params.ruas_nama }] : [{ id: '', text: '' }];
+                let defaultGerbang = params ? [{ id: params.gerbang_id, text: params.gerbang_nama }] : [{ id: '', text: '' }];
+
+                params?.gerbang_id ? gerbang_id.attr("disabled", false) : gerbang_id.attr("disabled", true);
+                params?.start_date && $('#start_date').val(params.start_date);
+                params?.end_date && $('#end_date').val(params.end_date);
+
                 ruas_id.select2({
+                    data: defaultRuas,
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -77,6 +85,7 @@
                         },
                     },
                     placeholder: "-- Pilih Gerbang --",
+                    data: defaultGerbang
                 });
 
                 // When select2 ruas id on change

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Sync Data Digital Receipt Dashboard") }}
+        {{ __("Jumlah data mediasi dan jumlah data resi digital Dashboard") }}
     </x-slot>
 
     <x-slot name="script">
@@ -21,7 +21,15 @@
                     selisih: "*",
                 };
 
+                let defaultRuas = params ? [{ id: params.ruas_id, text: params.ruas_nama }] : [{ id: '', text: '' }];
+                let defaultGerbang = params ? [{ id: params.gerbang_id, text: params.gerbang_nama }] : [{ id: '', text: '' }];
+
+                params?.gerbang_id ? gerbang_id.attr("disabled", false) : gerbang_id.attr("disabled", true);
+                params?.start_date && $('#start_date').val(params.start_date);
+                params?.end_date && $('#end_date').val(params.end_date);
+
                 ruas_id.select2({
+                    data: defaultRuas,
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -43,7 +51,6 @@
                         },
                         beforeSend: function() {
                             // Disable gerbang_id secara default
-                            gerbang_id.val(null).trigger('change');
                             gerbang_id.attr("disabled", true);
                         },
                     },
@@ -78,6 +85,7 @@
                         },
                     },
                     placeholder: "-- Pilih Gerbang --",
+                    data: defaultGerbang
                 });
 
                 // When select2 ruas id on change

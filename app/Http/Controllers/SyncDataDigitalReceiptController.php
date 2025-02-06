@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FilterRequest;
 use App\Models\DigitalReceipt;
+use App\Models\Utils;
 use Illuminate\Http\Request;
 use App\Repositories\DigitalReceiptRepository;
 use Yajra\DataTables\Facades\DataTables;
@@ -11,6 +12,9 @@ use Yajra\DataTables\Facades\DataTables;
 class SyncDataDigitalReceiptController extends Controller
 {
     public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $golongan = null, $gardu_id = null, $shift = null) {
+
+        $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
+
         return view("pages.SyncData.DigitalReceipt.index", [
             'columns' => [
                 [
@@ -76,9 +80,11 @@ class SyncDataDigitalReceiptController extends Controller
             ],
             'params' => [
                 'ruas_id' => $ruas_id,
+                'ruas_nama' => $filter->ruas_nama,
                 'start_date' => $tanggal,
                 'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
+                'gerbang_nama' => $filter->gerbang_nama,
                 'golongan' => $golongan,
                 'gardu_id' => $gardu_id,
                 'shift' => $shift,
