@@ -135,13 +135,13 @@ class DataCompareController extends Controller
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Jumlah Data Integrator',
+                    'title' => 'Jumlah Data DB Mediasi',
                     'data' => 'jumlah_data_integrator',
                     'orderable' => true,
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Jumlah Data Mediasi',
+                    'title' => 'Jumlah Data DB Resi',
                     'data' => 'jumlah_data_mediasi',
                     'orderable' => true,
                     'searchable' => true,
