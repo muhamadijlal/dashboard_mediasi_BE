@@ -4,6 +4,8 @@
     </x-slot>
 
     <x-slot name="script">
+        <script src="{{asset("assets/js/validationDates.js")}}"></script>
+        <script src="{{asset("assets/js/ipcheck.js")}}"></script>
         <script>
             let tblCompare;
 
@@ -122,8 +124,8 @@
                         error: function (response) {
                             Swal.fire({
                                 html: `<x-alert-error
-                                title="Error!"
-                                message="${response?.responseJSON?.message}!"
+                                    title="Error!"
+                                    message="${response?.responseJSON?.message}!"
                                 />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,

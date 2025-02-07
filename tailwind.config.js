@@ -17,5 +17,4 @@ export default {
         require('tailwindcss'),
         require('autoprefixer'),
     ],
-    darkMode: 'false'
 };

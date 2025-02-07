@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CheckConnectionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SyncDataDigitalReceiptController;
 use Illuminate\Support\Facades\Route;
@@ -83,4 +84,7 @@ Route::middleware(["revalidateHistory","authenticated"])->group(function () {
         Route::patch("/reset_password", [ProfileController::class, 'reset_password'])->name("reset_password");
         Route::delete("/delete_account", [ProfileController::class, 'delete_account'])->name("delete_account");
     });
+
+    // Checking IP Connection before fetch data
+    Route::post("/ipcheck", CheckConnectionController::class)->name("ipcheck");
 });
