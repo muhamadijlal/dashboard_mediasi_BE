@@ -11,7 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SyncDataDigitalReceiptController extends Controller
 {
-    public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $golongan = null, $gardu_id = null, $shift = null) {
+    public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $shift = null, $metoda_bayar = null) {
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
@@ -85,23 +85,21 @@ class SyncDataDigitalReceiptController extends Controller
                 'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
                 'gerbang_nama' => $filter->gerbang_nama,
-                'golongan' => $golongan,
-                'gardu_id' => $gardu_id,
+                'metoda_bayar' => $metoda_bayar,
                 'shift' => $shift,
             ]
         ]);
     }
 
-    public function getData(Request $request) {
-
+    public function getData(Request $request) 
+    {
         try {
             $request->validate([
                 'ruas_id' => 'required|string',
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'golongan' => 'required|string',
-                'gardu_id' => 'required|string',
+                'metoda_bayar' => 'required|string',
                 'shift' => 'required|string',
             ]);
 
@@ -128,8 +126,7 @@ class SyncDataDigitalReceiptController extends Controller
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'golongan' => 'required|string',
-                'gardu_id' => 'required|string',
+                'metoda_bayar' => 'required|string',
                 'shift' => 'required|string',
             ]);
 

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\DigitalReceipt;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class DigitalReceiptRepository
@@ -14,16 +13,18 @@ class DigitalReceiptRepository
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection(name: 'mediasi')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", DB::raw("gol_sah as golongan"), "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->select("tgl_lap", "gerbang_id", "shift", "metoda_bayar_sah", DB::raw('COUNT(id) as jumlah_data'))
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+                                ->whereIn('metoda_bayar_sah', ['21','22','23','24'])
+                                ->groupBy("tgl_lap", "gerbang_id", "shift", "metoda_bayar_sah");
 
             // Query untuk tabel integrator
             $query_integrator = DB::connection('integrator')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "gardu_id", DB::raw("gol_sah as golongan"), "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->select("tgl_lap", "gerbang_id", "shift", "metoda_bayar_sah", DB::raw('COUNT(id) as jumlah_data'))
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+                                ->whereIn('metoda_bayar_sah', ['21','22','23','24'])
+                                ->groupBy("tgl_lap", "gerbang_id", "shift", "metoda_bayar_sah");
 
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
@@ -36,9 +37,8 @@ class DigitalReceiptRepository
                 $index = $results_mediasi->search(function($mediasi) use($integrator) {
                     return $mediasi->tgl_lap == $integrator->tgl_lap && 
                         $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->gardu_id == $integrator->gardu_id &&
                         $mediasi->shift == $integrator->shift &&
-                        $mediasi->golongan == $integrator->golongan;
+                        $mediasi->metoda_bayar_sah == $integrator->metoda_bayar_sah;
                 });
 
                 // Hitung jumlah integrator dan selisih
@@ -49,9 +49,8 @@ class DigitalReceiptRepository
                 $final_result = new \stdClass();
                 $final_result->tanggal = $integrator->tgl_lap;
                 $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->golongan = $integrator->golongan;
-                $final_result->gardu_id = $integrator->gardu_id;
                 $final_result->shift = $integrator->shift;
+                $final_result->metoda_bayar_sah = $integrator->metoda_bayar_sah;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
                 $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
                 $final_result->selisih = $selisih;
@@ -128,8 +127,7 @@ class DigitalReceiptRepository
                 $query->when($request->has('card_num'), function ($query) use ($request) {
                     $query->where('etoll_id', 'LIKE', "%{$request->card_num}%");
                 }, function ($query) use($request) {
-                    $query->where("gol_sah", $request->golongan);
-                    $query->where("gardu_id", $request->gardu_id);
+                    $query->where("metoda_bayar_sah", $request->metoda_bayar);
                     $query->where("shift", $request->shift);
                 });
                         

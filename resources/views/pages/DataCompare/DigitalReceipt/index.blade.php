@@ -176,20 +176,20 @@
                             return doc.querySelector('a') ? doc.querySelector('a').textContent : null;
                         }
 
-                        let totalDataIntegrator = api.column(6).data().reduce(function (a, b) {
+                        let totalDataIntegrator = api.column(5).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b)
                         }, 0);
-                        let totalDataMediasi = api.column(7).data().reduce(function (a, b) {
+                        let totalDataMediasi = api.column(6).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b)
                         }, 0);
-                        let totalSelisihData = api.column(8).data().reduce(function (a, b) {
+                        let totalSelisihData = api.column(7).data().reduce(function (a, b) {
                             return intVal(a) + intVal(getValueFromLink(b))
                         }, 0);
 
                         $(api.column(0).footer()).html("Total");
-                        $(api.column(6).footer()).html(totalDataIntegrator)
-                        $(api.column(7).footer()).html(totalDataMediasi)
-                        $(api.column(8).footer()).html(totalSelisihData)
+                        $(api.column(5).footer()).html(totalDataIntegrator)
+                        $(api.column(6).footer()).html(totalDataMediasi)
+                        $(api.column(7).footer()).html(totalSelisihData)
                     }
                 });
 
@@ -274,7 +274,7 @@
             </thead>
             <tbody></tbody>
             <tfoot>
-                <th colspan="6" class="bg-gray-50"></th>
+                <th colspan="5" class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>

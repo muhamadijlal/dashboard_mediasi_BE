@@ -56,8 +56,6 @@
                                         popup: 'hide-bg-swal',
                                     }
                                 });
-
-                                tblSync.draw();
                             },
                             error: function (xhr, error, code) {
                                 Swal.fire({
@@ -178,7 +176,7 @@
                             Swal.fire({
                                 html: `<x-alert-error
                                         title="Error!"
-                                        message="${response.responseJSON.message}!"
+                                        message="${response?.responseJSON?.message}!"
                                 />`,
                                 showConfirmButton: false,
                                 showCancelButton: false,
