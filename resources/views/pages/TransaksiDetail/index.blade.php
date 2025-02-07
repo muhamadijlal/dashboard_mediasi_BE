@@ -8,8 +8,6 @@
         <script src="{{asset("assets/js/ipcheck.js")}}"></script>
         <script>
             let tblTransaksiDetail;
-            $('#ruas_id').val('').trigger('change');
-            $('#gerbang_id').val('').trigger('change');
 
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');

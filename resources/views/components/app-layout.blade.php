@@ -6,7 +6,64 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ str_replace("_"," ", config('app.name')) }} | {{ config('app.version') }}</title>
   <link rel="icon" href="{{asset("assets/image/logojm.ico")}}">
+  <style>
+    @media (prefers-color-scheme: dark) {
+        .dark\:bg-gray-800 {
+            --tw-bg-opacity: 1 !important;
+            background-color: rgb(255, 255, 255) !important;
+        }
 
+        .dark\:bg-gray-700\/50 {
+            background-color: rgb(244, 245, 246) !important;
+        }
+
+       
+        .dark\:border-gray-600 {
+            --tw-border-opacity: 1 !important;
+            border-color: rgb(209 213 219) !important;
+        }
+
+        .dark\:border-gray-700 {
+            --tw-border-opacity: 1 !important;
+            border-color: rgb(209 213 219) !important;
+        }
+
+        .dark\:border-gray-700\/50 {
+            border-color: rgb(255 255 255) !important;
+        }
+
+        .dark\:text-gray-50 {
+            --tw-text-opacity: 1 !important;
+            color: rgb(17, 24, 39) !important;
+        }
+
+        .dark\:even\:bg-gray-900\/50:nth-child(even) {
+            background-color: rgb(244 245 246) !important;
+        }
+
+        .dark\:bg-gray-700\/25 {
+            background-color: rgb(255 255 255) !important;
+        }
+
+        /* .dark\:text-gray-600 {
+            --tw-text-opacity: 1 !important;
+            color: rgb(17, 24, 39) !important;
+        }
+
+        .dark\:text-gray-300 {
+            --tw-text-opacity: 1 !important;
+            opacity: 0.5 !important;
+            color: rgb(17, 24, 39) !important;
+        }
+
+        .dark\:bg-gray-700\/75 {
+            --tw-text-opacity: 1 !important;
+            opacity: 0.5 !important;
+            background-color: rgb(17, 24, 39) !important;
+        } */
+    }
+
+  </style>
   <!-- Fonts -->
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
