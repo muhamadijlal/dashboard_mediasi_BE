@@ -45,22 +45,14 @@
             background-color: rgb(255 255 255) !important;
         }
 
-        /* .dark\:text-gray-600 {
-            --tw-text-opacity: 1 !important;
-            color: rgb(17, 24, 39) !important;
+        .dark\:bg-gray-700\/75 {
+            background-color: rgb(17, 24, 39) !important;
         }
 
         .dark\:text-gray-300 {
-            --tw-text-opacity: 1 !important;
-            opacity: 0.5 !important;
-            color: rgb(17, 24, 39) !important;
+            --tw-text-opacity: 1;
+            color: rgb(255 255 255) !important;
         }
-
-        .dark\:bg-gray-700\/75 {
-            --tw-text-opacity: 1 !important;
-            opacity: 0.5 !important;
-            background-color: rgb(17, 24, 39) !important;
-        } */
     }
 
   </style>
