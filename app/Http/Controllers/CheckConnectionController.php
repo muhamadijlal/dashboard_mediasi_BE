@@ -25,20 +25,23 @@ class CheckConnectionController extends Controller
         $ipMediasi = $mediasi->host;
         $ipIntegrator = $integrator->host;
 
-        // Windows
-        // $pingMediasi = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipMediasi));
-        // $pingIntegrator = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipIntegrator));
 
-        // Linux
-        $pingMediasi = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipMediasi));
-        $pingIntegrator = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipIntegrator));
+        if (stristr(PHP_OS, 'WIN')) {
+            // Windows
+            $pingMediasi = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipMediasi));
+            $pingIntegrator = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipIntegrator));
+        } elseif (stristr(PHP_OS, 'LINUX')) {
+            // Linux
+            $pingMediasi = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipMediasi));
+            $pingIntegrator = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipIntegrator));
+        }
 
         if ($pingMediasi && $pingIntegrator) {
             Log::info("Ping berhasil: Mediasi {$ipMediasi} dan Integrator {$ipIntegrator}");
 
             return response()->json([
                 'success' => true,
-                'message' => "Ping mediasi ip and ping integrator ip success!"
+                'message' => "Connected"
             ]);
         } else {
             Log::error("Ping gagal: Mediasi {$ipMediasi} atau Integrator {$ipIntegrator}");

@@ -1,5 +1,5 @@
 document.getElementById('notification-banner').addEventListener('click', function(event) {
-    const notificationBanner = document.getElementById('modal-card');
+    // const notificationBanner = document.getElementById('modal-card');
     if(!modalCard.contains(event.target)){
         toggleModal();
     }

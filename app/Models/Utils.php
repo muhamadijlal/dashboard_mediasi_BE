@@ -17,4 +17,19 @@ class Utils
 
         return $data;
     }
+
+    public static function metode_bayar_jid($metoda_bayar) {
+        switch((int)$metoda_bayar){
+            case 21:
+                return 'Mandiri';
+            case 22:
+                return 'BRI';
+            case 23:
+                return 'BNI';
+            case 24:
+                return 'BCA';
+            default:
+                return $metoda_bayar;
+        }
+    }
 }

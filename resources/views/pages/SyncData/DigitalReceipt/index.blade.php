@@ -23,7 +23,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("sync.digital_receipt.data_compare.syncData") }}',
+                            url: '{{ route("resi.sync.syncData") }}',
                             type: 'POST',
                             data: {
                                 ruas_id: params.ruas_id,
@@ -59,7 +59,7 @@
                                 });
 
                                 localStorage.setItem('params_resi', JSON.stringify(params));
-                                location.href = "{{ route('digital_receipt.data_compare.dashboard') }}";
+                                location.href = "{{ route('resi.data_compare.dashboard') }}";
                             },
                             error: function(xhr, status, error) {
                                 Swal.fire({
@@ -90,7 +90,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('sync.digital_receipt.data_compare.getData') }}",
+                        url: "{{ route('resi.sync.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({

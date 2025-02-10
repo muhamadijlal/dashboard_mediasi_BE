@@ -17,7 +17,7 @@ class NotAuthenticatedMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if(Auth::check()){
-            return redirect()->route("transaction_detail.dashboard");
+            return redirect()->route("mediasi.transaction_detail.dashboard");
         } else {
             return $next($request);
         }

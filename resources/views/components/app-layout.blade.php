@@ -46,12 +46,12 @@
         }
 
         .dark\:bg-gray-700\/75 {
-            background-color: rgb(17, 24, 39) !important;
+            background-color: rgb(17, 24, 39, 0.3) !important;
         }
 
         .dark\:text-gray-300 {
             --tw-text-opacity: 1;
-            color: rgb(255 255 255) !important;
+            color: rgb(17, 24, 39) !important;
         }
     }
 

@@ -8,12 +8,15 @@
         <script src="{{asset("assets/js/ipcheck.js")}}"></script>
         <script>
             let tblCompare;
+            const btnFilter = $("#btnFilter");
 
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
                 let columns = @json($columns);
                 let params = JSON.parse(localStorage.getItem("params_resi"));
+
+                btnFilter.attr("disabled", ruas_id.val() == '');
 
                 stateParams = {
                     ruas_id: params?.ruas_id ?? null,
@@ -93,6 +96,7 @@
                 // When select2 ruas id on change
                 // Toggle gerbang_id disabled when ruas_id changes
                 ruas_id.on('change', function() {
+                    btnFilter.attr("disabled", true);
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
@@ -101,7 +105,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('digital_receipt.data_compare.getData') }}",
+                        url: "{{ route('resi.data_compare.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({

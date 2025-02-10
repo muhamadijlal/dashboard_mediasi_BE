@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DigitalReceipt;
 use App\Http\Requests\FilterRequest;
 use App\Models\Integrator;
+use App\Models\Utils;
 use App\Repositories\DigitalReceiptRepository;
 use Yajra\DataTables\DataTables;
 
@@ -21,7 +22,7 @@ class DataCompareController extends Controller
                 ],
                 [
                     'title' => 'Tanggal',
-                    'data' => 'tgl_lap',
+                    'data' => 'tanggal',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -38,8 +39,8 @@ class DataCompareController extends Controller
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Metoda Bayar',
-                    'data' => 'metoda_bayar_sah',
+                    'title' => 'Gardu ID',
+                    'data' => 'gardu_id',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -74,7 +75,7 @@ class DataCompareController extends Controller
                             ->addIndexColumn()
                             ->addColumn('link', function ($row) use($request) {
                                 if ($row->selisih > 0) {
-                                    return '<a target="_blank" class="text-yellow-400" href="/sync/digital_receipt/data_compare/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->shift .'/'. $row->metoda_bayar_sah .'">'. $row->selisih .'</a>';
+                                    return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->shift .'/'. $row->metoda_bayar_sah .'">'. $row->selisih .'</a>';
                                 }else if($row->selisih < 0) {
                                     return '<span class="text-red-500">'.$row->selisih.'</span>';
                                 }else {
@@ -153,12 +154,15 @@ class DataCompareController extends Controller
                             ->addIndexColumn()
                             ->addColumn('link', function ($row) use($request) {
                                 if ($row->selisih > 0) {
-                                    return '<a target="_blank" class="text-yellow-400" href="/sync/digital_receipt/data_compare/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->shift .'/'. $row->metoda_bayar_sah .'">'. $row->selisih .'</a>';
+                                    return '<a target="_blank" class="text-yellow-400" href="/resi/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->shift .'/'. $row->metoda_bayar_sah .'">'. $row->selisih .'</a>';
                                 }else if($row->selisih < 0) {
                                     return '<span class="text-red-500">'.$row->selisih.'</span>';
                                 }else {
                                     return $row->selisih;
                                 }
+                            })
+                            ->addColumn('metoda_bayar_sah', function($row) {
+                                return Utils::metode_bayar_jid($row->metoda_bayar_sah);
                             })
                             ->rawColumns(['link'])
                             ->make();

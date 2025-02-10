@@ -50,23 +50,19 @@ $("#gerbang_id").on("change", function() {
                     buttonFilter.attr("disabled", false);
 
                     Swal.fire({
-                        html: `<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <div class="flex sm:items-start">
-                                        <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:size-10">
-                                            <i class="fa-regular fa-circle-check text-green-500"></i>
+                        html: `<div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all max-w-full inline-block">
+                                <div class="bg-white p-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-green-100 p-4">
+                                            <i class="text-green-700 fa-solid fa-tower-broadcast"></i>
                                         </div>
-                                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                            <h3 class="text-base font-semibold text-gray-900">Success!</h3>
-                                            <div class="mt-2">
-                                                <p class="text-sm text-gray-500">key: ${message}</p>
-                                            </div>
-                                        </div>
+                                        <h3 class="text-base font-semibold text-blue-950">Connected!</h3>
                                     </div>
                                 </div>   
                             </div>`,
                         showConfirmButton: false,
                         showCancelButton: false,
+                        timer: 1000, 
                         customClass: {
                             popup: 'hide-bg-swal',
                         }

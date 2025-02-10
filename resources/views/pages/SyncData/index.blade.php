@@ -23,7 +23,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("sync.syncData") }}',
+                            url: '{{ route("mediasi.sync.syncData") }}',
                             type: 'POST',
                             data: {
                                 ruas_id: params.ruas_id,
@@ -59,7 +59,7 @@
                                     }
                                 });
                                 localStorage.setItem('params', JSON.stringify(params));
-                                location.href = "{{ route('data_compare.transaction_detail.dashboard') }}";
+                                location.href = "{{ route('mediasi.data_compare.dashboard') }}";
                             },
                             error: function (response) {
                                 Swal.fire({
@@ -90,7 +90,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('sync.getData') }}",
+                        url: "{{ route('mediasi.sync.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({

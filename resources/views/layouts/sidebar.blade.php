@@ -7,52 +7,40 @@
     <!-- navigation menu -->
     <ul class="space-y-3">
         <li>
-            <a href="{{ route("transaction_detail.dashboard") }}" class="flex items-center gap-2 text-base font-medium hover:bg-yellow-400 p-1 pr-2 rounded-lg {{ request()->routeIs('transaction_detail.*') ? "bg-yellow-400" : "" }}">
-                <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
-                <i class="fa-solid fa-chart-simple text-yellow-400"></i>
-                </div>
-                {{ __("Transaction Detail") }}
-            </a>
-        </li>
-
-        <li>
-            <a href="{{ route("recap_at4.dashboard") }}" class="flex items-center gap-2 text-base font-medium hover:bg-yellow-400 p-1 pr-2 rounded-lg {{ request()->routeIs('recap_at4.*') ? "bg-yellow-400" : "" }}">
-                <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
-                <i class="fa-regular fa-paste text-yellow-400"></i>
-                </div>
-                {{ __("AT4 Recap") }}
-            </a>
-        </li>
-
-        <li>
-            <details {{ request()->routeIs('data_compare.transaction_detail.*') ? "open" : ""}}>
-                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('data_compare.transaction_detail.*') ? "bg-yellow-400" : "" }}">
+            <details {{ request()->routeIs('mediasi.*') ? "open" : ""}}>
+                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('mediasi.*') ? "bg-yellow-400" : "" }}">
                     <a href="#" class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
                         <i class="fa-solid fa-code-compare text-yellow-400"></i>
                         </div>
-                        {{ __("Data Compare") }}
+                        {{ __("Mediasi") }}
                     </a>
     
                     <i id="caret-menu" class="fa-solid fa-angle-up transition-all duration-100"></i>
                 </summary>
 
                 <ul id="submenu" class="ml-5 border-l-[1.5px] border-slate-200 mt-3 space-y-2">
-                    <li>  
-                        <a href="{{ route("data_compare.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('data_compare.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Transaction Detail") }}</a>
+                    <li>
+                        <a href="{{ route("mediasi.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('mediasi.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Transaksi Detail") }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route("mediasi.recap_at4.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('mediasi.recap_at4.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Rekap AT4") }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route("mediasi.data_compare.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('mediasi.data_compare.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
                     </li>
                 </ul>
             </details>
         </li>
 
         <li>
-            <details {{ (request()->routeIs('digital_receipt.*') || request()->routeIs('sync.digital_receipt.transaction_detail.*')) ? "open" : ""}}>
-                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('digital_receipt.*') ? "bg-yellow-400" : "" }}">
+            <details {{ request()->routeIs('resi.*') ? "open" : ""}}>
+                <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('resi.*') ? "bg-yellow-400" : "" }}">
                     <a href="#" class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-md bg-blue-950 flex justify-center items-center">
                             <i class="fa-solid fa-file-invoice text-yellow-400"></i>
                         </div>
-                        {{ __("Digital Receipt") }}
+                        {{ __("Resi Digital") }}
                     </a>
     
                     <i id="caret-menu" class="fa-solid fa-angle-up transition-all duration-100"></i>
@@ -60,11 +48,10 @@
 
                 <ul id="submenu" class="ml-5 border-l-[1.5px] border-slate-200 mt-3 space-y-2">
                     <li>  
-                        <a href="{{ route("digital_receipt.data_compare.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('digital_receipt.data_compare.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
+                        <a href="{{ route("resi.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('resi.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Transaction Detail") }}</a>
                     </li>
-
                     <li>  
-                        <a href="{{ route("sync.digital_receipt.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('sync.digital_receipt.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Transaction Detail") }}</a>
+                        <a href="{{ route("resi.data_compare.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('resi.data_compare.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
                     </li>
                 </ul>
             </details>

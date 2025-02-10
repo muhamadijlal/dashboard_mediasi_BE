@@ -25,7 +25,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("sync.digital_receipt.transaction_detail.syncData") }}',
+                            url: '{{ route("resi.transaction_detail.syncData") }}',
                             type: 'POST',
                             data: {
                                 ruas_id: $('#ruas_id').val(),
@@ -79,11 +79,14 @@
         </script>
         <script>
             let tblSync;
+            const btnFilter = $("#btnFilter");
             
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
                 let columns = @json($columns);
+
+                btnFilter.attr("disabled", ruas_id.val() == '');
 
                 ruas_id.select2({
                     ajax: {
@@ -146,6 +149,7 @@
                 // When select2 ruas id on change
                 // Toggle gerbang_id disabled when ruas_id changes
                 ruas_id.on('change', function() {
+                    btnFilter.attr("disabled", true);
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
@@ -154,7 +158,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('sync.digital_receipt.transaction_detail.getData') }}",
+                        url: "{{ route('resi.transaction_detail.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({
