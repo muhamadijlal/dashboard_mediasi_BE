@@ -8,6 +8,7 @@ const getRuasAndGerbangValues = () => {
 
 $("#gerbang_id").on("change", function() {
     const { ruas_id, gerbang_id } = getRuasAndGerbangValues(); // Dapatkan nilai terbaru dari select
+    const buttonFilter = $("#btnFilter");
 
     // Validasi jika nilai ruas_id dan gerbang_id tidak null
     if (ruas_id && gerbang_id) {
@@ -46,6 +47,8 @@ $("#gerbang_id").on("change", function() {
                 const message = response?.message;
 
                 if(response.success){
+                    buttonFilter.attr("disabled", false);
+
                     Swal.fire({
                         html: `<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
