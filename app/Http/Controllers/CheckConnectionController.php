@@ -18,10 +18,11 @@ class CheckConnectionController extends Controller
             'gerbang_id' => 'required',
         ]);
 
-        $credentials = DigitalReceipt::getIP($request->ruas_id, $request->gerbang_id);
+        $integrator = DigitalReceipt::getIPIntegrator($request->ruas_id, $request->gerbang_id);
+        $mediasi = DigitalReceipt::getIPMediasi($request->ruas_id, $request->gerbang_id);
 
-        $ipMediasi = $credentials[0]->host;
-        $ipIntegrator = $credentials[1]->host;
+        $ipMediasi = $mediasi->host;
+        $ipIntegrator = $integrator->host;
 
         $pingResult = function($ip){
             // menjalankan perintah ping
