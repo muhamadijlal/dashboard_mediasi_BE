@@ -26,12 +26,12 @@ class CheckConnectionController extends Controller
         $ipIntegrator = $integrator->host;
 
         // Windows
-        // $pingMediasi = shell_exec("ping -n 4 -w 3 " . escapeshellarg($ipMediasi));
-        // $pingIntegrator = shell_exec("ping -n 4 -w 3 " . escapeshellarg($ipIntegrator));
+        // $pingMediasi = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipMediasi));
+        // $pingIntegrator = shell_exec("ping -n 2 -w 2 " . escapeshellarg($ipIntegrator));
 
         // Linux
-        $pingMediasi = shell_exec("ping -c 4 -w 3 " . escapeshellarg($ipMediasi));
-        $pingIntegrator = shell_exec("ping -c 4 -w 3 " . escapeshellarg($ipIntegrator));
+        $pingMediasi = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipMediasi));
+        $pingIntegrator = shell_exec("ping -c 2 -w 2 " . escapeshellarg($ipIntegrator));
 
         if ($pingMediasi && $pingIntegrator) {
             Log::info("Ping berhasil: Mediasi {$ipMediasi} dan Integrator {$ipIntegrator}");
