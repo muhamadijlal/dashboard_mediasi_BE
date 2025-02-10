@@ -123,7 +123,7 @@
                             d.gerbang_id = stateParams.gerbang_id ?? $('#gerbang_id').val();
                             d.start_date = stateParams.start_date ?? $('#start_date').val();
                             d.end_date = stateParams.end_date ?? $('#end_date').val();
-                            d.selisih = stateParams.selisih ?? $('#selisih').val();
+                            d.selisih = $('#selisih').val();
                         },
                         error: function (response) {
                             Swal.fire({
