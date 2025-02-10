@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DigitalReceipt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CheckConnectionController extends Controller
@@ -24,13 +25,13 @@ class CheckConnectionController extends Controller
         $ipMediasi = $mediasi->host;
         $ipIntegrator = $integrator->host;
 
-        $pingResult = function($ip){
-            // menjalankan perintah ping
-            return exec("ping -n 4 " . escapeshellarg($ip)); // untuk Windows
-        };
+        // Windows
+        // $pingMediasi = shell_exec("ping -n 4 " . escapeshellarg($ipMediasi));
+        // $pingIntegrator = shell_exec("ping -n 4 " . escapeshellarg($ipIntegrator));
 
-       $pingMediasi = $pingResult($ipMediasi);
-       $pingIntegrator = $pingResult($ipIntegrator);
+        // Linux
+        $pingMediasi = shell_exec("ping -c 4 " . escapeshellarg($ipMediasi));
+        $pingIntegrator = shell_exec("ping -c 4 " . escapeshellarg($ipIntegrator));
 
         if ($pingMediasi && $pingIntegrator) {
             Log::info("Ping berhasil: Mediasi {$ipMediasi} dan Integrator {$ipIntegrator}");

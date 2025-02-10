@@ -60,7 +60,8 @@ class DigitalReceipt
 
     public static function getIPIntegrator($ruas_id, $gerbang_id)
     {
-        $integrator = DB::table('tbl_resi_mediasi')
+        $integrator = DB::connection('mysql')
+                ->table('tbl_resi_mediasi')
                 ->select("host")
                 ->where('ruas_id', $ruas_id)
                 ->where('gerbang_id', $gerbang_id*1)
@@ -72,7 +73,8 @@ class DigitalReceipt
 
     public static function getIPMediasi($ruas_id, $gerbang_id) 
     {
-        $mediasi = DB::table('tbl_resi_digital')
+        $mediasi = DB::connection('mysql')
+                ->table('tbl_resi_digital')
                 ->select("host")
                 ->where('ruas_id', $ruas_id)
                 ->where('gerbang_id', $gerbang_id*1)
