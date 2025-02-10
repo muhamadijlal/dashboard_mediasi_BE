@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Recap AT4 Dashboard") }}
+        {{ __("Rekap AT4 Mediasi Dashboard") }}
     </x-slot>
 
     <x-slot name="script">

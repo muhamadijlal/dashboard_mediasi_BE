@@ -15,7 +15,7 @@ class SyncDataDigitalReceiptController extends Controller
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
-        return view("pages.SyncData.DigitalReceipt.index", [
+        return view("pages.resi.SyncData.index", [
             'columns' => [
                 [
                     'title' => 'No',
@@ -138,7 +138,7 @@ class SyncDataDigitalReceiptController extends Controller
     }
 
     public function transcation_detail_dashboard() {
-        return view("pages.SyncData.DigitalReceipt.TransactionDetail.index", [
+        return view("pages.resi.TransactionDetail.index", [
             'columns' => [
                 [
                     'title' => 'No',

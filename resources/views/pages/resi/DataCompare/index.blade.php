@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Jumlah data mediasi dan jumlah data resi digital Dashboard") }}
+        {{ __("Jumlah data mediasi dan jumlah data Resi Digital Dashboard") }}
     </x-slot>
 
     <x-slot name="script">

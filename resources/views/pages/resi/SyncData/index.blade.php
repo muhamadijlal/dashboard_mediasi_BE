@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Sync Data Digital Receipt Dashboard") }}
+        {{ __("Sync Data Resi Digital Dashboard") }}
     </x-slot>
 
     <x-slot name="script">

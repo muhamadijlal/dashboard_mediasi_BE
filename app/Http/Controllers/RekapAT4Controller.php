@@ -10,7 +10,7 @@ class RekapAT4Controller extends Controller
 {
     public function dashboard()
     {
-        return view("pages.RekapAt4.index", [
+        return view("pages.mediasi.RekapAt4.index", [
             'columns' => [
                 [
                     'title' => 'No',

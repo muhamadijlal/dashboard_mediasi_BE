@@ -13,7 +13,7 @@ class SyncDataController extends Controller
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
-        return view("pages.SyncData.index", [
+        return view("pages.mediasi.SyncData.index", [
             'columns' => [
                 [
                     'title' => 'No',
@@ -52,8 +52,8 @@ class SyncDataController extends Controller
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Metoda Bayar',
-                    'data' => 'metoda_bayar_sah',
+                    'title' => 'Gardu ID',
+                    'data' => 'gardu_id',
                     'orderable' => true,
                     'searchable' => true,
                 ],

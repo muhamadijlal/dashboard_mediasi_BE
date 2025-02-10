@@ -10,7 +10,7 @@ class TransactionDetailController extends Controller
 {
     public function dashboard()
     {
-        return view("pages.TransaksiDetail.index", [
+        return view("pages.mediasi.TransaksiDetail.index", [
             'columns' => [
                 [
                     'title' => 'No',

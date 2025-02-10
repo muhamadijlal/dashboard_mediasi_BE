@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Transaction Detail Dashboard") }}
+        {{ __("Transaksi Detail Mediasi Dashboard") }}
     </x-slot>
 
     <x-slot name="script">

@@ -12,7 +12,7 @@ use Yajra\DataTables\DataTables;
 class DataCompareController extends Controller
 {
     public function transaction_detail_dashboard(){
-        return view("pages.DataCompare.TransactionDetail.index", [
+        return view("pages.mediasi.DataCompare.index", [
             'columns' => [
                 [
                     'title' => 'No',
@@ -91,7 +91,7 @@ class DataCompareController extends Controller
     }
 
     public function digital_receipt_dashboard(){
-        return view("pages.DataCompare.DigitalReceipt.index", [
+        return view("pages.resi.DataCompare.index", [
             'columns' => [
                 [
                     'title' => 'No',
