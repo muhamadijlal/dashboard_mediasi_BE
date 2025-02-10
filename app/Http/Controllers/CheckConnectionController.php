@@ -18,7 +18,7 @@ class CheckConnectionController extends Controller
             'gerbang_id' => 'required',
         ]);
 
-        $credentials = DigitalReceipt::getDB($request->ruas_id, $request->gerbang_id);
+        $credentials = DigitalReceipt::getIP($request->ruas_id, $request->gerbang_id);
 
         $ipMediasi = $credentials[0]->host;
         $ipIntegrator = $credentials[1]->host;

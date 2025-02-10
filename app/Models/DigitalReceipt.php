@@ -58,6 +58,28 @@ class DigitalReceipt
         return [$mediasi, $integrator];
     }
 
+    public static function getIP($ruas_id, $gerbang_id)
+    {
+        $mediasi = DB::connection('mysql')
+                ->table('tbl_resi_digital')
+                ->select("host")
+                ->where('ruas_id', $ruas_id)
+                ->where('gerbang_id', $gerbang_id*1)
+                ->where('status', 1)
+                ->first();
+
+        $integrator = DB::connection('mysql')
+                ->table('tbl_resi_mediasi')
+                ->select("host")
+                ->where('ruas_id', $ruas_id)
+                ->where('gerbang_id', $gerbang_id*1)
+                ->where('status', 1)
+                ->first();
+
+        return [$mediasi, $integrator];
+    }
+    
+
     public static function setCredentials($connectionName, $host, $port, $username, $password, $database)
     {
         if (empty($host) || empty($port) || empty($username) || empty($password) || empty($database)) {
