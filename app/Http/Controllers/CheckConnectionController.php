@@ -38,7 +38,7 @@ class CheckConnectionController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Ping mediasi ip and ping integrator ip success! \nmediasi: {$pingMediasi}, \nintegrator: {$pingIntegrator}"
+                'message' => "Ping mediasi ip and ping integrator ip success!"
             ]);
         } else {
             Log::error("Ping gagal: Mediasi {$ipMediasi} atau Integrator {$ipIntegrator}");
