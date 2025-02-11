@@ -82,6 +82,10 @@
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
+                gerbang_id.on('change', function() {
+                    btnFilter.attr("disabled", true);
+                });
+
 
                 tblTransaksiDetail = new DataTable('#tblTransaksiDetail', {
                     ajax: {

@@ -67,9 +67,9 @@ class CheckConnectionController extends Controller
     // Method to execute the ping command for the given host
     private function pingHost($host)
     {
-        $pingCommand = (stristr(PHP_OS, 'WIN')) ?
-            "ping -n 2 -w 2 " . escapeshellarg($host) :
-            "ping -c 2 -w 2 " . escapeshellarg($host);
+        $pingCommand = (stristr(PHP_OS, 'LINUX')) ?
+            "ping -c 2 -w 2 " . escapeshellarg($host) :
+            "ping -n 2 -w 2 " . escapeshellarg($host);
     
         return shell_exec($pingCommand);
     }
@@ -79,6 +79,6 @@ class CheckConnectionController extends Controller
     {
         return (stristr(PHP_OS, 'LINUX')) ?
             (strpos($pingOutput, '2 packets transmitted, 2 received') !== false) :
-            (strpos($pingOutput, '2 received') !== false);
+            (strpos($pingOutput, 'Received = 2') !== false);
     }
 }

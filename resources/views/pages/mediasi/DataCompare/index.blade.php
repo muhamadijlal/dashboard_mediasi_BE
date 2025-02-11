@@ -100,6 +100,10 @@
                     gerbang_id.prop("disabled", !ruas_id.val());
                 });
 
+                gerbang_id.on('change', function() {
+                    btnFilter.attr("disabled", true);
+                });
+
                 tblCompare = new DataTable('#tblCompare', {
                     ajax: {
                         headers: {
