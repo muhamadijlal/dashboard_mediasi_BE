@@ -25,7 +25,7 @@ class CheckConnectionController extends Controller
     
         $ipMediasi = $mediasi->host;
         $ipIntegrator = $integrator->host;
-    
+
         // Run the ping checks
         $pingMediasi = $this->pingHost($ipMediasi);
         $pingIntegrator = $this->pingHost($ipIntegrator);
@@ -77,6 +77,6 @@ class CheckConnectionController extends Controller
     // Method to check if the ping was successful (receive = 2 should be in the output)
     private function isPingSuccessful($pingOutput)
     {
-        return strpos($pingOutput, 'Received = 2') !== false;
+        return strpos($pingOutput, 'Received = 2') != false;
     }    
 }
