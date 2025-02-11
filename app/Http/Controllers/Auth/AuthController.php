@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -24,7 +23,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
  
-            return redirect()->intended(route('transaction_detail.dashboard'));
+            return redirect()->intended(route('mediasi.transaction_detail.dashboard'));
         }
  
         return back()->withErrors([
