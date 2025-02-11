@@ -16,7 +16,7 @@
                 let columns = @json($columns);
                 let params = JSON.parse(localStorage.getItem("params_resi"));
 
-                btnFilter.attr("disabled", ruas_id.val() == '');
+                btnFilter.attr("disabled", ruas_id.val() == null);
 
                 stateParams = {
                     ruas_id: params?.ruas_id ?? null,

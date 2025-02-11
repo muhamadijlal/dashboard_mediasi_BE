@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
 use App\Models\Integrator;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class MIYRepository
@@ -55,7 +56,6 @@ class MIYRepository
 
             $query_integrator = $services->getSourceCompare($start_date, $end_date);
 
-            
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
@@ -96,7 +96,6 @@ class MIYRepository
                     $final_results[] = $final_result;
                 }
             }
-           
 
             return $final_results;
         } catch (\Exception $e) {

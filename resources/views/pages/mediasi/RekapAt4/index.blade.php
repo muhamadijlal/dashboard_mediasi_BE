@@ -16,7 +16,7 @@
                 const gerbang_id = $('#gerbang_id');
                 let columns = @json($columns);
 
-                btnFilter.attr("disabled", ruas_id.val() == '');
+                btnFilter.attr("disabled", ruas_id.val() == null);
 
                 ruas_id.select2({
                     ajax: {
