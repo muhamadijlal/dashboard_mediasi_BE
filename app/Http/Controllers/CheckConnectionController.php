@@ -77,6 +77,8 @@ class CheckConnectionController extends Controller
     // Method to check if the ping was successful (receive = 2 should be in the output)
     private function isPingSuccessful($pingOutput)
     {
-        return strpos($pingOutput, 'Received = 2') != false;
-    }    
+        return (stristr(PHP_OS, 'LINUX')) ?
+            (strpos($pingOutput, '2 packets transmitted, 2 received') !== false) :
+            (strpos($pingOutput, '2 received') !== false);
+    }
 }
