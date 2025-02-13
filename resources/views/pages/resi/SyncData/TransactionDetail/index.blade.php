@@ -1,12 +1,84 @@
 <x-app-layout>
     <x-slot name="header">
-        {{ __("Transaction Detail Resi Digital Dashboard") }}
+        {{ __("Sync Transaction Detail Resi Digital Dashboard") }}
     </x-slot>
 
     <x-slot name="script">
+        <script src="{{asset("assets/js/validationDates.js")}}"></script>
         <script src="{{asset("assets/js/ipcheck.js")}}"></script>
         <script>
-            let tblTransDetail;
+            function showConfirmModal() {
+                Swal.fire({
+                    html: `<x-alert
+                                title="Attention!"
+                                message="Are you sure want to sync data ?"
+                                actionText="Sync data"
+                            />`,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    customClass: {
+                        popup: 'hide-bg-swal',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '{{ route("resi.sync.transaction_detail.syncData") }}',
+                            type: 'POST',
+                            data: {
+                                ruas_id: $('#ruas_id').val(),
+                                start_date: $('#start_date').val(),
+                                end_date: $('#end_date').val(),
+                                gerbang_id: $('#gerbang_id').val(),
+                                card_num: $('#card_num').val(),
+                            },
+                            beforeSend: function() {
+                                Swal.fire({
+                                    html: `<x-alert-loading />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    allowOutsideClick: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                })
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    html: `<x-alert-success
+                                        title="Success!"
+                                        message="Sync data success!"
+                                    />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    timer: 1500,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                            },
+                            error: function (xhr, error, code) {
+                                Swal.fire({
+                                    html: `<x-alert-error
+                                            title="Error!"
+                                            message="${xhr.responseJSON.message || error}!"
+                                        />`,
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    customClass: {
+                                        popup: 'hide-bg-swal',
+                                    }
+                                });
+                            },
+                        });
+                    }
+                });
+            }
+        </script>
+        <script>
+            let tblSync;
             const btnFilter = $("#btnFilter");
             
             $(document).ready(function() {
@@ -17,7 +89,6 @@
                 btnFilter.attr("disabled", ruas_id.val() == '');
 
                 ruas_id.select2({
-                    data: [{ id: "*", text: "ALL RUAS" }],
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -28,18 +99,13 @@
                         processResults: function (data) {
                             const {data: ruas} = data;
 
-                            const results = [
-                                { id: "*", text: "ALL RUAS" },
-                                ...$.map(ruas, function(item) {
+                            return {
+                                results: $.map((ruas), function(item) {
                                     return {
                                         id: item.value,
                                         text: item.label
                                     };
                                 })
-                            ];
-
-                            return {
-                                results: results
                             }
                         },
                         beforeSend: function() {
@@ -83,27 +149,21 @@
                 // When select2 ruas id on change
                 // Toggle gerbang_id disabled when ruas_id changes
                 ruas_id.on('change', function() {
-                    gerbang_id.html('');
+                    btnFilter.attr("disabled", true);
                     gerbang_id.prop("disabled", !ruas_id.val());
-
-                    if($(this).val() == '*') {
-                        btnFilter.attr("disabled", false);
-                        gerbang_id.prop("disabled", true);
-                    }else{
-                        btnFilter.attr("disabled", true);
-                    }
+                    gerbang_id.html('');
                 });
 
                 gerbang_id.on('change', function() {
                     btnFilter.attr("disabled", true);
                 });
 
-                tblTransDetail = new DataTable('#tblTransDetail', {
+                tblSync = new DataTable('#tblSync', {
                     ajax: {
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('resi.transaction_detail.getData') }}",
+                        url: "{{ route('resi.sync.transaction_detail.getData') }}",
                         type: 'POST',
                         beforeSend: function() {
                             Swal.fire({
@@ -166,12 +226,24 @@
                 });
             });
 
+            function handleSync(e) {
+                e.preventDefault();
+                showConfirmModal();
+            }
+
             function handleSubmit(e) {
                 e.preventDefault();
-                tblTransDetail.draw();
+                tblSync.draw();
             }
         </script>
     </x-slot>
+
+    <form onsubmit="handleSync(event)">
+        <button class="px-6 py-1 bg-yellow-400 border-2 border-blue-950 rounded-lg font-bold">
+            <i class="fa-solid fa-play"></i>
+            Sync
+        </button>
+    </form>
 
     <h4 class="h-10"></h4>
     
@@ -181,8 +253,7 @@
             <!-- Ruas -->
             <div>
                 <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
-                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10">
-                </select>
+                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
             </div>
         
             <!-- Gerbang -->
@@ -237,7 +308,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <table id="tblTransDetail" class="display" style="width:100%">
+        <table id="tblSync" class="display" style="width:100%">
             <thead>
                 <tr>
                     @foreach($columns as $column)

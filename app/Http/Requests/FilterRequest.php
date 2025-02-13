@@ -23,7 +23,8 @@ class FilterRequest extends FormRequest
     {
         return [
             'ruas_id' => 'required|string',
-            'gerbang_id' => 'required|string',
+            // Corrected rule for gerbang_id to be required unless ruas_id is "*"
+            'gerbang_id' => 'required_unless:ruas_id,*,string',
             'start_date' => 'required|date|date_format:Y-m-d',
             'end_date' => 'required|date|date_format:Y-m-d|after_or_equal:start_date',
         ];
@@ -35,6 +36,7 @@ class FilterRequest extends FormRequest
             'ruas_id.required'   => __('Ruas ID is required.'),
             'ruas_id.string'     => __('Ruas ID must be a string.'),
             'gerbang_id.required' => __('Gerbang ID is required.'),
+            'gerbang_id.required_unless' => __('Gerbang ID is required unless Ruas ID is \'ALL RUAS\''),
             'gerbang_id.string'   => __('Gerbang ID must be a string.'),
             'start_date.required' => __('Start date is required.'),
             'start_date.date'     => __('Start date must be a valid date.'),

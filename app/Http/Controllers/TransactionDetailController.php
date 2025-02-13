@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Integrator;
 use App\Http\Requests\FilterRequest;
+use App\Models\DigitalReceipt;
+use App\Models\Utils;
+use App\Repositories\DigitalReceiptRepository;
 use Yajra\DataTables\Facades\DataTables;
 
 class TransactionDetailController extends Controller
@@ -86,6 +89,96 @@ class TransactionDetailController extends Controller
                                 return 'Rp. '.number_format($data->tarif, 0, '.', '.');
                             })
                             ->addIndexColumn()
+                            ->make();
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'error' => true], 500);
+        }
+    }
+
+    public function dashboard_resi()
+    {
+        return view("pages.resi.TransactionDetail.index", [
+            'columns' => [
+                [
+                    'title' => 'No',
+                    'data' => 'DT_RowIndex',
+                    'orderable' => false,
+                    'searchable' => false,
+                ],
+                [
+                    'title' => 'Tanggal',
+                    'data' => 'tgl_transaksi',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Gerbang Asal',
+                    'data' => 'kode_gerbang_asal',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Metoda Bayar',
+                    'data' => 'bank',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Shift',
+                    'data' => 'shift',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Perioda',
+                    'data' => 'periode',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Tarif',
+                    'data' => 'tarif',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Saldo',
+                    'data' => 'saldo',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'No Resi',
+                    'data' => 'no_resi',
+                    'orderable' => true,
+                    'searchable' => true,
+                ]
+            ]
+        ]);
+    }
+
+    public function getData_resi(FilterRequest $request)
+    {
+        try {
+            // add custome validated field
+            $request->validate([
+                'card_num' => 'required|string'
+            ]);
+           
+            $query = DigitalReceiptRepository::getDataTransakiDetail($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->card_num);
+
+            return DataTables::of($query)
+                            ->addIndexColumn()
+                            ->addColumn('tarif', function($row){
+                                return 'Rp. '.number_format($row->tarif, 0,'.', '.');
+                            })
+                            ->addColumn('saldo', function($row){
+                                return 'Rp. '.number_format($row->saldo, 0,'.', '.');
+                            })
+                            ->addColumn('bank', function($row){
+                                return Utils::metode_bayar_jid($row->bank);
+                            })
                             ->make();
 
         } catch (\Exception $e) {

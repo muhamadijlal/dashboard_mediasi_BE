@@ -55,16 +55,21 @@ Route::middleware(["revalidateHistory","authenticated"])->group(function () {
             Route::post("/syncData", [DataCompareController::class, "digital_receipt_syncData"])->name("syncData");
         });
 
+        Route::prefix("transaction_detail")->name("transaction_detail.")->group(function(){
+            Route::get("/dashboard", [TransactionDetailController::class, "dashboard_resi"])->name("dashboard");
+            Route::post("/getData", [TransactionDetailController::class, "getData_resi"])->name("getData");
+        });
+
         Route::prefix("sync")->name("sync.")->group(function(){
             Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{shift?}/{metoda_bayar?}", [SyncDataDigitalReceiptController::class, "dashboard"])->name("dashboard");
             Route::post("/getData", [SyncDataDigitalReceiptController::class, "getData"])->name("getData");
             Route::post("/syncData", [SyncDataDigitalReceiptController::class, "syncData"])->name("syncData");
-        });
 
-        Route::prefix("transaction_detail")->name("transaction_detail.")->group(function(){
-            Route::get("/dashboard", [SyncDataDigitalReceiptController::class, "transcation_detail_dashboard"])->name("dashboard");
-            Route::post("/getData", [SyncDataDigitalReceiptController::class, "transcation_detail_getData"])->name("getData");
-            Route::post("/syncData", [SyncDataDigitalReceiptController::class, "transcation_detail_syncData"])->name("syncData");
+            Route::prefix("transaction_detail")->name("transaction_detail.")->group(function(){
+                Route::get("/dashboard", [SyncDataDigitalReceiptController::class, "transcation_detail_dashboard"])->name("dashboard");
+                Route::post("/getData", [SyncDataDigitalReceiptController::class, "transcation_detail_getData"])->name("getData");
+                Route::post("/syncData", [SyncDataDigitalReceiptController::class, "transcation_detail_syncData"])->name("syncData");
+            });
         });
     });
 

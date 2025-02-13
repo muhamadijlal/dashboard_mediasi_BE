@@ -21,13 +21,25 @@ class Utils
     public static function metode_bayar_jid($metoda_bayar) {
         switch((int)$metoda_bayar){
             case 21:
-                return 'Mandiri';
+                return 'MANDIRI';
             case 22:
                 return 'BRI';
             case 23:
                 return 'BNI';
             case 24:
                 return 'BCA';
+            case 40:
+                return 'TUNAI';
+            case 25:
+                return 'DKI';
+            case 28:
+                return 'FLO';
+            case 11:
+                return 'JMC OPERASI';
+            case 12:
+                return 'JMC KARYAWAN';
+            case 13:
+                return 'JMC MITRA';
             default:
                 return $metoda_bayar;
         }

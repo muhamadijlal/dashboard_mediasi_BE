@@ -7,6 +7,26 @@ use Illuminate\Support\Facades\DB;
 
 class DigitalReceipt
 {
+    public static function switchConnection()
+    {
+        try {
+            $credential = self::getCredential();
+
+            self::setCredentials(
+                'mediasi',
+                $credential->host,
+                $credential->port,
+                $credential->user,
+                $credential->pass,
+                database: 'travoy_db_history'
+            );
+
+            return response()->json(['message' => "Switch Connection succeed"], 200);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage()); 
+        }
+    }
+
     public static function switchDB($ruas_id, $gerbang_id)
     {
         try {
@@ -33,7 +53,7 @@ class DigitalReceipt
                 database: $integratorCredentials->database
             );
 
-            return response()->json(['message' => "Switch DB succed"], 200);
+            return response()->json(['message' => "Switch DB succeed"], 200);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
         }
@@ -56,6 +76,17 @@ class DigitalReceipt
                         ->first();
 
         return [$mediasi, $integrator];
+    }
+
+    public static function getCredential()
+    {
+        $credential = DB::connection('mysql')
+                        ->table('tbl_resi_digital')
+                        ->select("host","port","user","pass")
+                        ->where('status', 1)
+                        ->first();
+
+        return $credential;
     }
 
     public static function getIPIntegrator($ruas_id, $gerbang_id)

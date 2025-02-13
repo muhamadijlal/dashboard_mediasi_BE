@@ -47,8 +47,11 @@
                 </summary>
 
                 <ul id="submenu" class="ml-5 border-l-[1.5px] border-slate-200 mt-3 space-y-2">
-                    <li>  
+                    <li>
                         <a href="{{ route("resi.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('resi.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Transaction Detail") }}</a>
+                    </li>
+                    <li>
+                        <a href="{{ route("resi.sync.transaction_detail.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('resi.sync.transaction_detail.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Sync Transaction Detail") }}</a>
                     </li>
                     <li>  
                         <a href="{{ route("resi.data_compare.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('resi.data_compare.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>

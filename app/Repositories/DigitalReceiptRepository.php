@@ -125,7 +125,7 @@ class DigitalReceiptRepository
                         ->where("gerbang_id", $request->gerbang_id*1);
 
                 $query->when($request->has('card_num'), function ($query) use ($request) {
-                    $query->where('etoll_id', 'LIKE', "%{$request->card_num}%");
+                    $query->where('etoll_id', 'LIKE', "%$request->card_num%");
                 }, function ($query) use($request) {
                     $query->where("metoda_bayar_sah", $request->metoda_bayar);
                     $query->where("shift", $request->shift);
@@ -270,6 +270,39 @@ class DigitalReceiptRepository
             DB::connection('mediasi')->rollBack();
             // Throw the exception to be handled elsewhere
             throw new \Exception($e->getMessage());
+        }
+    }
+
+    public static function getDataTransakiDetail($ruas_id, $gerbang_id,  $start_date, $end_date, $card_num)
+    {
+        try {
+            DigitalReceipt::switchConnection();
+
+            $query = DB::connection('mediasi')
+                    ->table("tx_card_toll_history")
+                    ->select("tgl_report",
+                        "nama_gerbang",
+                        "tgl_transaksi",
+                        "bank",
+                        "shift",
+                        "periode",
+                        "tarif",
+                        "saldo",
+                        "no_resi",
+                        "kode_gerbang_asal"
+                    )
+                    ->whereBetween("tgl_report", [$start_date, $end_date])
+                    ->where("no_kartu", "LIKE", "%$card_num%");
+
+            if($ruas_id != "*")
+            {
+                $query->where("kode_cabang", $ruas_id);
+                $query->where("gerbang", $gerbang_id*1);
+            }
+
+            return $query;
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage()); 
         }
     }
 }

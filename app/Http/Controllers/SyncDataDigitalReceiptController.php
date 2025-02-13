@@ -138,7 +138,7 @@ class SyncDataDigitalReceiptController extends Controller
     }
 
     public function transcation_detail_dashboard() {
-        return view("pages.resi.TransactionDetail.index", [
+        return view("pages.resi.SyncData.TransactionDetail.index", [
             'columns' => [
                 [
                     'title' => 'No',
