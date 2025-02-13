@@ -48,6 +48,7 @@ class JMTORepository
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
                                 ->select("tgl_lap", "gerbang_id", DB::raw("gol_sah as golongan"), "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
                                 ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
 
@@ -55,6 +56,7 @@ class JMTORepository
             $query_integrator = DB::connection('integrator')
                                 ->table("jid_transaksi_deteksi")
                                 ->select("tgl_lap", "gerbang_id", "gardu_id", DB::raw("gol_sah as golongan"), "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
                                 ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
 

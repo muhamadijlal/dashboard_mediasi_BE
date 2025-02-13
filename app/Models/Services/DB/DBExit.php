@@ -17,6 +17,7 @@ class DBExit
                         'shift',
                         DB::raw('COUNT(*) as jumlah_data')
                     )
+                    ->whereNotNull('ruas_id')
                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->groupBy('tanggal_siklus', 'gerbang_keluar', 'gardu', 'shift', 'gol');

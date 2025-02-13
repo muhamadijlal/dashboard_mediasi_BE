@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
 use App\Models\Integrator;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class MIYRepository
