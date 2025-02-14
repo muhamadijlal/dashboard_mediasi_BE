@@ -281,15 +281,15 @@ class DigitalReceiptRepository
             $query = DB::connection('mediasi')
                     ->table("tx_card_toll_history")
                     ->select("tgl_report",
-                        "nama_gerbang",
                         "tgl_transaksi",
+                        "nama_gerbang",
+                        "kode_gardu",
+                        "nama_gerbang_asal",
                         "bank",
                         "shift",
-                        "periode",
                         "tarif",
-                        "saldo",
                         "no_resi",
-                        "kode_gerbang_asal"
+                        "saldo"
                     )
                     ->whereBetween("tgl_report", [$start_date, $end_date])
                     ->where("no_kartu", "LIKE", "%$card_num%");
