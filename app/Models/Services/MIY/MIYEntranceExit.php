@@ -18,7 +18,7 @@ class MIYEntranceExit
                                 "Shift as shift",
                                DB::raw('COUNT(*) as jumlah_data')
                             )
-                            ->whereNotNull('ruas_id')
+                            // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
                             ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
 
@@ -32,7 +32,7 @@ class MIYEntranceExit
                                 "Shift as shift",
                                DB::raw('COUNT(*) as jumlah_data')
                             )
-                            ->whereNotNull('ruas_id')
+                            // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
                             ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
 
