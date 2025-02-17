@@ -27,7 +27,6 @@ class MIYEntranceExit
                             ->select("TanggalLaporan as tgl_lap",
                                 "GerbangId as gerbang_id",
                                 "GarduId as gardu_id",
-                                "Golongan as golongan",
                                 "Shift as shift",
                                DB::raw('COUNT(*) as jumlah_data')
                             )
@@ -88,7 +87,6 @@ class MIYEntranceExit
                                 )
                                 ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
                                 ->where('GerbangId', $request['gerbang_id']*1)
-                                ->where('Golongan', $request['golongan'])
                                 ->where('GarduId', $request['gardu_id'])
                                 ->where('Shift', $request['shift']);
 
@@ -137,7 +135,6 @@ class MIYEntranceExit
                             )
                             ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
                             ->where('GerbangId', $request['gerbang_id']*1)
-                            ->where('Golongan', $request['golongan'])
                             ->where('GarduId', $request['gardu_id'])
                             ->where('Shift', $request['shift']);
 

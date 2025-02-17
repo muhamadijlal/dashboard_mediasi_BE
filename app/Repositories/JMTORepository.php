@@ -157,7 +157,6 @@ class JMTORepository
                         ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
                         ->where('ruas_id', $request->ruas_id)
                         ->where("gerbang_id", $request->gerbang_id)
-                        ->where("gol_sah", $request->golongan)
                         ->where("gardu_id", $request->gardu_id)
                         ->where("shift", $request->shift);
 
@@ -234,7 +233,6 @@ class JMTORepository
                         ruas_id = VALUES(ruas_id),
                         gerbang_id = VALUES(gerbang_id),
                         gardu_id = VALUES(gardu_id),
-                        gol_sah = VALUES(gol_sah),
                         tgl_lap = VALUES(tgl_lap),
                         shift = VALUES(shift),
                         no_resi = VALUES(no_resi),

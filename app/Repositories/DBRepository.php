@@ -184,7 +184,6 @@ class DBRepository
                 ON DUPLICATE KEY UPDATE
                     gerbang_id = VALUES(gerbang_id),
                     gardu_id = VALUES(gardu_id),
-                    gol_sah = VALUES(gol_sah),
                     tgl_lap = VALUES(tgl_lap),
                     shift = VALUES(shift),
                     no_resi = VALUES(no_resi),

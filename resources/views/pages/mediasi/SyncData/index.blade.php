@@ -30,7 +30,6 @@
                                 start_date: params.start_date,
                                 end_date: params.end_date,
                                 gerbang_id: params.gerbang_id,
-                                golongan: params.golongan,
                                 gardu_id: params.gardu_id,
                                 shift: params.shift
                             },
@@ -109,7 +108,6 @@
                             d.start_date = params.start_date;
                             d.end_date = params.end_date;
                             d.gerbang_id = params.gerbang_id;
-                            d.golongan = params.golongan;
                             d.gardu_id = params.gardu_id;
                             d.shift = params.shift;
                         },

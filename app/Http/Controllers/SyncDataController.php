@@ -9,7 +9,7 @@ use Yajra\DataTables\DataTables;
 
 class SyncDataController extends Controller
 {
-    public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $golongan = null, $gardu_id = null, $shift = null) {
+    public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $gardu_id = null, $shift = null) {
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
@@ -83,7 +83,6 @@ class SyncDataController extends Controller
                 'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
                 'gerbang_nama' => $filter->gerbang_nama,
-                'golongan' => $golongan,
                 'gardu_id' => $gardu_id,
                 'shift' => $shift,
             ]
@@ -97,7 +96,6 @@ class SyncDataController extends Controller
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'golongan' => 'required|string',
                 'gardu_id' => 'required|string',
                 'shift' => 'required|string',
             ]);
@@ -123,7 +121,6 @@ class SyncDataController extends Controller
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'golongan' => 'required|string',
                 'gardu_id' => 'required|string',
                 'shift' => 'required|string',
             ]);

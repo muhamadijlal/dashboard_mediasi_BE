@@ -52,7 +52,6 @@ class DBOpen
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
                     ->whereBetween('tanggal_siklus', [(string)$request->start_date, (string)$request->end_date])
                     ->where('idgerbang', $request->gerbang_id*1)
-                    ->where('gol', $request->golongan)
                     ->where('gardu', $request->gardu_id)
                     ->where('shift', $request->shift);
 
