@@ -47,18 +47,18 @@ class JMTORepository
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", DB::raw("gol_sah as golongan"), "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
                                 ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");
 
             // Query untuk tabel integrator
             $query_integrator = DB::connection('integrator')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "gardu_id", DB::raw("gol_sah as golongan"), "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
                                 ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift", "gol_sah");
+                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");
 
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
@@ -72,8 +72,7 @@ class JMTORepository
                     return $mediasi->tgl_lap == $integrator->tgl_lap && 
                         $mediasi->gerbang_id == $integrator->gerbang_id &&
                         $mediasi->gardu_id == $integrator->gardu_id &&
-                        $mediasi->shift == $integrator->shift &&
-                        $mediasi->golongan == $integrator->golongan;
+                        $mediasi->shift == $integrator->shift;
                 });
 
                 // Hitung jumlah integrator dan selisih
@@ -84,7 +83,6 @@ class JMTORepository
                 $final_result = new \stdClass();
                 $final_result->tanggal = $integrator->tgl_lap;
                 $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->golongan = $integrator->golongan;
                 $final_result->gardu_id = $integrator->gardu_id;
                 $final_result->shift = $integrator->shift;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;

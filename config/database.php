@@ -58,7 +58,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_TIMEOUT => 15,
+                \PDO::ATTR_TIMEOUT => 15,  // Set your timeout value here
             ]) : [],
         ],
 
@@ -78,7 +78,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_TIMEOUT => 15,
+                \PDO::ATTR_TIMEOUT => 15,  // Set your timeout value here
             ]) : [],
         ],
 
@@ -98,7 +98,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_TIMEOUT => 15,
+                \PDO::ATTR_TIMEOUT => 15,  // Set your timeout value here
             ]) : [],
         ],
 
@@ -118,7 +118,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_TIMEOUT => 15,
+                \PDO::ATTR_TIMEOUT => 15,  // Set your timeout value here
             ]) : [],
         ],
 
@@ -136,7 +136,7 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
             'options' => extension_loaded('pdo_pgsql') ? array_filter([
-                PDO::ATTR_TIMEOUT => 15,
+                \PDO::ATTR_TIMEOUT => 15,  // Set your timeout value here
             ]) : [],
         ],
 

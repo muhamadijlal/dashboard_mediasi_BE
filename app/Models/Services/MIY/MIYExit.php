@@ -13,13 +13,12 @@ class MIYExit
                                 ->select("TanggalLaporan as tgl_lap",
                                     "GerbangId as gerbang_id",
                                     "GarduId as gardu_id",
-                                    "Golongan as golongan",
                                     "Shift as shift",
                                     DB::raw('COUNT(*) as jumlah_data')
                                 )
                                 // ->whereNotNull('ruas_id')
                                 ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                                ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
+                                ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
 
         return $query;
     }

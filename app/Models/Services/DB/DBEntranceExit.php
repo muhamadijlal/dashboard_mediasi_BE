@@ -13,27 +13,25 @@ class DBEntranceExit
                                     ->select('tanggal_siklus as tgl_lap',
                                         'idgerbang as gerbang_id',
                                         'gardu as gardu_id',
-                                        'gol as golongan',
                                         'shift',
                                         DB::raw('COUNT(*) as jumlah_data')
                                     )
                                     // ->whereNotNull('ruas_id')
                                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                                    ->groupBy('tanggal_siklus', 'idgerbang', 'gardu', 'shift', 'gol');
+                                    ->groupBy('tanggal_siklus', 'idgerbang', 'gardu', 'shift');
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
                                     ->table((string)$schema.'.tbltransaksi_exit')
                                     ->select('tanggal_siklus as tgl_lap',
                                         'gerbang_keluar as gerbang_id',
                                         'gardu as gardu_id',
-                                        'gol as golongan',
                                         'shift',  DB::raw('COUNT(*) as jumlah_data')
                                     )
                                     // ->whereNotNull('ruas_id')
                                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                                    ->groupBy('tanggal_siklus', 'gerbang_keluar', 'gardu', 'shift', 'gol');
+                                    ->groupBy('tanggal_siklus', 'gerbang_keluar', 'gardu', 'shift');
 
         $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);
 

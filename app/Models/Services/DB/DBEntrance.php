@@ -14,14 +14,13 @@ class DBEntrance
                         'tanggal_siklus as tgl_lap',
                         'idgerbang as gerbang_id',
                         'gardu as gardu_id',
-                        'gol as golongan',
                         'shift',
                         DB::raw('COUNT(*) as jumlah_data')
                     )
                     // ->whereNotNull('ruas_id')
                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->groupBy('tanggal_siklus', 'idgerbang', 'gardu', 'shift', 'gol');
+                    ->groupBy('tanggal_siklus', 'idgerbang', 'gardu', 'shift');
 
         return $query;
     }

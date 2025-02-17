@@ -14,13 +14,12 @@ class MIYEntranceExit
                             ->select("TanggalLaporan as tgl_lap",
                                 "GerbangId as gerbang_id",
                                 "GarduId as gardu_id",
-                                "Golongan as golongan",
                                 "Shift as shift",
                                DB::raw('COUNT(*) as jumlah_data')
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
+                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
 
         // Query untuk lalin_entrance
         $lalin_entrance = DB::connection('integrator')
@@ -34,7 +33,7 @@ class MIYEntranceExit
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
+                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
 
         // Menggabungkan keduanya dengan unionAll
         $query = $lalin_settlement->unionAll($lalin_entrance);

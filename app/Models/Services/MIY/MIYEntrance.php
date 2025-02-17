@@ -19,7 +19,7 @@ class MIYEntrance
                                 )
                                 // ->whereNotNull('ruas_id')
                                 ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                                ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift", "Golongan");
+                                ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
 
         return $query;
     }
