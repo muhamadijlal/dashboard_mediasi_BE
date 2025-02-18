@@ -176,7 +176,7 @@
 
                         let intVal = function(i) {
                             return typeof i === 'string' ?
-                            i.replace('/[\$,]/g', '')*1 :
+                            i.replace(/[\Rp.\s,]/g, '') * 1 :
                             typeof i === 'number' ?
                                 i : 0;
                         };
@@ -187,20 +187,28 @@
                             return doc.querySelector('a') ? doc.querySelector('a').textContent : null;
                         }
 
-                        let totalDataIntegrator = api.column(5).data().reduce(function (a, b) {
+                        let totalTarifIntegrator = api.column(5).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b)
                         }, 0);
-                        let totalDataMediasi = api.column(6).data().reduce(function (a, b) {
+                        let totalTarifMediasi = api.column(6).data().reduce(function (a, b) {
                             return intVal(a) + intVal(b)
                         }, 0);
-                        let totalSelisihData = api.column(7).data().reduce(function (a, b) {
+                        let totalDataIntegrator = api.column(7).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b)
+                        }, 0);
+                        let totalDataMediasi = api.column(8).data().reduce(function (a, b) {
+                            return intVal(a) + intVal(b)
+                        }, 0);
+                        let totalSelisihData = api.column(9).data().reduce(function (a, b) {
                             return intVal(a) + intVal(getValueFromLink(b))
                         }, 0);
 
                         $(api.column(0).footer()).html("Total");
-                        $(api.column(5).footer()).html(totalDataIntegrator)
-                        $(api.column(6).footer()).html(totalDataMediasi)
-                        $(api.column(7).footer()).html(totalSelisihData)
+                        $(api.column(5).footer()).html("Rp. "+number_format(totalTarifIntegrator,0,'.','.'))
+                        $(api.column(6).footer()).html("Rp. "+number_format(totalTarifMediasi,0,'.','.'))
+                        $(api.column(7).footer()).html(totalDataIntegrator)
+                        $(api.column(8).footer()).html(totalDataMediasi)
+                        $(api.column(9).footer()).html(totalSelisihData)
                     }
                 });
 
@@ -211,6 +219,19 @@
             {
                 e.preventDefault();
                 tblCompare.draw();
+            }
+
+            function number_format(number, decimals, dec_point, thousands_sep) {
+                var n = number,
+                    prec = isNaN(decimals = Math.abs(decimals)) ? 0 : decimals,
+                    sep = (typeof thousands_sep === 'undefined') ? '.' : thousands_sep,
+                    dec = (typeof dec_point === 'undefined') ? ',' : dec_point,
+                    s = n < 0 ? '-' : '',
+                    i = parseInt(n = Math.abs(+n || 0).toFixed(prec)) + '',
+                    j = (i.length) > 3 ? i.length % 3 : 0;
+
+                return s + (j ? i.substr(0, j) + sep : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + sep) +
+                    (prec ? dec + Math.abs(n - i).toFixed(prec).slice(2) : '');
             }
         </script>
     </x-slot>
@@ -286,6 +307,8 @@
             <tbody></tbody>
             <tfoot>
                 <th colspan="5" class="bg-gray-50"></th>
+                <th class="bg-gray-50"></th>
+                <th class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>
                 <th class="bg-gray-50"></th>

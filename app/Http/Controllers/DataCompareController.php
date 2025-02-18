@@ -39,8 +39,20 @@ class DataCompareController extends Controller
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Gardu ID',
-                    'data' => 'gardu_id',
+                    'title' => 'Metoda Bayar',
+                    'data' => 'metoda_bayar_name',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Jumlah Tarif Integrator',
+                    'data' => 'jumlah_tarif_integrator',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Jumlah Tarif Mediasi',
+                    'data' => 'jumlah_tarif_mediasi',
                     'orderable' => true,
                     'searchable' => true,
                 ],
@@ -61,7 +73,7 @@ class DataCompareController extends Controller
                     'data' => 'link',
                     'orderable' => true,
                     'searchable' => true,
-                ],
+                ]
             ]
         ]);
     }
@@ -75,12 +87,18 @@ class DataCompareController extends Controller
                             ->addIndexColumn()
                             ->addColumn('link', function ($row) use($request) {
                                 if ($row->selisih > 0) {
-                                    return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->gardu_id  .'/'. $row->shift.'">'. $row->selisih .'</a>';
+                                    return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/'. $request->ruas_id .'/'. $row->tanggal .'/'. $row->gerbang_id .'/'. $row->metoda_bayar  .'/'. $row->shift.'">'. $row->selisih .'</a>';
                                 }else if($row->selisih < 0) {
                                     return '<span class="text-red-500">'.$row->selisih.'</span>';
                                 }else {
                                     return $row->selisih;
                                 }
+                            })
+                            ->addColumn('jumlah_tarif_mediasi', function($row) {
+                                return 'Rp. '.number_format($row->jumlah_tarif_mediasi, 0, '.', '.');
+                            })
+                            ->addColumn('jumlah_tarif_integrator', function($row) {
+                                return 'Rp. '.number_format($row->jumlah_tarif_integrator, 0, '.', '.');
                             })
                             ->rawColumns(['link'])
                             ->make();

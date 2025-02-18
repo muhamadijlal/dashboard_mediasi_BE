@@ -30,7 +30,7 @@
                                 start_date: params.start_date,
                                 end_date: params.end_date,
                                 gerbang_id: params.gerbang_id,
-                                gardu_id: params.gardu_id,
+                                metoda_bayar: params.metoda_bayar,
                                 shift: params.shift
                             },
                             beforeSend: function() {
@@ -108,7 +108,7 @@
                             d.start_date = params.start_date;
                             d.end_date = params.end_date;
                             d.gerbang_id = params.gerbang_id;
-                            d.gardu_id = params.gardu_id;
+                            d.metoda_bayar = params.metoda_bayar;
                             d.shift = params.shift;
                         },
                         error: function (xhr, error, code) {

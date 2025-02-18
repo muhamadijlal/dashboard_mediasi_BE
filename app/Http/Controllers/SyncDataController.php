@@ -9,7 +9,7 @@ use Yajra\DataTables\DataTables;
 
 class SyncDataController extends Controller
 {
-    public function dashboard($ruas_id = null, $tanggal = null, $gerbang_id = null, $gardu_id = null, $shift = null) {
+    public function dashboard($ruas_id, $tanggal, $gerbang_id, $metoda_bayar, $shift) {
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
@@ -52,12 +52,6 @@ class SyncDataController extends Controller
                     'searchable' => true,
                 ],
                 [
-                    'title' => 'Gardu ID',
-                    'data' => 'gardu_id',
-                    'orderable' => true,
-                    'searchable' => true,
-                ],
-                [
                     'title' => 'Jenis Notran',
                     'data' => 'jenis_notran',
                     'orderable' => true,
@@ -83,7 +77,7 @@ class SyncDataController extends Controller
                 'end_date' => $tanggal,
                 'gerbang_id' =>  $gerbang_id, 
                 'gerbang_nama' => $filter->gerbang_nama,
-                'gardu_id' => $gardu_id,
+                'metoda_bayar' => $metoda_bayar,
                 'shift' => $shift,
             ]
         ]);
@@ -96,7 +90,7 @@ class SyncDataController extends Controller
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'gardu_id' => 'required|string',
+                'metoda_bayar' => 'required',
                 'shift' => 'required|string',
             ]);
 
@@ -121,7 +115,7 @@ class SyncDataController extends Controller
                 'start_date' => 'required|date|date_format:Y-m-d',
                 'end_date' => 'required|date|date_format:Y-m-d',
                 'gerbang_id' => 'required|string',
-                'gardu_id' => 'required|string',
+                'metoda_bayar' => 'required',
                 'shift' => 'required|string',
             ]);
 
