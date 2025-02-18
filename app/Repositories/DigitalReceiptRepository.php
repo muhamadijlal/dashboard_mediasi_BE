@@ -125,7 +125,7 @@ class DigitalReceiptRepository
                         ->where("gerbang_id", $request->gerbang_id*1);
 
                 $query->when($request->has('card_num'), function ($query) use ($request) {
-                    $query->where('etoll_id', 'LIKE', "%$request->card_num%");
+                    $query->where('etoll_id', $request->card_num);
                 }, function ($query) use($request) {
                     $query->where("metoda_bayar_sah", $request->metoda_bayar);
                     $query->where("shift", $request->shift);
@@ -292,7 +292,7 @@ class DigitalReceiptRepository
                         "saldo"
                     )
                     ->whereBetween("tgl_report", [$start_date, $end_date])
-                    ->where("no_kartu", "LIKE", "%$card_num%");
+                    ->where("no_kartu", $card_num);
 
             if($ruas_id != "*")
             {

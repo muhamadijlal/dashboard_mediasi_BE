@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Integrator;
 use App\Http\Requests\FilterRequest;
-use App\Models\DigitalReceipt;
 use App\Models\Utils;
 use App\Repositories\DigitalReceiptRepository;
 use Yajra\DataTables\Facades\DataTables;
