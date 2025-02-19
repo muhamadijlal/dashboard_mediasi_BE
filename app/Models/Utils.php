@@ -53,6 +53,39 @@ class Utils
                 return 'JMC KARYAWAN';
             case 13:
                 return 'JMC MITRA';
+            case 48:
+                return 'ALR/NTK / LOLOS';
+            default:
+                return $metoda_bayar;
+        }
+    }
+
+    public static function transmetod_miy_to_jid($metoda_bayar)
+    {
+        switch((int)$metoda_bayar){
+            case 2:
+                return 40;
+            case 3:
+                return 21;
+            case 23:
+                return 24;
+            case 20:
+                return 22;
+            case 21:
+                return 23;
+            case 29:
+                return 28;
+            case 1:
+            case 17:
+                return 11;
+            case 12:
+            case 18:
+                return 12;
+            case 13:
+            case 19:
+                return 13;
+            case 0:
+                return 48;
             default:
                 return $metoda_bayar;
         }

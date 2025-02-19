@@ -6,33 +6,37 @@ use Illuminate\Support\Facades\DB;
 
 class MIYEntranceExit
 {
-    public function getSourceCompare($start_date, $end_date)
+    public function getSourceCompare($start_date, $end_date, $gerbang_id)
     {
         // Query untuk lalin_settlement
         $lalin_settlement = DB::connection('integrator')
                             ->table('lalin_settlement')
                             ->select("TanggalLaporan as tgl_lap",
                                 "GerbangId as gerbang_id",
-                                "GarduId as gardu_id",
+                                "MetodeTransaksi as metoda_bayar",
                                 "Shift as shift",
-                               DB::raw('COUNT(*) as jumlah_data')
+                               DB::raw('COUNT(id) as jumlah_data'),
+                               DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
+                            ->where("GerbangId", $gerbang_id)
+                            ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
 
         // Query untuk lalin_entrance
         $lalin_entrance = DB::connection('integrator')
                             ->table('lalin_entrance')
                             ->select("TanggalLaporan as tgl_lap",
                                 "GerbangId as gerbang_id",
-                                "GarduId as gardu_id",
+                                "MetodeTransaksi as metoda_bayar",
                                 "Shift as shift",
-                               DB::raw('COUNT(*) as jumlah_data')
+                               DB::raw('COUNT(id) as jumlah_data'),
+                               DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->groupBy("TanggalLaporan", "GerbangId", "GarduId", "Shift");
+                            ->where("GerbangId", $gerbang_id)
+                            ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
 
         // Menggabungkan keduanya dengan unionAll
         $query = $lalin_settlement->unionAll($lalin_entrance);
@@ -87,7 +91,7 @@ class MIYEntranceExit
                                 )
                                 ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
                                 ->where('GerbangId', $request['gerbang_id']*1)
-                                ->where('GarduId', $request['gardu_id'])
+                                ->where('MetodeTransaksi', $request['metoda_bayar'])
                                 ->where('Shift', $request['shift']);
 
         $lalin_entrance = DB::connection('integrator')
@@ -135,7 +139,7 @@ class MIYEntranceExit
                             )
                             ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
                             ->where('GerbangId', $request['gerbang_id']*1)
-                            ->where('GarduId', $request['gardu_id'])
+                            ->where('MetodeTransaksi', $request['metoda_bayar'])
                             ->where('Shift', $request['shift']);
 
         // Menggabungkan keduanya dengan unionAll

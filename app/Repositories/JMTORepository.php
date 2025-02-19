@@ -52,6 +52,7 @@ class JMTORepository
                                 ->select("tgl_lap", "gerbang_id", "shift", 'metoda_bayar_sah as metoda_bayar', DB::raw('COUNT(id) as jumlah_data'), DB::raw("SUM(tarif) as jumlah_tarif_mediasi"))
                                 ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
+                                ->where("gerbang_id", $gerbang_id*1)
                                 ->groupBy("tgl_lap", "gerbang_id", "metoda_bayar_sah", "shift");
 
             // Query untuk tabel integrator
@@ -60,6 +61,7 @@ class JMTORepository
                                 ->select("tgl_lap", "gerbang_id", "shift", 'metoda_bayar_sah as metoda_bayar', DB::raw('COUNT(id) as jumlah_data'), DB::raw("SUM(tarif) as jumlah_tarif_integrator"))
                                 ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
+                                ->where("gerbang_id", $gerbang_id*1)
                                 ->groupBy("tgl_lap", "gerbang_id", "metoda_bayar_sah", "shift");
 
             // Mendapatkan hasil dari query mediasi dan integrator
@@ -161,7 +163,7 @@ class JMTORepository
                         )
                         ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
                         ->where('ruas_id', $request->ruas_id)
-                        ->where("gerbang_id", $request->gerbang_id)
+                        ->where("gerbang_id", $request->gerbang_id * 1)
                         ->where("metoda_bayar_sah", $request->metoda_bayar)
                         ->where("shift", $request->shift);
 

@@ -4,11 +4,12 @@ namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
 use App\Models\Integrator;
+use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 
 class MIYRepository
 {
-    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataTransakiDetail($ruas_id, $gerbang_id, $start_date, $end_date)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -24,7 +25,7 @@ class MIYRepository
         }
     }
 
-    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataRekapAT4($ruas_id, $gerbang_id, $start_date, $end_date)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -40,7 +41,7 @@ class MIYRepository
         }
     }
 
-    public function getDataCompare(string $ruas_id, string $gerbang_id, string $start_date=null, string $end_date=null, string $isSelisih)
+    public function getDataCompare($ruas_id, $gerbang_id, $start_date, $end_date, $isSelisih)
     {
         try {
             DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator');
@@ -49,11 +50,13 @@ class MIYRepository
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "gardu_id", "shift", DB::raw('COUNT(id) as jumlah_data'))
+                                ->select("tgl_lap", "gerbang_id", "metoda_bayar_sah as metoda_bayar", "shift", DB::raw('COUNT(id) as jumlah_data'), DB::raw('SUM(tarif) as jumlah_tarif_mediasi'))
+                                ->whereNotNull("ruas_id")
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->groupBy("tgl_lap", "gerbang_id", "gardu_id", "shift");
+                                ->where("gerbang_id", $gerbang_id)
+                                ->groupBy("tgl_lap", "gerbang_id", "metoda_bayar_sah", "shift");
 
-            $query_integrator = $services->getSourceCompare($start_date, $end_date);
+            $query_integrator = $services->getSourceCompare($start_date, $end_date, $gerbang_id);
 
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
@@ -64,10 +67,12 @@ class MIYRepository
 
             foreach($results_integrator as $integrator)
             {
-                $index = $results_mediasi->search(function($mediasi) use($integrator) {
+                $metodaBayarMIYtoJID = Utils::transmetod_miy_to_jid($integrator->metoda_bayar);
+
+                $index = $results_mediasi->search(function($mediasi) use($integrator, $metodaBayarMIYtoJID) {
                     return $mediasi->tgl_lap == $integrator->tgl_lap && 
                         $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->gardu_id == $integrator->gardu_id &&
+                        $mediasi->metoda_bayar == $metodaBayarMIYtoJID &&
                         $mediasi->shift == $integrator->shift;
                 });
 
@@ -79,11 +84,14 @@ class MIYRepository
                 $final_result = new \stdClass();
                 $final_result->tanggal = $integrator->tgl_lap;
                 $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->gardu_id = $integrator->gardu_id;
+                $final_result->metoda_bayar = $integrator->metoda_bayar;
+                $final_result->metoda_bayar_name = Utils::metode_bayar_jid(metoda_bayar: $metodaBayarMIYtoJID);
                 $final_result->shift = $integrator->shift;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
                 $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
                 $final_result->selisih = $selisih;
+                $final_result->jumlah_tarif_integrator = $integrator->jumlah_tarif_integrator;
+                $final_result->jumlah_tarif_mediasi = $results_mediasi[$index]->jumlah_tarif_mediasi;
 
                 if ($isSelisih === '*') {
                     $final_results[] = $final_result;
