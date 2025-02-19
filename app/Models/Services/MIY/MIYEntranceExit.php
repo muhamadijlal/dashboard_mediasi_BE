@@ -20,7 +20,7 @@ class MIYEntranceExit
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->where("GerbangId", $gerbang_id)
+                            ->where("GerbangId", $gerbang_id*1)
                             ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
 
         // Query untuk lalin_entrance
@@ -35,7 +35,7 @@ class MIYEntranceExit
                             )
                             // ->whereNotNull('ruas_id')
                             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
-                            ->where("GerbangId", $gerbang_id)
+                            ->where("GerbangId", $gerbang_id*1)
                             ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
 
         // Menggabungkan keduanya dengan unionAll

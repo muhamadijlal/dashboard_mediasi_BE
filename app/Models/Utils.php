@@ -54,7 +54,7 @@ class Utils
             case 13:
                 return 'JMC MITRA';
             case 48:
-                return 'ALR/NTK / LOLOS';
+                return 'ALR/NTK/LOLOS';
             default:
                 return $metoda_bayar;
         }
@@ -85,6 +85,60 @@ class Utils
             case 19:
                 return 13;
             case 0:
+                return 48;
+            default:
+                return $metoda_bayar;
+        }
+    }
+
+    public static function transmetod_db_to_jid($metoda_bayar, $jenis_dinas=null){
+
+        // if ((int)$metoda_bayar === 21) {
+        //     if (in_array((int)$jenis_dinas, [1, 20, 50])) {
+        //         return 11;
+        //     } elseif (in_array((int)$jenis_dinas, [2, 21, 51])) {
+        //         return 12;
+        //     } elseif (in_array((int)$jenis_dinas, [3, 22, 52])) {
+        //         return 13;
+        //     }
+        // }
+
+        switch((int)$metoda_bayar){
+            case 1:
+            case 2:
+                return 40;
+            case 11:
+            case 12:
+                return 21;
+            case 18:
+            case 19:
+                return 24;
+            case 14:
+            case 15:
+                return 22;
+            case 16:
+            case 17:
+                return 23;
+            case 5:
+            case 6:
+                return 25;
+            case 31:
+            case 32:
+            case 60:
+            case 61:
+                return 28;
+            case 20:
+                return 11;
+            case 21:
+                return 12;
+            case 22:
+                return 13;
+            case 80:
+            case 82:
+                return 40;
+            case 81:
+            case 83:
+            case 84:
                 return 48;
             default:
                 return $metoda_bayar;

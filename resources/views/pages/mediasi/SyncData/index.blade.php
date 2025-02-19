@@ -45,6 +45,7 @@
                                 })
                             },
                             success: function(response) {
+                                console.log(response)
                                 Swal.fire({
                                     html: `<x-alert-success
                                             title="Success!"

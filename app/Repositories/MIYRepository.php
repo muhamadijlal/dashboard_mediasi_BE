@@ -182,11 +182,13 @@ class MIYRepository
                         )
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE
-                            gerbang_id = VALUES(gerbang_id),
+                            ruas_id = VALUES(ruas_id),
                             gardu_id = VALUES(gardu_id),
-                            tgl_lap = VALUES(tgl_lap),
                             shift = VALUES(shift),
                             no_resi = VALUES(no_resi),
+                            metoda_bayar_sah = VALUES(metoda_bayar_sah),
+                            gerbang_id = VALUES(gerbang_id),
+                            tgl_lap = VALUES(tgl_lap),
                             tgl_transaksi = VALUES(tgl_transaksi)
                         ";
 

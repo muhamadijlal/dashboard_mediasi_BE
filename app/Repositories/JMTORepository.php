@@ -234,7 +234,7 @@ class JMTORepository
                         KodeIntegrator,
                         create_at,
                         update_at
-                    ) 
+                    )
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
                         ruas_id = VALUES(ruas_id),
