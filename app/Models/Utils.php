@@ -18,21 +18,75 @@ class Utils
         return $data;
     }
 
-    public static function metode_bayar_jid($metoda_bayar, $jenis_notran = null) {
+    public static function metoda_bayar_sah($metoda_bayar, $jenis_notran, $jenis_ktp) {
+        $metode_transaksi = (int) $metoda_bayar;
 
-        if((int)$metoda_bayar === 48 && (int)$jenis_notran === 2) {
-            return 'LOLOS/ALR/NTK';
-        } else if((int)$metoda_bayar === 49 && (int)$jenis_notran === 2) {
-            return 'INDAMAL';
-        } else if((int)$metoda_bayar === 50 && (int)$jenis_notran === 2) {
-            return 'MAJU MUNDUR';
-        } else if((int)$metoda_bayar === 46 && (int)$jenis_notran === 2) {
-            return 'MAJU MUNDUR';
-        } else if((int)$metoda_bayar === 40 && (int)$jenis_notran === 3) {
-            return 'LSB/NAK';
+        // Mapping umum untuk transaksi yang memiliki kondisi jenis_notran == 1
+        $payment_map_normal = [
+            1 => ['40', '3'],
+            3 => ['21', '1'],
+            7 => ['24', '1'],
+            4 => ['22', '1'],
+            5 => ['23', '1'],
+            8 => ['25', '1'],
+            41 => ['28', '1'],
+        ];
+        if($metode_transaksi == 21 && $jenis_notran == 1) {
+            return['21','1'];
+        }
+    
+        // Mapping untuk transaksi dengan metode 2 berdasarkan jenis_ktp
+        $payment_map_metode_2 = [
+            1 => ['11', '1'],
+            2 => ['12', '1'],
+            3 => ['13', '1'],
+        ];
+    
+        // Mapping untuk transaksi dengan metode 0 dan jenis_notran 7, 8, 9
+        $payment_map_metode_0 = [
+            7 => ['48', '2'],
+            8 => ['49', '2'],
+            9 => ['50', '2'],
+        ];
+    
+        // Cek apakah metode transaksi adalah 2, dan sesuaikan dengan jenis_ktp
+        if ($metode_transaksi == 2 && isset($payment_map_metode_2[$jenis_ktp])) {
+            return $payment_map_metode_2[$jenis_ktp];
+        }
+    
+        // Cek apakah metode transaksi adalah 0 dan jenis_notran 7, 8, atau 9
+        if ($metode_transaksi == 0 && isset($payment_map_metode_0[$jenis_notran])) {
+            return $payment_map_metode_0[$jenis_notran];
+        }
+    
+        // Jika metode transaksi ditemukan dalam mapping normal
+        if (isset($payment_map_normal[$metode_transaksi])) {
+            return $payment_map_normal[$metode_transaksi];
+        }
+    
+        // Jika tidak ada kondisi yang cocok, kembalikan nilai default (0, 0)
+        return ['0', '0'];
+    }     
+
+    public static function metode_bayar_jid($metoda_bayar, $jenis_notran = null) 
+    {
+        // Special cases handled with an associative array
+        $specialCases = [
+            48 => [2 => 'LOLOS/ALR/NTK'],
+            41 => [3 => 'PEMBAYARAN DITANGGUHKAN'],
+            49 => [2 => 'INDAMAL'],
+            50 => [2 => 'MAJU MUNDUR'],
+            46 => [2 => '33 LK'],
+            40 => [3 => 'LSB/NAK'],
+        ];
+
+        // Check for special case first
+        if (isset($specialCases[(int)$metoda_bayar]) && isset($specialCases[(int)$metoda_bayar][(int)$jenis_notran])) {
+            return $specialCases[(int)$metoda_bayar][(int)$jenis_notran];
         }
 
-        switch((int)$metoda_bayar){
+        // Default cases in a switch
+        switch ((int)$metoda_bayar) {
             case 21:
                 return 'MANDIRI';
             case 22:
@@ -53,8 +107,6 @@ class Utils
                 return 'JMC KARYAWAN';
             case 13:
                 return 'JMC MITRA';
-            case 48:
-                return 'ALR/NTK/LOLOS';
             default:
                 return $metoda_bayar;
         }
