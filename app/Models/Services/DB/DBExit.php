@@ -13,6 +13,8 @@ class DBExit
                     ->select('tanggal_siklus as tgl_lap',
                         'gerbang_keluar as gerbang_id',
                         'jenis_transaksi as metoda_bayar',
+                        DB::raw("'' as jenis_notran"),
+                        'jenis_dinas',
                         'shift',
                         DB::raw('COUNT(id) as jumlah_data'),
                         DB::raw('SUM(tarif) as jumlah_tarif_integrator')
@@ -21,7 +23,7 @@ class DBExit
                     ->where("idgerbang", $gerbang_id*1)
                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->groupBy('tanggal_siklus', 'gerbang_keluar', 'jenis_transaksi', 'shift');
+                    ->groupBy('tanggal_siklus', 'jenis_dinas', 'jenis_notran', 'gerbang_keluar', 'jenis_transaksi', 'shift');
 
         return $query;
     }

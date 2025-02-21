@@ -50,11 +50,18 @@ class MIYRepository
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "metoda_bayar_sah as metoda_bayar", "shift", DB::raw('COUNT(id) as jumlah_data'), DB::raw('SUM(tarif) as jumlah_tarif_mediasi'))
+                                ->select("tgl_lap",
+                                    "gerbang_id",
+                                    "metoda_bayar_sah as metoda_bayar",
+                                    "jenis_notran",
+                                    "validasi_notran",
+                                    "shift", 
+                                    DB::raw('COUNT(id) as jumlah_data'), 
+                                    DB::raw('SUM(tarif) as jumlah_tarif_mediasi'))
                                 ->whereNotNull("ruas_id")
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->where("gerbang_id", $gerbang_id)
-                                ->groupBy("tgl_lap", "gerbang_id", "metoda_bayar_sah", "shift");
+                                ->where("gerbang_id", $gerbang_id*1)
+                                ->groupBy("tgl_lap", "gerbang_id", "jenis_notran", "validasi_notran", "metoda_bayar_sah", "shift");
 
             $query_integrator = $services->getSourceCompare($start_date, $end_date, $gerbang_id);
 
@@ -65,14 +72,14 @@ class MIYRepository
             // Gabungkan hasilnya
             $final_results = [];
 
-            foreach($results_integrator as $integrator)
-            {
-                $metodaBayarMIYtoJID = Utils::transmetod_miy_to_jid($integrator->metoda_bayar);
+            foreach($results_integrator as $integrator) {
+                list($metodaBayar, $jenisNotran) = Utils::transmetod_miy_to_jid($integrator->metoda_bayar, $integrator->jenis_notran, $integrator->validasi_notran);
 
-                $index = $results_mediasi->search(function($mediasi) use($integrator, $metodaBayarMIYtoJID) {
+                $index = $results_mediasi->search(function($mediasi) use($integrator, $metodaBayar, $jenisNotran) {
                     return $mediasi->tgl_lap == $integrator->tgl_lap && 
                         $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->metoda_bayar == $metodaBayarMIYtoJID &&
+                        $mediasi->jenis_notran == $jenisNotran &&
+                        $mediasi->metoda_bayar == $metodaBayar &&
                         $mediasi->shift == $integrator->shift;
                 });
 
@@ -85,13 +92,13 @@ class MIYRepository
                 $final_result->tanggal = $integrator->tgl_lap;
                 $final_result->gerbang_id = $integrator->gerbang_id;
                 $final_result->metoda_bayar = $integrator->metoda_bayar;
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid(metoda_bayar: $metodaBayarMIYtoJID);
+                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
                 $final_result->shift = $integrator->shift;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
                 $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
                 $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = $integrator->jumlah_tarif_integrator;
-                $final_result->jumlah_tarif_mediasi = $results_mediasi[$index]->jumlah_tarif_mediasi;
+                $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
+                $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
 
                 if ($isSelisih === '*') {
                     $final_results[] = $final_result;

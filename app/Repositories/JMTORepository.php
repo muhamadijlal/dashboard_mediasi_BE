@@ -6,11 +6,10 @@ use App\Models\DatabaseConfig;
 use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 use App\Models\Services\JMTO\JMTOServices;
-use Illuminate\Testing\Constraints\CountInDatabase;
 
 class JMTORepository
 {
-    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataTransakiDetail($ruas_id, $gerbang_id, $start_date, $end_date)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -26,7 +25,7 @@ class JMTORepository
         }
     }
 
-    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataRekapAT4($ruas_id, $gerbang_id, $start_date, $end_date)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -42,7 +41,7 @@ class JMTORepository
         }
     }
 
-    public function getDataCompare(string $ruas_id, string $gerbang_id, string $start_date=null, string $end_date=null, string $isSelisih)
+    public function getDataCompare($ruas_id, $gerbang_id, $start_date, $end_date, $isSelisih)
     {
         try {
             DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator');
@@ -50,7 +49,14 @@ class JMTORepository
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
                                 ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap", "gerbang_id", "jenis_notran", "shift", 'metoda_bayar_sah as metoda_bayar', DB::raw('COUNT(id) as jumlah_data'), DB::raw("SUM(tarif) as jumlah_tarif_mediasi"))
+                                ->select("tgl_lap",
+                                    "gerbang_id",
+                                    "jenis_notran",
+                                    "shift",
+                                    "metoda_bayar_sah as metoda_bayar",
+                                    DB::raw("COUNT(id) as jumlah_data"),
+                                    DB::raw("SUM(tarif) as jumlah_tarif_mediasi")
+                                )
                                 ->whereNotNull('ruas_id')
                                 ->whereBetween('tgl_lap', [$start_date, $end_date])
                                 ->where("gerbang_id", $gerbang_id*1)
@@ -63,13 +69,13 @@ class JMTORepository
                                     "ktp_jenis_id as jenis_ktp",
                                     "gerbang_id",
                                     "shift",
-                                    'metoda_bayar_id as metoda_bayar',
-                                    'notran_id_sah as jenis_notran',
-                                    DB::raw('COUNT(id) as jumlah_data'),
+                                    "metoda_bayar_id as metoda_bayar",
+                                    "notran_id_sah as jenis_notran",
+                                    DB::raw("COUNT(id) as jumlah_data"),
                                     DB::raw("SUM(tarif) as jumlah_tarif_integrator")
                                 )
-                                ->whereNotNull('ruas_id')
-                                ->whereBetween('tgl_lap', [$start_date, $end_date])
+                                ->whereNotNull("ruas_id")
+                                ->whereBetween("tgl_lap", [$start_date, $end_date])
                                 ->where("gerbang_id", $gerbang_id*1)
                                 ->groupBy("tgl_lap",
                                     "notran_id_sah",
@@ -94,8 +100,8 @@ class JMTORepository
                     return $mediasi->tgl_lap == $integrator->tgl_lap &&
                         $mediasi->gerbang_id == $integrator->gerbang_id &&
                         $mediasi->jenis_notran == $jenisNotran &&
-                        $mediasi->shift == $integrator->shift &&
-                        $mediasi->metoda_bayar == $metodaBayar;
+                        $mediasi->metoda_bayar == $metodaBayar &&
+                        $mediasi->shift == $integrator->shift;
                 });
 
                 // Hitung jumlah integrator dan selisih
@@ -115,11 +121,11 @@ class JMTORepository
                 $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
                 $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
 
-                if ($isSelisih === '*') {
+                if ($isSelisih === "*") {
                     $final_results[] = $final_result;
-                } elseif ($isSelisih === '1' && $selisih > 0) {
+                } elseif ($isSelisih === "1" && $selisih > 0) {
                     $final_results[] = $final_result;
-                } elseif ($isSelisih === '0' && $selisih == 0) {
+                } elseif ($isSelisih === "0" && $selisih == 0) {
                     $final_results[] = $final_result;
                 }
             }
@@ -135,40 +141,40 @@ class JMTORepository
         try {
             DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id, 'integrator');
 
-            $query = DB::connection('integrator')
-                        ->table('tbl_transaksi_deteksi')
-                        ->select('ruas_id',
-                            'asal_gerbang_id',
-                            'gerbang_id',
-                            'gardu_id',
-                            'tgl_lap',
-                            'shift',
-                            'perioda',
-                            'no_resi',
-                            'gol_sah',
-                            'ktp_sn as etoll_id',
-                            'metoda_bayar_id as metoda_bayar_sah',
-                            'notran_id_sah as jenis_notran',
-                            'tgl_transaksi',
-                            'kspt_id',
-                            'pultol_id',
-                            'tgl_entrance',
-                            'etoll_hash',
-                            'tarif',
-                            'trf1',
-                            'trf2',
-                            'trf3',
-                            'trf4',
-                            'trf5',
-                            'trf6',
-                            'trf7',
-                            'trf8',
-                            'trf9',
-                            'trf10',
-                            'datereceived',
+            $query = DB::connection("integrator")
+                        ->table("tbl_transaksi_deteksi")
+                        ->select("ruas_id",
+                            "asal_gerbang_id",
+                            "gerbang_id",
+                            DB::raw("SUBSTRING(gardu_id, 3, 2) as gardu_id"),
+                            "tgl_lap",
+                            "shift",
+                            "perioda",
+                            "no_resi",
+                            "gol_sah",
+                            "ktp_sn as etoll_id",
+                            "metoda_bayar_id as metoda_bayar_sah",
+                            "notran_id_sah as jenis_notran",
+                            "tgl_transaksi",
+                            "kspt_id",
+                            "pultol_id",
+                            "tgl_entrance",
+                            "etoll_hash",
+                            "tarif",
+                            "trf1",
+                            "trf2",
+                            "trf3",
+                            "trf4",
+                            "trf5",
+                            "trf6",
+                            "trf7",
+                            "trf8",
+                            "trf9",
+                            "trf10",
+                            "datereceived",
                         )
-                        ->whereBetween('tgl_lap', [$request->start_date, $request->end_date])
-                        ->where('ruas_id', $request->ruas_id)
+                        ->whereBetween("tgl_lap", [$request->start_date, $request->end_date])
+                        ->where("ruas_id", $request->ruas_id)
                         ->where("gerbang_id", $request->gerbang_id * 1)
                         ->where("shift", $request->shift);
                     
@@ -178,7 +184,7 @@ class JMTORepository
                     } else {
                         $query->where("metoda_bayar_id", $request->metoda_bayar);
                     }
-
+            
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
@@ -201,6 +207,18 @@ class JMTORepository
             if (count($result) === 0) {
                 throw new \Exception("Data empty cannot sync");
             }
+
+            $cols = "";
+            $variables = "";
+            $investors = Utils::miy_investor($request->ruas_id);
+
+            foreach ($investors as $idx => $_) {
+                $cols .= "inv" . ($idx + 1) . ",";
+                $variables .= " ?, ";
+            }
+
+            $variables = rtrim($variables, ", ");
+            $cols = rtrim($cols, ", ");
 
             foreach ($result as $dataItem) {
                 // Define the SQL query with placeholders for parameterized queries
@@ -233,19 +251,32 @@ class JMTORepository
                         trf9,
                         trf10,
                         create_at,
-                        update_at
+                        update_at,
+                        $cols
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $variables)
                     ON DUPLICATE KEY UPDATE 
                         ruas_id = VALUES(ruas_id),
+                        gerbang_id = VALUES(gerbang_id),
                         gardu_id = VALUES(gardu_id),
+                        tgl_lap = VALUES(tgl_lap),
                         shift = VALUES(shift),
                         no_resi = VALUES(no_resi),
-                        metoda_bayar_sah = VALUES(metoda_bayar_sah),
-                        gerbang_id = VALUES(gerbang_id),
-                        tgl_lap = VALUES(tgl_lap),
-                        tgl_transaksi = VALUES(tgl_transaksi)
-                ";
+                        tgl_transaksi = VALUES(tgl_transaksi),
+                        inv1,
+                        inv2,
+                        inv3,
+                        inv4,
+                        inv5,
+                        inv6,
+                        inv7,
+                        inv8,
+                        inv9,
+                        inv10
+                    ";
+
+                $metoda_bayar_sah = in_array($dataItem->metoda_bayar_sah, [13, 3]) ? 21 : $dataItem->metoda_bayar_sah;
+                $jenis_notran = in_array($dataItem->metoda_bayar_sah, [13, 3]) ? 1 : $dataItem->jenis_notran;
 
                 // Bind the data for the prepared statement
                 $params = [
@@ -255,17 +286,17 @@ class JMTORepository
                     $dataItem->tgl_lap, 
                     $dataItem->shift, 
                     $dataItem->perioda, 
-                    $dataItem->no_resi, 
-                    $dataItem->gol_sah, 
+                    $dataItem->no_resi,
+                    $dataItem->gol_sah,
                     $dataItem->etoll_id, 
-                    $dataItem->metoda_bayar_sah, 
-                    $dataItem->jenis_notran, 
+                    $metoda_bayar_sah, 
+                    $jenis_notran, 
                     $dataItem->tgl_transaksi, 
                     $dataItem->kspt_id, 
                     $dataItem->pultol_id, 
                     $dataItem->tgl_entrance, 
                     $dataItem->etoll_hash, 
-                    $dataItem->tarif, 
+                    $dataItem->tarif,
                     $dataItem->trf1,
                     $dataItem->trf2,
                     $dataItem->trf3,
@@ -277,7 +308,8 @@ class JMTORepository
                     $dataItem->trf9,
                     $dataItem->trf10,
                     $dataItem->datereceived,
-                    $dataItem->datereceived
+                    $dataItem->datereceived,
+                    ...$investors,  // spread the value
                 ];
 
                 // Execute the statement on the "mediasi" connection

@@ -15,6 +15,8 @@ class DBEntrance
                         'idgerbang as gerbang_id',
                         'jenis_transaksi as metoda_bayar',
                         'shift',
+                        'jenis_dinas',
+                        DB::raw("'' as jenis_notran"),
                         DB::raw('COUNT(id) as jumlah_data'),
                         DB::raw('0 as jumlah_tarif_integrator')
                     )
@@ -22,7 +24,7 @@ class DBEntrance
                     ->where("idgerbang", $gerbang_id*1)
                     ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
                     ->whereNotIn('jenis_transaksi', ['91', '92'])
-                    ->groupBy('tanggal_siklus', 'idgerbang', 'jenis_transaksi', 'shift');
+                    ->groupBy('tanggal_siklus', 'jenis_dinas', 'jenis_notran', 'idgerbang', 'jenis_transaksi', 'shift');
 
         return $query;
     }

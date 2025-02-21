@@ -14,13 +14,15 @@ class MIYEntrance
                                     "GerbangId as gerbang_id",
                                     "MetodeTransaksi as metoda_bayar",
                                     "Shift as shift",
+                                    "JenisNotran as jenis_notran",
+                                    "ValidasiNotran as validasi_notran",
                                     DB::raw('COUNT(id) as jumlah_data'),
                                     DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
                                 )
                                 // ->whereNotNull('ruas_id')
                                 ->whereBetween('TanggalLaporan', [$start_date, $end_date])
                                 ->where("GerbangId", $gerbang_id*1)
-                                ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
+                                ->groupBy("TanggalLaporan", "JenisNotran", "ValidasiNotran", "GerbangId", "MetodeTransaksi", "Shift");
 
         return $query;
     }
