@@ -65,7 +65,7 @@ class Utils
         }
     
         // Jika tidak ada kondisi yang cocok, kembalikan nilai default (0, 0)
-        return ['0', '0'];
+        return ['', ''];
     }     
 
     public static function metode_bayar_jid($metoda_bayar, $jenis_notran = null) 
@@ -114,50 +114,63 @@ class Utils
 
     public static function transmetod_miy_to_jid($metoda_bayar, $jenis_notran=null, $validasi_notran=null)
     {
-        if(strtoupper($jenis_notran) == 'LSB/NAK/NTK' && $validasi_notran == '(3-3) L/K') {
-            return ['46','2'];
+        $metodeTransaksi = (int) $metoda_bayar;
+
+        $paymentMap = [
+            1 => ["11", "1"],
+            3 => ["21", "1"],
+            12 => ["12", "1"],
+            13 => ["13", "1"],
+            17 => ["11", "1"],
+            18 => ["12", "1"],
+            19 => ["13", "1"],
+            20 => ["22", "1"],
+            21 => ["23", "1"],
+            23 => ["24", "1"],
+            25 => ["25", "1"],
+            29 => ["28", "1"],
+        ];
+
+        // Jenis Notran ( 2 ALR | 3 LSB )
+        if (($metodeTransaksi == 2 || $metodeTransaksi == 7) && 
+            ($jenis_notran == "NAK" || $jenis_notran == "NTK" || $jenis_notran == "LSB") && 
+            ($validasi_notran != "(3-3) L/K" || $validasi_notran == "Pembayaran Transaksi Tidak Normal")) {
+            return ["40", "3"]; // Tunai LSB
+        } elseif (($metodeTransaksi == 2 || $metodeTransaksi == 8 || $metodeTransaksi == 0) && 
+                  $jenis_notran == "NTK" && 
+                  $validasi_notran == "Tidak Dapat Menyerahkan KTM") {
+            return ["43", "3"]; // Lolos, ALR
+        } elseif (($metodeTransaksi == 2 || $metodeTransaksi == 7) && 
+                  ($jenis_notran == "NTK" || $jenis_notran == "NAK" || $jenis_notran == "LSB") && 
+                  $validasi_notran == "Pembayaran Kurang") {
+            return ["45", "3"]; // Pembayaran Kurang, LSB
+        } elseif ($metodeTransaksi == 2 && 
+                  ($jenis_notran == "NTK" || $jenis_notran == "NAK" || $jenis_notran == "LSB") && 
+                  $validasi_notran == "(3-3) L/K") {
+            return ["46", "3"]; // 33 LK, LSB
+        } elseif (($metodeTransaksi == 2 || $metodeTransaksi == 8 || $metodeTransaksi == 0) && 
+                  $jenis_notran == "NTK" && 
+                  $validasi_notran != "(3-3) L/K") {
+            return ["48", "2"]; // Lolos, ALR
+        } elseif (($metodeTransaksi == 2 || $metodeTransaksi == 8 || $metodeTransaksi == 0) && 
+                  ($jenis_notran == "NTK" || $jenis_notran == "ALR") && 
+                  $validasi_notran == "Indamal") {
+            return ["49", "2"]; // Indamal, ALR
+        } elseif (($metodeTransaksi == 2 || $metodeTransaksi == 8 || $metodeTransaksi == 0) && 
+                  ($jenis_notran == "NTK" || $jenis_notran == "ALR") && 
+                  $validasi_notran == "Maju Mundur") {
+            return ["50", "2"]; // Maju Mundur, ALR
         }
 
-        if((int)$metoda_bayar == 2 && (strtoupper($jenis_notran) == 'NAK' || strtoupper($jenis_notran) == 'LSB')) {
-            return ['40','3'];
-        }else if((int)$metoda_bayar == 2 && strtoupper($jenis_notran) == 'NTK') {
-            return ['48','2'];
-        } else if((int)$metoda_bayar == 0) {
-            return ['48','2'];
+        if (array_key_exists($metodeTransaksi, $paymentMap)) {
+            return $paymentMap[$metodeTransaksi];
         }
 
-        switch((int)$metoda_bayar){
-            case 2:
-                return ['40','1'];
-            case 3:
-                return ['21','1'];
-            case 23:
-                return ['24','1'];
-            case 20:
-                return ['22','1'];
-            case 21:
-                return ['23','1'];
-            case 25:
-                return ['25','1'];
-            case 29:
-                return ['28','1'];
-            case 1:
-            case 17:
-                return ['11','1'];
-            case 12:
-            case 18:
-                return ['12','1'];
-            case 13:
-            case 19:
-                return ['13','1'];
-            case 0:
-                return ['48','1'];
-            default:
-                return ['0','0'];
-        }
+        // Return a default value or error if no match is found
+        return ["", ""];
     }
 
-    public static function transmetod_db_to_jid($metoda_bayar, $jenis_dinas=null){
+    public static function transmetod_db_to_jid($metoda_bayar, $jenis_dinas=null, $jenis_notran=null){
 
         // if((int)$jenis_notran == 81){
         //     $jenis_notran = 2;
@@ -213,7 +226,7 @@ class Utils
             case 84:
                 return ['48', '1'];
             default:
-                return ['0', '0'];
+                return ['', ''];
         }
     }
 
