@@ -9,61 +9,65 @@ use Illuminate\Support\Facades\DB;
 
 class DBRepository
 {
-    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date = null, ?string $end_date = null)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
             $query = DB::connection('mediasi')
-                        ->table("jid_transaksi_deteksi")
-                        ->select("gardu_id",
-                            "shift",
-                            "perioda",
-                            "no_resi",
-                            "gol_sah",
-                            "metoda_bayar_sah",
-                            "validasi_notran",
-                            "etoll_hash",
-                            "tarif"
-                        )
-                        ->whereBetween('tgl_lap', [$start_date, $end_date]);
+                ->table("jid_transaksi_deteksi")
+                ->select(
+                    "gardu_id",
+                    "shift",
+                    "perioda",
+                    "no_resi",
+                    "gol_sah",
+                    "metoda_bayar_sah",
+                    "validasi_notran",
+                    "etoll_hash",
+                    "tarif"
+                )
+                ->whereBetween('tgl_lap', [$start_date, $end_date]);
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
-    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date=null, ?string $end_date=null)
+    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date = null, ?string $end_date = null)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
             $query = DB::connection('mediasi')
-                    ->table("jid_rekap_at4_db")
-                    ->select("Shift",
-                        "Tunai",
-                        "DinasOpr",
-                        "DinasMitra",
-                        "DinasKary",
-                        "eMandiri",
-                        "eBri",
-                        "eBni",
-                        "eBca",
-                        "eFlo",
-                        "RpTunai", DB::raw("0 AS RpDinasOpr"),
-                        "RpDinasMitra" ,"RpDinasKary",
-                        "RpeMandiri",
-                        "RpeBri",
-                        "RpeBni",
-                        "RpeBca",
-                        "RpeFlo"
-                    )
-                    ->whereBetween('Tanggal', [$start_date, $end_date]);
+                ->table("jid_rekap_at4_db")
+                ->select(
+                    "Shift",
+                    "Tunai",
+                    "DinasOpr",
+                    "DinasMitra",
+                    "DinasKary",
+                    "eMandiri",
+                    "eBri",
+                    "eBni",
+                    "eBca",
+                    "eFlo",
+                    "RpTunai",
+                    DB::raw("0 AS RpDinasOpr"),
+                    "RpDinasMitra",
+                    "RpDinasKary",
+                    "RpeMandiri",
+                    "RpeBri",
+                    "RpeBni",
+                    "RpeBca",
+                    "RpeFlo"
+                )
+                ->whereBetween('Tanggal', [$start_date, $end_date]);
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -76,18 +80,20 @@ class DBRepository
 
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
-                                ->table('jid_transaksi_deteksi')
-                                ->select('tgl_lap',
-                                    'gerbang_id',
-                                    'jenis_notran',
-                                    'metoda_bayar_sah as metoda_bayar',
-                                    'shift', DB::raw('COUNT(id) as jumlah_data'),
-                                    DB::raw("SUM(tarif) as jumlah_tarif_mediasi")
-                                )
-                                ->whereNotNull("ruas_id")
-                                ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->where("gerbang_id", $gerbang_id*1)
-                                ->groupBy('tgl_lap', 'jenis_notran', 'gerbang_id', 'metoda_bayar_sah', 'shift');
+                ->table('jid_transaksi_deteksi')
+                ->select(
+                    'tgl_lap',
+                    'gerbang_id',
+                    'jenis_notran',
+                    'metoda_bayar_sah as metoda_bayar',
+                    'shift',
+                    DB::raw('COUNT(id) as jumlah_data'),
+                    DB::raw("SUM(tarif) as jumlah_tarif_mediasi")
+                )
+                ->whereNotNull("ruas_id")
+                ->whereBetween('tgl_lap', [$start_date, $end_date])
+                ->where("gerbang_id", $gerbang_id * 1)
+                ->groupBy('tgl_lap', 'jenis_notran', 'gerbang_id', 'metoda_bayar_sah', 'shift');
 
             // Query untuk tabel integrator
             $query_integrator = $services->getSourceCompare($start_date, $end_date, $database_schema, $gerbang_id);
@@ -99,29 +105,28 @@ class DBRepository
             // Gabungkan hasilnya
             $final_results = [];
 
-            foreach($results_integrator as $integrator)
-            {
+            foreach ($results_integrator as $integrator) {
                 list($metodaBayar, $jenisNotran) = Utils::transmetod_db_to_jid($integrator->metoda_bayar, $integrator->jenis_dinas);
 
-                $index = $results_mediasi->search(function($mediasi) use($integrator, $metodaBayar, $jenisNotran) {
-                            return $mediasi->tgl_lap == $integrator->tgl_lap && 
-                                $mediasi->gerbang_id == $integrator->gerbang_id &&
-                                $mediasi->jenis_notran == $jenisNotran &&
-                                $mediasi->metoda_bayar == $metodaBayar &&
-                                $mediasi->shift == $integrator->shift;
-                        });
+                $index = $results_mediasi->search(function ($mediasi) use ($integrator, $metodaBayar, $jenisNotran) {
+                    return $mediasi->tgl_lap == $integrator->tgl_lap &&
+                        $mediasi->gerbang_id == $integrator->gerbang_id &&
+                        $mediasi->jenis_notran == $jenisNotran &&
+                        $mediasi->metoda_bayar == $metodaBayar &&
+                        $mediasi->shift == $integrator->shift;
+                });
 
                 // Hitung jumlah integrator dan selisih
                 $jumlah_data = $integrator->jumlah_data;
                 $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
-        
+
 
                 // Membuat objek stdClass untuk hasil
                 $final_result = new \stdClass();
                 $final_result->tanggal = $integrator->tgl_lap;
                 $final_result->gerbang_id = $integrator->gerbang_id;
                 $final_result->metoda_bayar = $integrator->metoda_bayar;
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid( $metodaBayar, $jenisNotran);
+                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
                 $final_result->shift = $integrator->shift;
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
                 $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
@@ -154,7 +159,7 @@ class DBRepository
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -169,7 +174,7 @@ class DBRepository
 
             if (count($result) === 0) {
                 throw new \Exception("Data empty cannot sync");
-            } 
+            }
 
             foreach ($result as $dataItem) {
                 $query = "INSERT INTO jid_transaksi_deteksi(
@@ -210,7 +215,7 @@ class DBRepository
                     $dataItem->gerbang_id,
                     $dataItem->gardu_id,
                     $dataItem->tgl_lap,
-                    $dataItem->shift, 
+                    $dataItem->shift,
                     $dataItem->perioda,
                     $dataItem->no_resi,
                     $dataItem->gol_sah,
@@ -218,11 +223,11 @@ class DBRepository
                     $result[0], # metoda bayar sah
                     $result[1], # jenis notran
                     $dataItem->tgl_transaksi,
-                    $dataItem->KsptId, 
+                    $dataItem->KsptId,
                     $dataItem->PLTId,
                     $dataItem->tgl_entrance,
-                    $dataItem->etoll_hash, 
-                    $dataItem->tarif, 
+                    $dataItem->etoll_hash,
+                    $dataItem->tarif,
                     $dataItem->saldo
                 ];
 
@@ -241,7 +246,8 @@ class DBRepository
         }
     }
 
-    private function metoda_bayar_sah($metodaBayarSah, $jenisDinas = 0, $jenisNotran = 0) {
+    private function metoda_bayar_sah($metodaBayarSah, $jenisDinas = 0, $jenisNotran = 0)
+    {
         // Define payment map for different payment methods
         $paymentMap = [
             11 => ["21", 1],
@@ -281,18 +287,18 @@ class DBRepository
             83 => ["48", 2],
             84 => ["48", 2],
         ];
-    
+
         // Convert input values to integers
         $metodaBayarSah = (int) $metodaBayarSah;
         $jenisDinas = (int) $jenisDinas;
         $jenisNotran = (int) $jenisNotran;
-    
+
         // Handle specific case for metodaBayarSah 20
         if ($metodaBayarSah === 20) {
             // Always returns ["11", 1]
             return $paymentMap[20];
         }
-    
+
         // Handle nested mapping for metodaBayarSah 21
         if ($metodaBayarSah === 21) {
             if (isset($paymentMap[21][$jenisDinas])) {
@@ -302,7 +308,7 @@ class DBRepository
                 throw new \Exception("jenis_dinas {$jenisDinas} not found for metoda_bayar_sah 21.");
             }
         }
-    
+
         // Update payment method and transaction type based on mappings
         if (isset($paymentMap[$metodaBayarSah])) {
             if (is_array($paymentMap[$metodaBayarSah])) {
@@ -318,14 +324,14 @@ class DBRepository
         } else {
             throw new \Exception("metoda_bayar_sah {$metodaBayarSah} not found in payment_map.");
         }
-    
+
         // Update transaction type based on specific conditions
         if ($jenisNotran === 81) {
             $jenisNotran = 2;
         } elseif (in_array($jenisNotran, [80, 82])) {
             $jenisNotran = 3;
         }
-    
+
         return [$metodaBayarSah, $jenisNotran];
-    }    
+    }
 }
