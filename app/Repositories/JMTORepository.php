@@ -263,16 +263,16 @@ class JMTORepository
                         shift = VALUES(shift),
                         no_resi = VALUES(no_resi),
                         tgl_transaksi = VALUES(tgl_transaksi),
-                        inv1,
-                        inv2,
-                        inv3,
-                        inv4,
-                        inv5,
-                        inv6,
-                        inv7,
-                        inv8,
-                        inv9,
-                        inv10
+                        inv1 = VALUES(inv1),
+                        inv2 = VALUES(inv2),
+                        inv3 = VALUES(inv3),
+                        inv4 = VALUES(inv4),
+                        inv5 = VALUES(inv5),
+                        inv6 = VALUES(inv6),
+                        inv7 = VALUES(inv7),
+                        inv8 = VALUES(inv8),
+                        inv9 = VALUES(inv9),
+                        inv10 = VALUES(inv10)
                     ";
 
                 $metoda_bayar_sah = in_array($dataItem->metoda_bayar_sah, [13, 3]) ? 21 : $dataItem->metoda_bayar_sah;

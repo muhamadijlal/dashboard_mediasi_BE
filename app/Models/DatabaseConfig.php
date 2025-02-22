@@ -64,7 +64,7 @@ class DatabaseConfig
 
     public static function setCredentials($connectionName, $host, $port, $username, $password, $database)
     {
-        if (empty($host) || empty($port) || empty($username) || empty($password) || empty($database)) {
+        if (empty($host) || empty($port) || empty($username) || empty($database)) {
             throw new \Exception("All credentials must be filled.");
         }
 
