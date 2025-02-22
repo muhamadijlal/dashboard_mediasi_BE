@@ -102,36 +102,55 @@ class DBRepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            // Gabungkan hasilnya
             $final_results = [];
+            $groupedData = [];
 
             foreach ($results_integrator as $integrator) {
                 list($metodaBayar, $jenisNotran) = Utils::transmetod_db_to_jid($integrator->metoda_bayar, $integrator->jenis_dinas);
 
-                $index = $results_mediasi->search(function ($mediasi) use ($integrator, $metodaBayar, $jenisNotran) {
-                    return $mediasi->tgl_lap == $integrator->tgl_lap &&
-                        $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->jenis_notran == $jenisNotran &&
-                        $mediasi->metoda_bayar == $metodaBayar &&
-                        $mediasi->shift == $integrator->shift;
+                // Create key directly and group in single pass
+                $key = "{$integrator->tgl_lap}_{$integrator->gerbang_id}_{$metodaBayar}_{$jenisNotran}_{$integrator->shift}";
+
+                if (!isset($groupedData[$key])) {
+                    $groupedData[$key] = [
+                        'tgl_lap' => $integrator->tgl_lap,
+                        'gerbang_id' => $integrator->gerbang_id,
+                        'metoda_bayar' => $metodaBayar,
+                        'jenis_notran' => $jenisNotran,
+                        'shift' => $integrator->shift,
+                        'jumlah_data' => 0,
+                        'jumlah_tarif_integrator' => 0
+                    ];
+                }
+
+                $groupedData[$key]['jumlah_data'] += $integrator->jumlah_data;
+                $groupedData[$key]['jumlah_tarif_integrator'] += (float)$integrator->jumlah_tarif_integrator;
+            }
+
+            foreach ($groupedData as $integrator) {
+                $index = $results_mediasi->search(function ($mediasi) use ($integrator) {
+                    return $mediasi->tgl_lap == $integrator['tgl_lap'] &&
+                        $mediasi->gerbang_id == $integrator['gerbang_id'] &&
+                        $mediasi->jenis_notran == $integrator['jenis_notran'] &&
+                        $mediasi->metoda_bayar == $integrator['metoda_bayar'] &&
+                        $mediasi->shift == $integrator['shift'];
                 });
 
                 // Hitung jumlah integrator dan selisih
-                $jumlah_data = $integrator->jumlah_data;
+                $jumlah_data = $integrator['jumlah_data'];
                 $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
-
 
                 // Membuat objek stdClass untuk hasil
                 $final_result = new \stdClass();
-                $final_result->tanggal = $integrator->tgl_lap;
-                $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->metoda_bayar = $integrator->metoda_bayar;
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
-                $final_result->shift = $integrator->shift;
+                $final_result->tanggal = $integrator['tgl_lap'];
+                $final_result->gerbang_id = $integrator['gerbang_id'];
+                $final_result->metoda_bayar = $integrator['metoda_bayar'];
+                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($integrator['metoda_bayar'], $integrator['jenis_notran']);
+                $final_result->shift = $integrator['shift'];
                 $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
                 $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
                 $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
+                $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator['jumlah_tarif_integrator'] : 0;
                 $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
 
                 if ($isSelisih === '*') {
