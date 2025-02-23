@@ -114,7 +114,7 @@ class Utils
         }
     }
 
-    public static function transmetod_miy_to_jid($metoda_bayar, $jenis_notran = null, $validasi_notran = null)
+    public static function transmetod_miy_to_jid($metoda_bayar, $jenis_notran, $validasi_notran)
     {
         $metodeTransaksi = (int) $metoda_bayar;
 

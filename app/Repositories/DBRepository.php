@@ -201,7 +201,6 @@ class DBRepository
 
             return response()->json(['message' => "Syncronize data success!"], 201);
         } catch (\Exception $e) {
-            dd($e);
             DB::connection('mediasi')->rollBack();
             throw new \Exception($e->getMessage());
         }

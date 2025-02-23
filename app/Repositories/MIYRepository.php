@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\DatabaseConfig;
 use App\Models\Integrator;
+use App\Models\Services\MIY\MIYServices;
 use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 
@@ -15,13 +16,13 @@ class MIYRepository
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
             $query = DB::connection('mediasi')
-                        ->table("jid_transaksi_deteksi")
-                        ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah", "metoda_bayar_sah", "jenis_notran as validasi_notran", "etoll_hash", "tarif")
-                        ->whereBetween('tgl_lap', values: [$start_date, $end_date]);
+                ->table("jid_transaksi_deteksi")
+                ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah", "metoda_bayar_sah", "jenis_notran as validasi_notran", "etoll_hash", "tarif")
+                ->whereBetween('tgl_lap', values: [$start_date, $end_date]);
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -31,13 +32,13 @@ class MIYRepository
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
 
             $query = DB::connection('mediasi')
-                    ->table("jid_rekap_at4_miy")
-                    ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra" ,"RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
-                    ->whereBetween('Tanggal', [$start_date, $end_date]);
+                ->table("jid_rekap_at4_miy")
+                ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra", "RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
+                ->whereBetween('Tanggal', [$start_date, $end_date]);
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -49,19 +50,21 @@ class MIYRepository
 
             // Query untuk tabel mediasi
             $query_mediasi = DB::connection('mediasi')
-                                ->table("jid_transaksi_deteksi")
-                                ->select("tgl_lap",
-                                    "gerbang_id",
-                                    "metoda_bayar_sah as metoda_bayar",
-                                    "jenis_notran",
-                                    "validasi_notran",
-                                    "shift", 
-                                    DB::raw('COUNT(id) as jumlah_data'), 
-                                    DB::raw('SUM(tarif) as jumlah_tarif_mediasi'))
-                                ->whereNotNull("ruas_id")
-                                ->whereBetween('tgl_lap', [$start_date, $end_date])
-                                ->where("gerbang_id", $gerbang_id*1)
-                                ->groupBy("tgl_lap", "gerbang_id", "jenis_notran", "validasi_notran", "metoda_bayar_sah", "shift");
+                ->table("jid_transaksi_deteksi")
+                ->select(
+                    "tgl_lap",
+                    "gerbang_id",
+                    "metoda_bayar_sah as metoda_bayar",
+                    "jenis_notran",
+                    "validasi_notran",
+                    "shift",
+                    DB::raw('COUNT(id) as jumlah_data'),
+                    DB::raw('SUM(tarif) as jumlah_tarif_mediasi')
+                )
+                ->whereNotNull("ruas_id")
+                ->whereBetween('tgl_lap', [$start_date, $end_date])
+                ->where("gerbang_id", $gerbang_id * 1)
+                ->groupBy("tgl_lap", "gerbang_id", "jenis_notran", "validasi_notran", "metoda_bayar_sah", "shift");
 
             $query_integrator = $services->getSourceCompare($start_date, $end_date, $gerbang_id);
 
@@ -69,47 +72,51 @@ class MIYRepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            // Gabungkan hasilnya
-            $final_results = [];
-
-            foreach($results_integrator as $integrator) {
-                list($metodaBayar, $jenisNotran) = Utils::transmetod_miy_to_jid($integrator->metoda_bayar, $integrator->jenis_notran, $integrator->validasi_notran);
-
-                $index = $results_mediasi->search(function($mediasi) use($integrator, $metodaBayar, $jenisNotran) {
-                    return $mediasi->tgl_lap == $integrator->tgl_lap && 
-                        $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->jenis_notran == $jenisNotran &&
-                        $mediasi->metoda_bayar == $metodaBayar &&
-                        $mediasi->shift == $integrator->shift;
-                });
-
-                // Hitung jumlah integrator dan selisih
-                $jumlah_data = $integrator->jumlah_data;
-                $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
-
-                // Membuat objek stdClass untuk hasil
-                $final_result = new \stdClass();
-                $final_result->tanggal = $integrator->tgl_lap;
-                $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->metoda_bayar = $integrator->metoda_bayar;
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
-                $final_result->shift = $integrator->shift;
-                $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
-                $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
-                $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
-                $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
-
-                if ($isSelisih === '*') {
-                    $final_results[] = $final_result;
-                } elseif ($isSelisih === '1' && $selisih > 0) {
-                    $final_results[] = $final_result;
-                } elseif ($isSelisih === '0' && $selisih == 0) {
-                    $final_results[] = $final_result;
-                }
-            }
+            $final_results = MIYServices::mappingDataDB($results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
+
+            // // Gabungkan hasilnya
+            // $final_results = [];
+
+            // foreach ($results_integrator as $integrator) {
+            //     list($metodaBayar, $jenisNotran) = Utils::transmetod_miy_to_jid($integrator->metoda_bayar, $integrator->jenis_notran, $integrator->validasi_notran);
+
+            //     $index = $results_mediasi->search(function ($mediasi) use ($integrator, $metodaBayar, $jenisNotran) {
+            //         return $mediasi->tgl_lap == $integrator->tgl_lap &&
+            //             $mediasi->gerbang_id == $integrator->gerbang_id &&
+            //             $mediasi->jenis_notran == $jenisNotran &&
+            //             $mediasi->metoda_bayar == $metodaBayar &&
+            //             $mediasi->shift == $integrator->shift;
+            //     });
+
+            //     // Hitung jumlah integrator dan selisih
+            //     $jumlah_data = $integrator->jumlah_data;
+            //     $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
+
+            //     // Membuat objek stdClass untuk hasil
+            //     $final_result = new \stdClass();
+            //     $final_result->tanggal = $integrator->tgl_lap;
+            //     $final_result->gerbang_id = $integrator->gerbang_id;
+            //     $final_result->metoda_bayar = $integrator->metoda_bayar;
+            //     $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
+            //     $final_result->shift = $integrator->shift;
+            //     $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
+            //     $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
+            //     $final_result->selisih = $selisih;
+            //     $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
+            //     $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
+
+            //     if ($isSelisih === '*') {
+            //         $final_results[] = $final_result;
+            //     } elseif ($isSelisih === '1' && $selisih > 0) {
+            //         $final_results[] = $final_result;
+            //     } elseif ($isSelisih === '0' && $selisih == 0) {
+            //         $final_results[] = $final_result;
+            //     }
+            // }
+
+            // return $final_results;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -124,7 +131,7 @@ class MIYRepository
 
             return $query;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -132,7 +139,7 @@ class MIYRepository
     {
         // Switch to the correct database connection based on the request parameters
         DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
-        
+
         // Begin a transaction on the "mediasi" connection
         DB::connection('mediasi')->beginTransaction();
 
@@ -143,7 +150,7 @@ class MIYRepository
 
             if (count($result) === 0) {
                 throw new \Exception("Data empty cannot sync");
-            } 
+            }
 
             foreach ($result as $dataItem) {
                 $query = "INSERT INTO jid_transaksi_deteksi(
@@ -199,28 +206,28 @@ class MIYRepository
                             tgl_transaksi = VALUES(tgl_transaksi)
                         ";
 
-                $result = $this->metoda_bayar_sah( $dataItem->metoda_bayar_sah, $dataItem->jenis_notran);
-                
+                $result = $this->metoda_bayar_sah($dataItem->metoda_bayar_sah, $dataItem->jenis_notran);
+
                 // Bind the data for the prepared statement
                 $params = [
                     $this->asalGerbang($dataItem->asal_gerbang_id ?? NULL),
-                    $dataItem->gerbang_id, 
-                    $dataItem->gardu_id, 
-                    $dataItem->tgl_lap, 
-                    $dataItem->shift, 
-                    $dataItem->perioda, 
-                    $dataItem->no_resi, 
-                    $dataItem->gol_sah, 
-                    $this->add_zero_cardnum($dataItem->NomorKartu), 
+                    $dataItem->gerbang_id,
+                    $dataItem->gardu_id,
+                    $dataItem->tgl_lap,
+                    $dataItem->shift,
+                    $dataItem->perioda,
+                    $dataItem->no_resi,
+                    $dataItem->gol_sah,
+                    $this->add_zero_cardnum($dataItem->NomorKartu),
                     $result[0], # metoda bayar sah
                     $result[1], # jenis notran
                     $dataItem->tgl_transaksi,
-                    $dataItem->KsptId, 
+                    $dataItem->KsptId,
                     $dataItem->PLTId,
                     $dataItem->tgl_entrance,
-                    $dataItem->etoll_hash, 
-                    $dataItem->tarif, 
-                    $dataItem->Saldo, 
+                    $dataItem->etoll_hash,
+                    $dataItem->tarif,
+                    $dataItem->Saldo,
                     $dataItem->TarifInvestor1 ?? NULL,
                     $dataItem->KodeInvestor1 ?? NULL,
                     $dataItem->TarifInvestor2 ?? NULL,
@@ -245,7 +252,7 @@ class MIYRepository
                 ];
 
                 // Execute the statement
-                DB::connection("mediasi")->statement($query, $params);              
+                DB::connection("mediasi")->statement($query, $params);
             }
 
             // Jika semua operasi berhasil, commit transaksi
@@ -265,21 +272,22 @@ class MIYRepository
 
     private function add_zero_cardnum($cardNumber)
     {
-        if($cardNumber == '' ||  $cardNumber == NULL) {
+        if ($cardNumber == '' ||  $cardNumber == NULL) {
             return '';
         }
 
         $cardNumber = (string)$cardNumber;
-        if(substr($cardNumber, 0, 2) == '14') {
-            return "0".(string)$cardNumber;
+        if (substr($cardNumber, 0, 2) == '14') {
+            return "0" . (string)$cardNumber;
         }
 
         return $cardNumber;
     }
 
-    private function metoda_bayar_sah($metoda_bayar_sah, $jenis_notran) {
+    private function metoda_bayar_sah($metoda_bayar_sah, $jenis_notran)
+    {
         $metode_transaksi = (int)$metoda_bayar_sah;
-    
+
         $payment_map = [
             0 => ["48", "2"],
             1 => ["11", "1"],
@@ -298,7 +306,7 @@ class MIYRepository
             25 => ["25", "1"],
             29 => ["28", "1"],
         ];
-    
+
         if ($metode_transaksi == 2 && $jenis_notran == "NAK") {
             return ["40", "3"];
         } elseif ($metode_transaksi == 2 && $jenis_notran == "NTK") {
@@ -306,7 +314,7 @@ class MIYRepository
         } elseif (array_key_exists($metode_transaksi, $payment_map)) {
             return $payment_map[$metode_transaksi];
         }
-    
+
         return null; // Optional: in case no match is found
     }
 }
