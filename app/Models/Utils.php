@@ -241,6 +241,47 @@ class Utils
         }
     }
 
+    public static function metode_bayar_jidDB($metoda_bayar, $jenis_notran, $jenis_dinas)
+    {
+        if ((int)$metoda_bayar == 40 && (int)$jenis_notran == 3) {
+            return "jenis_transaksi IN ('80', '82')";
+        } else if ((int)$metoda_bayar == 48 && (int)$jenis_notran == 2) {
+            return "jenis_transaksi IN ('81', '83', '84')";
+        }
+
+        // metoda yang sudah di mapping dan jenis dinas yang belum di mapping
+        if ((int)$metoda_bayar == 11 && in_array((int)$jenis_dinas, [1, 20, 50])) {
+            return "jenis_transaksi IN ('21') AND jenis_dinas IN ('1', '20', '50')";
+        } else if ((int)$metoda_bayar == 12 && in_array((int)$jenis_dinas, [2, 21, 51])) {
+            return "jenis_transaksi IN ('21') AND jenis_dinas IN ('2', '21', '51')";
+        } else if ((int)$metoda_bayar == 13 && in_array((int)$jenis_dinas, [3, 22, 52])) {
+            return "jenis_transaksi IN ('21') AND jenis_dinas IN ('3', '22', '52')";
+        }
+
+        switch ((int)$metoda_bayar) {
+            case 40:
+                return "jenis_transaksi IN ('1', '2')";
+            case 21:
+                return "jenis_transaksi IN ('11', '12')";
+            case 24:
+                return "jenis_transaksi IN ('18', '19')";
+            case 22:
+                return "jenis_transaksi IN ('14', '15')";
+            case 23:
+                return "jenis_transaksi IN ('16', '17')";
+            case 25:
+                return "jenis_transaksi IN ('5', '6')";
+            case 28:
+                return "jenis_transaksi IN ('31', '32', '60', '61')";
+            case 11:
+                return "jenis_transaksi IN ('20')";
+            case 13:
+                return "jenis_transaksi IN ('22')";
+            default:
+                return null;
+        }
+    }
+
     public static function miy_investor($ruas_id)
     {
         if ((int)$ruas_id == 11) { // JAGORAWI

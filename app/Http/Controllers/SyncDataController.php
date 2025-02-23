@@ -9,7 +9,8 @@ use Yajra\DataTables\DataTables;
 
 class SyncDataController extends Controller
 {
-    public function dashboard($ruas_id, $tanggal, $gerbang_id, $metoda_bayar, $shift) {
+    public function dashboard($ruas_id, $tanggal, $gerbang_id, $metoda_bayar, $shift, $jenis_notran, $jenis_dinas)
+    {
 
         $filter = Utils::getRuasnGerbangName($ruas_id, $gerbang_id);
 
@@ -75,7 +76,9 @@ class SyncDataController extends Controller
                 'ruas_nama' => $filter->ruas_nama,
                 'start_date' => $tanggal,
                 'end_date' => $tanggal,
-                'gerbang_id' =>  $gerbang_id, 
+                'jenis_notran' => $jenis_notran,
+                'jenis_dinas' => $jenis_dinas,
+                'gerbang_id' =>  $gerbang_id,
                 'gerbang_nama' => $filter->gerbang_nama,
                 'metoda_bayar' => $metoda_bayar,
                 'shift' => $shift,
@@ -83,7 +86,9 @@ class SyncDataController extends Controller
         ]);
     }
 
-    public function getData(Request $request) {
+    public function getData(Request $request)
+    {
+
         try {
             $request->validate([
                 'ruas_id' => 'required|string',
@@ -98,18 +103,18 @@ class SyncDataController extends Controller
             $query = $repository->getDataSync($request);
 
             return DataTables::of($query)
-                        ->addColumn('tarif', function($row){
-                            return  "Rp. ".number_format($row->tarif, 0, '.', '.');
-                        })
-                        ->addIndexColumn()
-                        ->make();
-
-        } catch(\Exception $e) { 
+                ->addColumn('tarif', function ($row) {
+                    return  "Rp. " . number_format($row->tarif, 0, '.', '.');
+                })
+                ->addIndexColumn()
+                ->make();
+        } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'error' => true], 500);
         }
     }
-    public function syncData(Request $request) {
-        try{
+    public function syncData(Request $request)
+    {
+        try {
             $request->validate([
                 'ruas_id' => 'required|string',
                 'start_date' => 'required|date|date_format:Y-m-d',
@@ -121,9 +126,8 @@ class SyncDataController extends Controller
 
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
             return $repository->syncData($request);
-
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage()); 
+            throw new \Exception($e->getMessage());
         }
     }
 }

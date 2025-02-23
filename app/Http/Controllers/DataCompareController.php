@@ -89,7 +89,7 @@ class DataCompareController extends Controller
                 ->addIndexColumn()
                 ->addColumn('link', function ($row) use ($request) {
                     if ($row->selisih > 0) {
-                        return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/' . $request->ruas_id . '/' . $row->tanggal . '/' . $row->gerbang_id . '/' . $row->metoda_bayar  . '/' . $row->shift . '">' . $row->selisih . '</a>';
+                        return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/' . $request->ruas_id . '/' . $row->tanggal . '/' . $row->gerbang_id . '/' . $row->metoda_bayar  . '/' . $row->shift . '/' . $row->jenis_notran . '/' . $row->jenis_dinas . '">' . $row->selisih . '</a>';
                     } else if ($row->selisih < 0) {
                         return '<span class="text-red-500">' . $row->selisih . '</span>';
                     } else {

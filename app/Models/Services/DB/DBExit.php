@@ -2,6 +2,7 @@
 
 namespace App\Models\Services\DB;
 
+use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 
 class DBExit
@@ -14,9 +15,8 @@ class DBExit
                 'tanggal_siklus as tgl_lap',
                 'gerbang_keluar as gerbang_id',
                 'jenis_transaksi as metoda_bayar',
-                DB::raw("'' as jenis_notran"),
-                'jenis_dinas',
                 'shift',
+                'jenis_dinas',
                 DB::raw('COUNT(id) as jumlah_data'),
                 DB::raw('SUM(tarif) as jumlah_tarif_integrator')
             )
@@ -24,13 +24,15 @@ class DBExit
             ->where("gerbang_keluar", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
             ->whereNotIn('jenis_transaksi', ['91', '92'])
-            ->groupBy('tanggal_siklus', 'jenis_dinas', 'jenis_notran', 'gerbang_keluar', 'jenis_transaksi', 'shift');
+            ->groupBy('tanggal_siklus', 'gerbang_keluar', 'jenis_dinas', 'jenis_transaksi', 'shift');
 
         return $query;
     }
 
     public function getSourceSync($request, $schema)
     {
+        $whereClause = Utils::metode_bayar_jidDB($request->metoda_bayar, $request->jenis_notran, $request->jenis_dinas);
+
         $query = DB::connection('integrator_pgsql')
             ->table((string)$schema . '.tbltransaksi_exit')
             ->select(
@@ -54,11 +56,13 @@ class DBExit
                 'idpultol as PLTId',
                 DB::raw('NULL as jenis_notran')  // Replacing empty string with NULL
             )
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
             ->where('tanggal_siklus', [(string)$request->start_date, (string)$request->end_date])
             ->where('gerbang_keluar', $request->gerbang_id * 1)
-            ->where('jenis_transaksi', $request->metoda_bayar)
             ->where('shift', $request->shift);
+
+        if ($whereClause) {
+            $query->whereRaw($whereClause);
+        }
 
         return $query;
     }

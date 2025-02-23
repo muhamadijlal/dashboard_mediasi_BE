@@ -2,6 +2,7 @@
 
 namespace App\Models\Services\DB;
 
+use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 
 class DBEntranceExit
@@ -49,6 +50,8 @@ class DBEntranceExit
 
     public function getSourceSync($request, $schema)
     {
+        $whereClause = Utils::metode_bayar_jidDB($request->metoda_bayar, $request->jenis_notran, $request->jenis_dinas);
+
         $tbltransaksi_entrance = DB::connection('integrator_pgsql')
             ->table((string)$schema . '.tbltransaksi_entry')
             ->select(
@@ -72,10 +75,8 @@ class DBEntranceExit
                 'idpultol as PLTId',
                 DB::raw('NULL as jenis_notran'),
             )
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
             ->where('tanggal_siklus', [(string)$request->start_date, (string)$request->end_date])
             ->where('idgerbang', $request->gerbang_id * 1)
-            ->where('jenis_transaksi', $request->metoda_bayar)
             ->where('shift', $request->shift);
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
@@ -101,14 +102,16 @@ class DBEntranceExit
                 'idpultol as PLTId',
                 DB::raw('NULL as jenis_notran')
             )
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
             ->where('tanggal_siklus', [(string)$request->start_date, (string)$request->end_date])
             ->where('gerbang_keluar', $request->gerbang_id * 1)
-            ->where('jenis_transaksi', $request->metoda_bayar)
             ->where('shift', $request->shift);
 
-        $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);
+        if ($whereClause) {
+            $tbltransaksi_entrance->whereRaw($whereClause);
+            $tbltransaksi_exit->whereRaw($whereClause);
+        }
 
+        $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);
 
         return $query;
     }
