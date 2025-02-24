@@ -70,7 +70,7 @@ class JMTOServices
     {
         $final_results = [];
         $groupedData = Self::reducePaymethodJMTO($integratorData);
-        $groupedMediasi = Self::reduceNotran($mediasiData);
+        $groupedMediasi = Utils::reduceNotran($mediasiData);
 
         foreach ($groupedData as $key => $group) {
 

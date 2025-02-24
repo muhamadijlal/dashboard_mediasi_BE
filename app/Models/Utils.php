@@ -16,6 +16,37 @@ class Utils
         return [0, 0];
     }
 
+    public static function reduceNotran($mediasiData)
+    {
+        $groupedData = [];
+
+        foreach ($mediasiData as $mediasi) {
+            list($metodaBayar, $jenisNotran) = Self::paymethod_notran($mediasi->metoda_bayar);
+
+            // Create key directly and group in single pass
+            $key = "{$mediasi->tgl_lap}_{$mediasi->gerbang_id}_{$metodaBayar}_{$jenisNotran}_{$mediasi->shift}";
+
+            if (!isset($groupedData[$key])) {
+                $groupedData[$key] = [
+                    'tgl_lap' => $mediasi->tgl_lap,
+                    'gerbang_id' => $mediasi->gerbang_id,
+                    'metoda_bayar' => $metodaBayar,
+                    'jenis_notran' => $jenisNotran,
+                    'jenis_dinas' => 0,
+                    'shift' => $mediasi->shift,
+                    'jumlah_data' => 0,
+                    'jumlah_tarif_mediasi' => 0
+                ];
+            }
+
+            $groupedData[$key]['jumlah_data'] += $mediasi->jumlah_data;
+            $groupedData[$key]['jumlah_tarif_mediasi'] += (float)$mediasi->jumlah_tarif_mediasi;
+        }
+
+        return $groupedData;
+    }
+
+
     public static function getRuasnGerbangName($ruas_id, $gerbang_id)
     {
         $data = DB::connection("mysql")
@@ -146,15 +177,15 @@ class Utils
 
         // Handle normal payment methods
         $reversePaymentMap = [
-            "11" => "(1,17)",
-            "21" => "(3)",
-            "12" => "(12,81)",
-            "13" => "(13,19)",
-            "22" => "(20)",
-            "23" => "(21)",
-            "24" => "(23)",
-            "25" => "(25)",
-            "28" => "(29)",
+            "11" => "(1,17)", // JMC OPERASI
+            "12" => "(12,81)", // JMC KARYAWAN
+            "13" => "(13,19)", // JMC MITRA
+            "21" => "(3)", // MANDIRI
+            "22" => "(20)", // BRI
+            "23" => "(21)", // BNI
+            "24" => "(23)", // BCA
+            "25" => "(25)", // DKI
+            "28" => "(29)", // FLO
         ];
 
         $key = "$metodeTransaksi";
@@ -163,7 +194,7 @@ class Utils
         }
 
         // Return default if no match found
-        return ["", ""];
+        return "MetodeTransaksi NOT IN (1, 17, 12, 81, 13, 19, 3, 20, 21, 23, 25, 29)";
     }
 
     public static function transmetod_miy_to_jid($metoda_bayar, $jenis_notran = null, $validasi_notran = null)
@@ -171,18 +202,18 @@ class Utils
         $metodeTransaksi = (int) $metoda_bayar;
 
         $paymentMap = [
-            1 => ["11", "1"],
-            3 => ["21", "1"],
-            12 => ["12", "1"],
-            13 => ["13", "1"],
-            17 => ["11", "1"],
-            18 => ["12", "1"],
-            19 => ["13", "1"],
-            20 => ["22", "1"],
-            21 => ["23", "1"],
-            23 => ["24", "1"],
-            25 => ["25", "1"],
-            29 => ["28", "1"],
+            1 => ["11", "1"], // JMC OPERASI
+            17 => ["11", "1"], // JMC OPERASI
+            12 => ["12", "1"], // JMC KARYAWAN
+            18 => ["12", "1"], // JMC KARYAWAN
+            13 => ["13", "1"], // JMC MITRA
+            19 => ["13", "1"], // JMC MITRA
+            3 => ["21", "1"], // MANDIRI
+            20 => ["22", "1"], // BRI
+            21 => ["23", "1"], // BNI
+            23 => ["24", "1"], // BCA
+            25 => ["25", "1"], // DKI
+            29 => ["28", "1"], // FLO
         ];
 
         if (array_key_exists($metodeTransaksi, $paymentMap)) {
@@ -229,7 +260,7 @@ class Utils
         // }
 
         // Return a default value or error if no match is found
-        return ["", ""];
+        return [0, 0];
     }
 
     public static function transmetod_db_to_jid($metoda_bayar, $jenis_dinas = null, $jenis_notran = null)
