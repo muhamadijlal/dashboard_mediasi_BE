@@ -60,7 +60,12 @@ class JMTORepository
                 ->whereNotNull('ruas_id')
                 ->whereBetween('tgl_lap', [$start_date, $end_date])
                 ->where("gerbang_id", $gerbang_id * 1)
-                ->groupBy("tgl_lap", "gerbang_id", "metoda_bayar_sah", "shift");
+                ->groupBy(
+                    "tgl_lap",
+                    "gerbang_id",
+                    "metoda_bayar_sah",
+                    "shift"
+                );
 
             // Query untuk tabel integrator
             $query_integrator = DB::connection('integrator')
@@ -69,6 +74,7 @@ class JMTORepository
                     "tgl_lap",
                     "gerbang_id",
                     "shift",
+                    "ktp_jenis_id",
                     "metoda_bayar_id as metoda_bayar",
                     DB::raw("COUNT(id) as jumlah_data"),
                     DB::raw("SUM(tarif) as jumlah_tarif_integrator")
@@ -79,6 +85,7 @@ class JMTORepository
                 ->groupBy(
                     "tgl_lap",
                     "gerbang_id",
+                    "ktp_jenis_id",
                     "metoda_bayar_id",
                     "shift"
                 );
@@ -87,45 +94,7 @@ class JMTORepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            $mergeResults = JMTOServices::mergeMandiriPayMethod($results_integrator);
-
-            $final_results = [];
-
-            foreach ($mergeResults as $integrator) {
-                list($metodaBayar, $jenisNotran) = Utils::metoda_bayar_jmto_to_jid($integrator->metoda_bayar);
-
-                $index = $results_mediasi->search(function ($mediasi) use ($integrator, $metodaBayar) {
-                    return $mediasi->tgl_lap == $integrator->tgl_lap &&
-                        $mediasi->gerbang_id == $integrator->gerbang_id &&
-                        $mediasi->metoda_bayar == $metodaBayar &&
-                        $mediasi->shift == $integrator->shift;
-                });
-
-                // Hitung jumlah integrator dan selisih
-                $jumlah_data = $integrator->jumlah_data;
-                $selisih = $jumlah_data - (($index !== false) ? $results_mediasi[$index]->jumlah_data : 0);
-
-                // Membuat objek stdClass untuk hasil
-                $final_result = new \stdClass();
-                $final_result->tanggal = $integrator->tgl_lap;
-                $final_result->gerbang_id = $integrator->gerbang_id;
-                $final_result->metoda_bayar = $integrator->metoda_bayar;
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($metodaBayar, $jenisNotran);
-                $final_result->shift = $integrator->shift;
-                $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
-                $final_result->jumlah_data_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_data : 0;
-                $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = ($index !== false) ? $integrator->jumlah_tarif_integrator : 0;
-                $final_result->jumlah_tarif_mediasi = ($index !== false) ? $results_mediasi[$index]->jumlah_tarif_mediasi : 0;
-
-                if ($isSelisih === "*") {
-                    $final_results[] = $final_result;
-                } elseif ($isSelisih === "1" && $selisih > 0) {
-                    $final_results[] = $final_result;
-                } elseif ($isSelisih === "0" && $selisih == 0) {
-                    $final_results[] = $final_result;
-                }
-            }
+            $final_results = JMTOServices::mappingDataJMTO($results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {

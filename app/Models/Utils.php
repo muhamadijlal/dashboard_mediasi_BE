@@ -6,6 +6,16 @@ use Illuminate\Support\Facades\DB;
 
 class Utils
 {
+    public static function paymethod_notran($metoda_bayar)
+    {
+        $metoda_transaksi = (int) $metoda_bayar;
+        if (in_array($metoda_transaksi, [11, 12, 13, 21, 22, 23, 24, 25, 28])) {
+            return [$metoda_bayar, 1];
+        }
+
+        return [0, 0];
+    }
+
     public static function getRuasnGerbangName($ruas_id, $gerbang_id)
     {
         $data = DB::connection("mysql")
@@ -19,15 +29,14 @@ class Utils
         return $data;
     }
 
-    public static function metoda_bayar_jmto_to_jid($metoda_bayar, $jenis_notran = null, $jenis_ktp = null)
+    public static function transmetod_jmto_to_jid($metoda_bayar, $jenis_notran = null, $jenis_ktp = null)
     {
         $metode_transaksi = (int) $metoda_bayar;
 
         // Mapping umum untuk transaksi yang memiliki kondisi jenis_notran == 1
         $payment_map_normal = [
-            1 => ['40', '3'],
             3 => ['21', '1'],
-            21 => ['21', '1'],
+            13 => ['21', '1'],
             7 => ['24', '1'],
             4 => ['22', '1'],
             5 => ['23', '1'],
@@ -40,12 +49,18 @@ class Utils
             return $payment_map_normal[$metode_transaksi];
         }
 
-        // // Mapping untuk transaksi dengan metode 2 berdasarkan jenis_ktp
-        // $payment_map_metode_2 = [
-        //     1 => ['11', '1'],
-        //     2 => ['12', '1'],
-        //     3 => ['13', '1'],
-        // ];
+        // Mapping untuk transaksi dengan metode 2 berdasarkan jenis_ktp
+        $payment_map_metode_2 = [
+            1 => ['11', '1'],
+            2 => ['12', '1'],
+            3 => ['13', '1'],
+        ];
+
+        // Cek apakah metode transaksi adalah 2, dan sesuaikan dengan jenis_ktp
+        if ($metode_transaksi == 2 && isset($payment_map_metode_2[$jenis_ktp])) {
+            return $payment_map_metode_2[$jenis_ktp];
+        }
+
 
         // // Mapping untuk transaksi dengan metode 0 dan jenis_notran 7, 8, 9
         // $payment_map_metode_0 = [
@@ -54,18 +69,13 @@ class Utils
         //     9 => ['50', '2'],
         // ];
 
-        // // Cek apakah metode transaksi adalah 2, dan sesuaikan dengan jenis_ktp
-        // if ($metode_transaksi == 2 && isset($payment_map_metode_2[$jenis_ktp])) {
-        //     return $payment_map_metode_2[$jenis_ktp];
-        // }
-
         // // Cek apakah metode transaksi adalah 0 dan jenis_notran 7, 8, atau 9
         // if ($metode_transaksi == 0 && isset($payment_map_metode_0[$jenis_notran])) {
         //     return $payment_map_metode_0[$jenis_notran];
         // }
 
         // Jika tidak ada kondisi yang cocok, kembalikan nilai default (0, 0)
-        return ['', ''];
+        return [0, 0];
     }
 
     public static function metode_bayar_jid($metoda_bayar, $jenis_notran = null)
