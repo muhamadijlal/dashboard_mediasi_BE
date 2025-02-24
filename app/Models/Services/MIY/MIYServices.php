@@ -46,7 +46,7 @@ class MIYServices
         foreach ($groupedData as $key => $group) {
             // Hitung jumlah integrator dan selisih
             $jumlah_data = $group['jumlah_data'];
-            $selisih = $jumlah_data - ($groupedMediasi[$key] ? $groupedMediasi[$key]['jumlah_data'] : 0);
+            $selisih = $jumlah_data - (isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_data'] : 0);
 
             // Membuat objek stdClass untuk hasil
             $final_result = new \stdClass();
@@ -58,10 +58,10 @@ class MIYServices
             $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar'], $group['jenis_notran']);
             $final_result->shift = $group['shift'];
             $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
-            $final_result->jumlah_data_mediasi = $groupedMediasi[$key] ? $groupedMediasi[$key]['jumlah_data'] : 0;
+            $final_result->jumlah_data_mediasi = isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_data'] : 0;
             $final_result->selisih = $selisih;
-            $final_result->jumlah_tarif_integrator = $groupedMediasi[$key] ? $group['jumlah_tarif_integrator'] : 0;
-            $final_result->jumlah_tarif_mediasi = $groupedMediasi[$key] ? $groupedMediasi[$key]['jumlah_tarif_mediasi'] : 0;
+            $final_result->jumlah_tarif_integrator = isset($groupedMediasi[$key]) ? $group['jumlah_tarif_integrator'] : 0;
+            $final_result->jumlah_tarif_mediasi = isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_tarif_mediasi'] : 0;
 
             if ($filterSelisih === '*') {
                 $final_results[] = $final_result;
