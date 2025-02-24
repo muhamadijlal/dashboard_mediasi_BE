@@ -11,7 +11,7 @@ class MIYServices
         $groupedData = [];
 
         foreach ($integratorData as $integrator) {
-            list($metodaBayar, $jenisNotran) = Utils::transmetod_miy_to_jid($integrator->metoda_bayar, $integrator->jenis_notran, $integrator->validasi_notran);
+            list($metodaBayar, $jenisNotran) = Utils::transmetod_miy_to_jid($integrator->metoda_bayar);
 
             // Create key directly and group in single pass
             $key = "{$integrator->tgl_lap}_{$integrator->gerbang_id}_{$metodaBayar}_{$jenisNotran}_{$integrator->shift}";
@@ -23,7 +23,7 @@ class MIYServices
                     'metoda_bayar' => $metodaBayar,
                     'metoda_bayar_old' => $integrator->metoda_bayar,
                     'jenis_notran' => $jenisNotran,
-                    'jenis_dinas' => $integrator->jenis_dinas,
+                    'jenis_dinas' => 0,
                     'shift' => $integrator->shift,
                     'jumlah_data' => 0,
                     'jumlah_tarif_integrator' => 0
@@ -37,7 +37,7 @@ class MIYServices
         return $groupedData;
     }
 
-    public static function mappingDataDB($integratorData, $mediasiData, $filterSelisih)
+    public static function mappingDataMIY($integratorData, $mediasiData, $filterSelisih)
     {
         $final_results = [];
         $groupedData = Self::reducePaymethodMIY($integratorData);
@@ -46,7 +46,6 @@ class MIYServices
             $index = $mediasiData->search(function ($item) use ($group) {
                 return $item->tgl_lap == $group['tgl_lap'] &&
                     $item->gerbang_id == $group['gerbang_id'] &&
-                    $item->jenis_notran == $group['jenis_notran'] &&
                     $item->metoda_bayar == $group['metoda_bayar'] &&
                     $item->shift == $group['shift'];
             });

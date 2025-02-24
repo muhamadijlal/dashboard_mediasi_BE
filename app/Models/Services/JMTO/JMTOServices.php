@@ -2,7 +2,8 @@
 
 namespace App\Models\Services\JMTO;
 
-class JMTOServices {
+class JMTOServices
+{
     public static function mergeMandiriPayMethod($collection)
     {
         // Separate and filter the collections for metoda_bayar = 3 and metoda_bayar = 13

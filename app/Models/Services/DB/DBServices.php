@@ -11,7 +11,7 @@ class DBServices
         $groupedData = [];
 
         foreach ($integratorData as $integrator) {
-            list($metodaBayar, $jenisNotran) = Utils::transmetod_db_to_jid($integrator->metoda_bayar, $integrator->jenis_dinas);
+            list($metodaBayar, $jenisNotran) = Utils::transmetod_db_to_jid($integrator->metoda_bayar);
 
             // Create key directly and group in single pass
             $key = "{$integrator->tgl_lap}_{$integrator->gerbang_id}_{$metodaBayar}_{$jenisNotran}_{$integrator->shift}";
@@ -23,7 +23,6 @@ class DBServices
                     'metoda_bayar' => $metodaBayar,
                     'metoda_bayar_old' => $integrator->metoda_bayar,
                     'jenis_notran' => $jenisNotran,
-                    'jenis_dinas' => $integrator->jenis_dinas,
                     'shift' => $integrator->shift,
                     'jumlah_data' => 0,
                     'jumlah_tarif_integrator' => 0
@@ -46,7 +45,6 @@ class DBServices
             $index = $mediasiData->search(function ($item) use ($group) {
                 return $item->tgl_lap == $group['tgl_lap'] &&
                     $item->gerbang_id == $group['gerbang_id'] &&
-                    $item->jenis_notran == $group['jenis_notran'] &&
                     $item->metoda_bayar == $group['metoda_bayar'] &&
                     $item->shift == $group['shift'];
             });
@@ -61,7 +59,6 @@ class DBServices
             $final_result->gerbang_id = $group['gerbang_id'];
             $final_result->metoda_bayar = $group['metoda_bayar'];
             $final_result->jenis_notran = $group['jenis_notran'];
-            $final_result->jenis_dinas = $group['jenis_dinas'];
             $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar'], $group['jenis_notran']);
             $final_result->shift = $group['shift'];
             $final_result->jumlah_data_integrator = $jumlah_data ?? 0;

@@ -2,6 +2,7 @@
 
 namespace App\Models\Services\MIY;
 
+use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 
 class MIYEntrance
@@ -15,20 +16,21 @@ class MIYEntrance
                 "GerbangId as gerbang_id",
                 "MetodeTransaksi as metoda_bayar",
                 "Shift as shift",
-                "JenisNotran as jenis_notran",
-                "ValidasiNotran as validasi_notran",
                 DB::raw('COUNT(id) as jumlah_data'),
                 DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
             )
             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
             ->where("GerbangId", $gerbang_id * 1)
-            ->groupBy("TanggalLaporan", "JenisNotran", "ValidasiNotran", "GerbangId", "MetodeTransaksi", "Shift");
+            ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
+
 
         return $query;
     }
 
     public function getSourceSync($request)
     {
+        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar, $request->jenis_notran);
+
         $query = DB::connection('integrator')
             ->table("lalin_entrance")
             ->select(
@@ -48,12 +50,16 @@ class MIYEntrance
                 'PLTId',
                 'MetodeTransaksi as metoda_bayar_sah',
                 'JenisNotran as jenis_notran',
+                'ValidasiNotran as validasi_notran',
                 DB::raw('"" as etoll_hash')
             )
             ->whereBetween('TanggalLaporan', [$request['start_date'], $request['end_date']])
             ->where('GerbangId', $request['gerbang_id'] * 1)
-            ->where('MetodeTransaksi', $request['metoda_bayar'])
             ->where('Shift', $request['shift']);
+
+        if ($whereClause) {
+            $query->whereRaw($whereClause);
+        }
 
         return $query;
     }

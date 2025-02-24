@@ -107,8 +107,6 @@
                             d.ruas_id = params.ruas_id;
                             d.start_date = params.start_date;
                             d.end_date = params.end_date;
-                            d.jenis_notran = params.jenis_notran;
-                            d.jenis_dinas = params.jenis_dinas;
                             d.gerbang_id = params.gerbang_id;
                             d.metoda_bayar = params.metoda_bayar;
                             d.shift = params.shift;

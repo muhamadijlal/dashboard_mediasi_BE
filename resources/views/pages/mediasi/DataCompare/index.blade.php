@@ -158,6 +158,7 @@
                             return xhr;
                         }
                     },
+                    order: [[4, 'asc']],
                     columns: columns,
                     serverSide: true,
                     scrollX: true,

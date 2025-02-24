@@ -42,7 +42,7 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
         });
 
         Route::prefix("sync")->name("sync.")->group(function () {
-            Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{metoda_bayar?}/{shift?}/{jenis_notran?}/{jenis_dinas?}", [SyncDataController::class, "dashboard"])->name("dashboard");
+            Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{metoda_bayar?}/{shift?}", [SyncDataController::class, "dashboard"])->name("dashboard");
             Route::post("/getData", [SyncDataController::class, "getData"])->name("getData");
             Route::post("/syncData", [SyncDataController::class, "syncData"])->name("syncData");
         });
