@@ -141,7 +141,6 @@ class DBRepository
             foreach ($result as $dataItem) {
                 list($metoda_bayar, $jenis_notran) =  Utils::transmetod_db_to_jid($dataItem->metoda_bayar_sah);
 
-
                 $query = "INSERT INTO jid_transaksi_deteksi(
                     gerbang_id,
                     gardu_id,

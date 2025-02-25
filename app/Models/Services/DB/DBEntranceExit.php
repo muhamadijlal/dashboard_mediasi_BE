@@ -19,7 +19,6 @@ class DBEntranceExit
                 DB::raw('COUNT(id) as jumlah_data'),
                 DB::raw('0 as jumlah_tarif_integrator')
             )
-            // ->whereNotNull('ruas_id')
             ->where("idgerbang", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
             ->whereNotIn('jenis_transaksi', ['91', '92'])
@@ -35,7 +34,6 @@ class DBEntranceExit
                 DB::raw('COUNT(id) as jumlah_data'),
                 DB::raw('SUM(tarif) as jumlah_tarif_integrator')
             )
-            // ->whereNotNull('ruas_id')
             ->where("gerbang_keluar", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
             ->whereNotIn('jenis_transaksi', ['91', '92'])

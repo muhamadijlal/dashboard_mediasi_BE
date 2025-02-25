@@ -210,26 +210,23 @@ class Utils
                 return ['11', '1'];
             case 22:
                 return ['13', '1'];
-            case 80:
-            case 82:
-                return ['40', '3'];
-            case 81:
-            case 83:
-            case 84:
-                return ['48', '2'];
             default:
-                return ['', ''];
+                return [0, 0];
         }
     }
 
     public static function metode_bayar_jidDB($metoda_bayar, $jenis_notran = null, $jenis_dinas = null)
     {
+
+        // $payMethodJMC = [
+        //     "21_1"
+        // ]
+
         $reversePaymentMap = [
-            "40" => "('1','2')",
             "21" => "('11','12')",
             "24" => "('18','19')",
             "22" => "('14','15')",
-            "23" => "('16','17')",
+            "23" => "('9','16','17')",
             "25" => "('5','6')",
             "28" => "('31','32','60','61')",
             "11" => "('20')",
@@ -242,7 +239,7 @@ class Utils
         }
 
         // Return default if no match found
-        return ["", ""];
+        return "jenis_transaksi IN ('40','3','80','82','81','83','84')";
     }
 
     public static function jmto_investor($ruas_id)
