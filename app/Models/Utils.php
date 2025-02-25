@@ -60,7 +60,7 @@ class Utils
         return $data;
     }
 
-    public static function transmetod_jmto_to_jid($metoda_bayar, $jenis_notran = null, $jenis_ktp = null)
+    public static function transmetod_jmto_to_jid($metoda_bayar, $jenis_ktp)
     {
         $metode_transaksi = (int) $metoda_bayar;
 
@@ -96,7 +96,7 @@ class Utils
         return [0, 0];
     }
 
-    public static function metode_bayar_jid($metoda_bayar, $jenis_notran = null)
+    public static function metode_bayar_jid($metoda_bayar)
     {
         // Default cases in a switch
         switch ((int)$metoda_bayar) {
@@ -125,7 +125,7 @@ class Utils
         }
     }
 
-    public static function metode_bayar_jidMIY($metoda_bayar, $jenis_notran = null)
+    public static function metode_bayar_jidMIY($metoda_bayar)
     {
         $metodeTransaksi = (int) $metoda_bayar;
 
@@ -151,7 +151,7 @@ class Utils
         return "MetodeTransaksi NOT IN (1, 17, 12, 81, 13, 19, 3, 20, 21, 23, 25, 29)";
     }
 
-    public static function transmetod_miy_to_jid($metoda_bayar, $jenis_notran = null, $validasi_notran = null)
+    public static function transmetod_miy_to_jid($metoda_bayar)
     {
         $metodeTransaksi = (int) $metoda_bayar;
 
@@ -178,14 +178,11 @@ class Utils
         return [0, 0];
     }
 
-    public static function transmetod_db_to_jid($metoda_bayar, $jenis_dinas = null, $jenis_notran = null)
+    public static function transmetod_db_to_jid($metoda_bayar)
     {
 
         // Handle other cases
         switch ((int)$metoda_bayar) {
-            case 1:
-            case 2:
-                return ['40', '1'];
             case 11:
             case 12:
                 return ['21', '1'];
@@ -208,6 +205,8 @@ class Utils
                 return ['28', '1'];
             case 20:
                 return ['11', '1'];
+            case 21:
+                return ['12', '1'];
             case 22:
                 return ['13', '1'];
             default:
@@ -215,21 +214,17 @@ class Utils
         }
     }
 
-    public static function metode_bayar_jidDB($metoda_bayar, $jenis_notran = null, $jenis_dinas = null)
+    public static function metode_bayar_jidDB($metoda_bayar)
     {
-
-        // $payMethodJMC = [
-        //     "21_1"
-        // ]
-
         $reversePaymentMap = [
             "21" => "('11','12')",
             "24" => "('18','19')",
             "22" => "('14','15')",
-            "23" => "('9','16','17')",
+            "23" => "('16','17')",
             "25" => "('5','6')",
             "28" => "('31','32','60','61')",
             "11" => "('20')",
+            "12" => "('21')",
             "13" => "('22')",
         ];
 

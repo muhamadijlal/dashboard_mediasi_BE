@@ -21,7 +21,7 @@ class DBEntranceExit
             )
             ->where("idgerbang", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
+            ->whereNotIn('jenis_transaksi', ['91', '92', '10', '4', '9', '8'])
             ->groupBy('tanggal_siklus', 'idgerbang', 'jenis_transaksi', 'shift');
 
         $tbltransaksi_exit = DB::connection('integrator_pgsql')
@@ -36,7 +36,7 @@ class DBEntranceExit
             )
             ->where("gerbang_keluar", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
+            ->whereNotIn('jenis_transaksi', ['91', '92', '10', '4', '9', '8'])
             ->groupBy('tanggal_siklus', 'gerbang_keluar', 'jenis_transaksi', 'shift');
 
         $query = $tbltransaksi_exit->unionAll($tbltransaksi_entrance);

@@ -22,7 +22,7 @@ class DBEntrance
             // ->whereNotNull('ruas_id')
             ->where("idgerbang", $gerbang_id * 1)
             ->whereBetween('tanggal_siklus', [(string)$start_date, (string)$end_date])
-            ->whereNotIn('jenis_transaksi', ['91', '92'])
+            ->whereNotIn('jenis_transaksi', ['91', '92', '10', '4', '9', '8'])
             ->groupBy('tanggal_siklus', 'idgerbang', 'jenis_transaksi', 'shift');
 
 
