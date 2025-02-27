@@ -96,6 +96,29 @@ class Utils
         return [0, 0];
     }
 
+    public static function metode_bayar_jidJMTO($metoda_bayar)
+    {
+        $reversePaymentMap = [
+            "24" => "(7, 1)",
+            "22" => "(4, 1)",
+            "23" => "(5, 1)",
+            "25" => "(8, 1)",
+            "28" => "(41, 1)",
+        ];
+
+        $key = "$metoda_bayar";
+        if($metoda_bayar == '21'){
+            return "metoda_bayar_id IN (3, 13)";
+        }
+
+        if (isset($reversePaymentMap[$key])) {
+            return "metoda_bayar_id IN " . $reversePaymentMap[$key]; // Normal transaction without special status
+        }
+
+        // Return default if no match found
+        return "metoda_bayar_id IN (1, 2, 0)";
+    }
+
     public static function metode_bayar_jid($metoda_bayar)
     {
         // Default cases in a switch

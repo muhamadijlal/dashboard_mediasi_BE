@@ -107,6 +107,8 @@ class JMTORepository
         try {
             DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id, 'integrator');
 
+            $whereClause = Utils::metode_bayar_jidJMTO($request->metoda_bayar);
+
             $query = DB::connection("integrator")
                 ->table("tbl_transaksi_deteksi")
                 ->select(
@@ -145,12 +147,9 @@ class JMTORepository
                 ->where("gerbang_id", $request->gerbang_id * 1)
                 ->where("shift", $request->shift);
 
-            // special case for metoda_bayar Mandiri (3, 13)
-            if ((int)$request->metoda_bayar == 21) {
-                $query->whereIn("metoda_bayar_id", [13, 3]);
-            } else {
-                $query->where("metoda_bayar_id", $request->metoda_bayar);
-            }
+                if ($whereClause) {
+                    $query->whereRaw($whereClause);
+                }
 
             return $query;
         } catch (\Exception $e) {
