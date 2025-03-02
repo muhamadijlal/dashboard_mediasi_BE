@@ -60,6 +60,9 @@
   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <link href="https://cdn.datatables.net/2.2.2/css/dataTables.tailwindcss.css" rel="stylesheet" />
+    @isset($link)
+        {{ $link }}
+    @endisset
 
   <!-- Scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
