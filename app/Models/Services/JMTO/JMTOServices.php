@@ -6,37 +6,7 @@ use App\Models\Utils;
 
 class JMTOServices
 {
-    private static function reduceNotran($mediasiData)
-    {
-        $groupedData = [];
-
-        foreach ($mediasiData as $mediasi) {
-            list($metodaBayar, $jenisNotran) = Utils::paymethod_notran($mediasi->metoda_bayar);
-
-            // Create key directly and group in single pass
-            $key = "{$mediasi->tgl_lap}_{$mediasi->gerbang_id}_{$metodaBayar}_{$jenisNotran}_{$mediasi->shift}";
-
-            if (!isset($groupedData[$key])) {
-                $groupedData[$key] = [
-                    'tgl_lap' => $mediasi->tgl_lap,
-                    'gerbang_id' => $mediasi->gerbang_id,
-                    'metoda_bayar' => $metodaBayar,
-                    'jenis_notran' => $jenisNotran,
-                    'jenis_dinas' => 0,
-                    'shift' => $mediasi->shift,
-                    'jumlah_data' => 0,
-                    'jumlah_tarif_mediasi' => 0
-                ];
-            }
-
-            $groupedData[$key]['jumlah_data'] += $mediasi->jumlah_data;
-            $groupedData[$key]['jumlah_tarif_mediasi'] += (float)$mediasi->jumlah_tarif_mediasi;
-        }
-
-        return $groupedData;
-    }
-
-    private static function reducePaymethodJMTO($integratorData)
+      private static function reducePaymethodJMTO($integratorData)
     {
         $groupedData = [];
 
@@ -66,7 +36,7 @@ class JMTOServices
         return $groupedData;
     }
 
-    public static function mappingDataJMTO($integratorData, $mediasiData, $filterSelisih)
+    public static function mappingDataJMTO($ruas_id, $integratorData, $mediasiData, $filterSelisih)
     {
         $final_results = [];
         $groupedData = Self::reducePaymethodJMTO($integratorData);
@@ -82,10 +52,11 @@ class JMTOServices
             $final_result = new \stdClass();
             $final_result->tanggal = $group['tgl_lap'];
             $final_result->gerbang_id = $group['gerbang_id'];
+            $final_result->gerbang_nama = Utils::gerbang_nama($ruas_id, $group['gerbang_id']);
             $final_result->metoda_bayar = $group['metoda_bayar'];
             $final_result->jenis_notran = $group['jenis_notran'];
             $final_result->jenis_dinas = $group['jenis_dinas'];
-            $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar'], $group['jenis_notran']);
+            $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar']);
             $final_result->shift = $group['shift'];
             $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
             $final_result->jumlah_data_mediasi = $groupedMediasi[$key] ? $groupedMediasi[$key]['jumlah_data'] : 0;

@@ -28,6 +28,12 @@ class DataCompareController extends Controller
                     'searchable' => true,
                 ],
                 [
+                    'title' => 'Gerbang Nama',
+                    'data' => 'gerbang_nama',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
                     'title' => 'Gerbang ID',
                     'data' => 'gerbang_id',
                     'orderable' => true,

@@ -94,7 +94,7 @@ class JMTORepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            $final_results = JMTOServices::mappingDataJMTO($results_integrator, $results_mediasi, $isSelisih);
+            $final_results = JMTOServices::mappingDataJMTO($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {

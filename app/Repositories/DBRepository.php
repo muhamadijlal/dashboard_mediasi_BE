@@ -103,7 +103,7 @@ class DBRepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            $final_results = DBServices::mappingDataDB($results_integrator, $results_mediasi, $isSelisih);
+            $final_results = DBServices::mappingDataDB($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {

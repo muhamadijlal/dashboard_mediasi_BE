@@ -36,7 +36,7 @@ class DBServices
         return $groupedData;
     }
 
-    public static function mappingDataDB($integratorData, $mediasiData, $filterSelisih)
+    public static function mappingDataDB($ruas_id, $integratorData, $mediasiData, $filterSelisih)
     {
         $final_results = [];
         $groupedData = Self::reducePaymethodDB($integratorData);
@@ -50,10 +50,11 @@ class DBServices
             // Membuat objek stdClass untuk hasil
             $final_result = new \stdClass();
             $final_result->tanggal = $group['tgl_lap'];
+            $final_result->gerbang_nama = Utils::gerbang_nama($ruas_id, $group['gerbang_id']);
             $final_result->gerbang_id = $group['gerbang_id'];
             $final_result->metoda_bayar = $group['metoda_bayar'];
             $final_result->jenis_notran = $group['jenis_notran'];
-            $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar'], $group['jenis_notran']);
+            $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar']);
             $final_result->shift = $group['shift'];
             $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
             $final_result->jumlah_data_mediasi = isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_data'] : 0;

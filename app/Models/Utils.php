@@ -260,6 +260,19 @@ class Utils
         return "jenis_transaksi IN ('40','3','80','82','81','83','84')";
     }
 
+    public static function gerbang_nama($ruas_id, $gerbang_id)
+    {
+        $data = DB::connection("mysql")
+            ->table('tbl_ruas')
+            ->select('gerbang_nama')
+            ->where('ruas_id', $ruas_id)
+            ->where('gerbang_id', $gerbang_id * 1)
+            ->where('status', 1)
+            ->first();
+
+        return $data->gerbang_nama;
+    }
+
     public static function jmto_investor($ruas_id)
     {
         if ((int)$ruas_id == 11) { // JAGORAWI

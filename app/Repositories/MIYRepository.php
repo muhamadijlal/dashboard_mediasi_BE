@@ -70,7 +70,7 @@ class MIYRepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            $final_results = MIYServices::mappingDataMIY($results_integrator, $results_mediasi, $isSelisih);
+            $final_results = MIYServices::mappingDataMIY($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {
