@@ -28,7 +28,7 @@ class MIYExit
 
     public function getSourceSync($request)
     {
-        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar, $request->jenis_notran);
+        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar);
 
         $query = DB::connection('integrator')
             ->table("lalin_settlement")

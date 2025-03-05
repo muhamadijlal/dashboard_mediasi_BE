@@ -32,7 +32,7 @@ class JMTORepository
 
             $query = DB::connection('mediasi')
                 ->table("jid_rekap_at4")
-                ->select("Shift", "Tunai", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra", "RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
+                ->select("Shift", "Tunai", "Tanggal", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra", "RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
                 ->whereBetween('Tanggal', [$start_date, $end_date]);
 
             return $query;

@@ -45,6 +45,8 @@ class DBRepository
                 ->table("jid_rekap_at4_db")
                 ->select(
                     "Shift",
+                    "Tanggal",
+                    "Shift",
                     "Tunai",
                     "DinasOpr",
                     "DinasMitra",
@@ -102,7 +104,7 @@ class DBRepository
             // Mendapatkan hasil dari query mediasi dan integrator
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
-
+            
             $final_results = DBServices::mappingDataDB($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;

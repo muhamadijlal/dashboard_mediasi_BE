@@ -22,13 +22,13 @@ class MIYOpen
             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
             ->where("GerbangId", $gerbang_id * 1)
             ->groupBy("TanggalLaporan", "GerbangId", "MetodeTransaksi", "Shift");
-
+        
         return $query;
     }
 
     public function getSourceSync($request)
     {
-        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar, $request->jenis_notran);
+        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar);
         // dd($request->metoda_bayar, $request->jenis_notran, $whereClause);
 
         $query = DB::connection('integrator')

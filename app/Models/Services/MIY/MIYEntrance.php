@@ -17,7 +17,7 @@ class MIYEntrance
                 "MetodeTransaksi as metoda_bayar",
                 "Shift as shift",
                 DB::raw('COUNT(id) as jumlah_data'),
-                DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
+                DB::raw("0 as jumlah_tarif_integrator")
             )
             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
             ->where("GerbangId", $gerbang_id * 1)
@@ -29,7 +29,7 @@ class MIYEntrance
 
     public function getSourceSync($request)
     {
-        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar, $request->jenis_notran);
+        $whereClause = Utils::metode_bayar_jidMIY($request->metoda_bayar);
 
         $query = DB::connection('integrator')
             ->table("lalin_entrance")

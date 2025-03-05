@@ -19,6 +19,12 @@ class RekapAT4Controller extends Controller
                     'searchable' => false,
                 ],
                 [
+                    'title' => 'Tanggal Laporan',
+                    'data' => 'Tanggal',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
                     'title' => 'Shift',
                     'data' => 'Shift',
                     'orderable' => true,
