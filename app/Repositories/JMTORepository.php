@@ -16,7 +16,18 @@ class JMTORepository
 
             $query = DB::connection('mediasi')
                 ->table("jid_transaksi_deteksi")
-                ->select("gardu_id", "shift", "perioda", "no_resi", "gol_sah", "metoda_bayar_sah", "validasi_notran", "etoll_hash", "tarif")
+                ->select("gardu_id",
+                    "shift",
+                    "perioda",
+                    "no_resi",
+                    "tgl_lap",
+                    "tgl_transaksi",
+                    "gol_sah",
+                    "metoda_bayar_sah",
+                    "validasi_notran",
+                    "etoll_hash",
+                    "tarif"
+                )
                 ->whereBetween('tgl_lap', [$start_date, $end_date]);
 
             return $query;

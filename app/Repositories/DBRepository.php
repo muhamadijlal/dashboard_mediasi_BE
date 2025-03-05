@@ -20,6 +20,8 @@ class DBRepository
                 ->select(
                     "gardu_id",
                     "shift",
+                    "tgl_lap",
+                    "tgl_transaksi",
                     "perioda",
                     "no_resi",
                     "gol_sah",

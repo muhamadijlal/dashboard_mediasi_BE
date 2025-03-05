@@ -21,6 +21,18 @@ class TransactionDetailController extends Controller
                     'searchable' => false,
                 ],
                 [
+                    'title' => 'Tanggal Laporan',
+                    'data' => 'tgl_lap',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
+                    'title' => 'Waktu Transaksi',
+                    'data' => 'tgl_transaksi',
+                    'orderable' => true,
+                    'searchable' => true,
+                ],
+                [
                     'title' => 'Gardu',
                     'data' => 'gardu_id',
                     'orderable' => true,
