@@ -16,7 +16,7 @@ class DBExit
                 'gerbang_keluar as gerbang_id',
                 'jenis_transaksi as metoda_bayar',
                 'shift',
-                DB::raw('COUNT(id) as jumlah_data'),
+                DB::raw('COUNT(*) as jumlah_data'),
                 DB::raw('SUM(tarif) as jumlah_tarif_integrator')
             )
             // ->whereNotNull('ruas_id')

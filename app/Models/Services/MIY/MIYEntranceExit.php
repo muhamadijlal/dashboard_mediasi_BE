@@ -17,7 +17,7 @@ class MIYEntranceExit
                 "GerbangId as gerbang_id",
                 "MetodeTransaksi as metoda_bayar",
                 "Shift as shift",
-                DB::raw('COUNT(id) as jumlah_data'),
+                DB::raw('COUNT(*) as jumlah_data'),
                 DB::raw("SUM(Tarif) as jumlah_tarif_integrator")
             )
             ->whereBetween('TanggalLaporan', [$start_date, $end_date])
@@ -32,7 +32,7 @@ class MIYEntranceExit
                 "GerbangId as gerbang_id",
                 "MetodeTransaksi as metoda_bayar",
                 "Shift as shift",
-                DB::raw('COUNT(id) as jumlah_data'),
+                DB::raw('COUNT(*) as jumlah_data'),
                 DB::raw("0 as jumlah_tarif_integrator")
             )
             ->whereBetween('TanggalLaporan', [$start_date, $end_date])

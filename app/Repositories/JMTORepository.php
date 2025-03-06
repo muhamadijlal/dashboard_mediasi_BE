@@ -65,7 +65,7 @@ class JMTORepository
                     "gerbang_id",
                     "shift",
                     "metoda_bayar_sah as metoda_bayar",
-                    DB::raw("COUNT(id) as jumlah_data"),
+                    DB::raw("COUNT(*) as jumlah_data"),
                     DB::raw("SUM(tarif) as jumlah_tarif_mediasi")
                 )
                 ->whereNotNull('ruas_id')

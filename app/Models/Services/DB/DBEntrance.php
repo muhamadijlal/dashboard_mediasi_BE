@@ -16,7 +16,7 @@ class DBEntrance
                 'idgerbang as gerbang_id',
                 'jenis_transaksi as metoda_bayar',
                 'shift',
-                DB::raw('COUNT(id) as jumlah_data'),
+                DB::raw('COUNT(*) as jumlah_data'),
                 DB::raw('0 as jumlah_tarif_integrator')
             )
             // ->whereNotNull('ruas_id')

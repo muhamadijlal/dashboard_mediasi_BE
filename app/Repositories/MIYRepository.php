@@ -67,7 +67,7 @@ class MIYRepository
                     "gerbang_id",
                     "metoda_bayar_sah as metoda_bayar",
                     "shift",
-                    DB::raw('COUNT(id) as jumlah_data'),
+                    DB::raw('COUNT(*) as jumlah_data'),
                     DB::raw('SUM(tarif) as jumlah_tarif_mediasi')
                 )
                 ->whereNotNull("ruas_id")
