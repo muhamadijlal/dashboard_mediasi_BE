@@ -1,6 +1,7 @@
 const path = window.location.pathname;
 const segments = path.split('/');
 const type = segments[1];
+const jenis = segments[2];
 
 
 // Ambil nilai ruas_id dan gerbang_id hanya sekali, di luar event listener
@@ -27,7 +28,8 @@ $("#gerbang_id").on("change", function() {
             data: {
                 ruas_id,
                 gerbang_id,
-                type
+                type,
+                jenis
             },
             beforeSend: function() {
                 Swal.fire({

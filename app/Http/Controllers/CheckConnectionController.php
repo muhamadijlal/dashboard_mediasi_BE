@@ -17,17 +17,51 @@ class CheckConnectionController extends Controller
         $request->validate([
             'ruas_id' => 'required',
             'gerbang_id' => 'required',
-            'type' => 'required|in:resi,mediasi'
+            'type' => 'required|in:resi,mediasi',
+            'jenis' => 'required|in:transaction_detail,recap_at4,data_compare'
         ]);
 
-        // Get the appropriate data based on the 'type' parameter
-        [$integrator, $mediasi] = $this->getIntegratorAndMediasi($request->type, $request->ruas_id, $request->gerbang_id);
+        // Get the appropriate data based on the 'type' parametera
+        if($request->jenis === 'data_compare') {
+            return $this->pingIntegratorAndMediasi($request->type, $request->ruas_id, $request->gerbang_id);
+        } else if($request->jenis === 'transaction_detail' || $request->jenis === 'recap_at4') {
+            return $this->pingMediasi($request->type, $request->ruas_id, $request->gerbang_id);
+        }
+    }
+
+    private function pingMediasi($type, $ruas_id, $gerbang_id)
+    {
+        $mediasi = $this->getMediasi($type, $ruas_id, $gerbang_id);
     
         $ipMediasi = $mediasi->host;
-        $ipIntegrator = $integrator->host;
-
-        // Run the ping checks
         $pingMediasi = $this->pingHost($ipMediasi);
+
+        // Check if both pings are successful
+        if($this->isPingSuccessful($pingMediasi)){
+            Log::info("Ping berhasil: Mediasi {$ipMediasi}");
+    
+            return response()->json([
+                'success' => true,
+                'message' => "Connected"
+            ]);
+        } else {
+            Log::error("Ping gagal: Mediasi {$ipMediasi}");
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Request Time Out'
+            ]);
+        }
+    }
+    
+    private function pingIntegratorAndMediasi($type, $ruas_id, $gerbang_id)
+    {
+        [$integrator, $mediasi] = $this->getIntegratorAndMediasi($type, $ruas_id, $gerbang_id);
+    
+        $ipMediasi = $mediasi->host;
+        $pingMediasi = $this->pingHost($ipMediasi);
+
+        $ipIntegrator = $integrator->host;
         $pingIntegrator = $this->pingHost($ipIntegrator);
 
         // Check if both pings are successful
@@ -61,6 +95,15 @@ class CheckConnectionController extends Controller
                 Mediasi::getIPIntegrator($ruasId, $gerbangId),
                 Mediasi::getIPMediasi($ruasId, $gerbangId)
             ];
+        }
+    }
+
+    private function getMediasi($type, $ruasId, $gerbangId)
+    {
+        if ($type === 'resi') {
+            return DigitalReceipt::getIPMediasi($ruasId, $gerbangId);
+        } else {
+            return Mediasi::getIPMediasi($ruasId, $gerbangId);
         }
     }
     
