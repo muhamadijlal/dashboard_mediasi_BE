@@ -99,11 +99,11 @@ class Utils
     public static function metode_bayar_jidJMTO($metoda_bayar)
     {
         $reversePaymentMap = [
-            "24" => "(7, 1)",
-            "22" => "(4, 1)",
-            "23" => "(5, 1)",
-            "25" => "(8, 1)",
-            "28" => "(41, 1)",
+            "24" => "(7)",
+            "22" => "(4)",
+            "23" => "(5)",
+            "25" => "(8)",
+            "28" => "(41)",
         ];
 
         $key = "$metoda_bayar";
@@ -115,8 +115,18 @@ class Utils
             return "metoda_bayar_id IN " . $reversePaymentMap[$key]; // Normal transaction without special status
         }
 
+        if($metoda_bayar == '11'){
+            return "metoda_bayar_id = 2 AND ktp_jenis_id = 1";
+        }
+        else if($metoda_bayar == '12'){
+            return "metoda_bayar_id = 2 AND ktp_jenis_id = 2";
+        }
+        else if($metoda_bayar =='13'){
+            return "metoda_bayar_id = 2 AND ktp_jenis_id = 3";
+        }
+
         // Return default if no match found
-        return "metoda_bayar_id IN (1, 2, 0)";
+        return "metoda_bayar_id NOT IN (7, 4, 5, 8, 41, 3, 13, 2)";
     }
 
     public static function metode_bayar_jid($metoda_bayar)

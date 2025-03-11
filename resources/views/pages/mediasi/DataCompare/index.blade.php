@@ -168,7 +168,7 @@
                             return xhr;
                         }
                     },
-                    order: [[4, 'asc']],
+                    order: [[5, 'asc']],
                     columns: columns,
                     layout: {
                         topEnd: {

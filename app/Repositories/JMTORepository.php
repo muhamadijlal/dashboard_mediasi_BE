@@ -6,6 +6,7 @@ use App\Models\DatabaseConfig;
 use App\Models\Utils;
 use Illuminate\Support\Facades\DB;
 use App\Models\Services\JMTO\JMTOServices;
+use Illuminate\Database\Eloquent\Collection;
 
 class JMTORepository
 {
@@ -132,6 +133,7 @@ class JMTORepository
                     "perioda",
                     "no_resi",
                     "gol_sah",
+                    "ktp_jenis_id",
                     "ktp_sn as etoll_id",
                     "metoda_bayar_id as metoda_bayar_sah",
                     "notran_id_sah as jenis_notran",
@@ -170,138 +172,89 @@ class JMTORepository
 
     public function syncData($request)
     {
-        // Switch to the correct database connection based on the request parameters
+        // Get investors as dynamic columns (inv1, inv2, ..., invN)
+        $investors = Utils::jmto_investor($request->ruas_id);
+        $invColumns = array_map(fn($idx) => 'inv' . ($idx + 1), array_keys($investors));
+
+        // Switch DB connection
         DatabaseConfig::switchConnection($request->ruas_id, $request->gerbang_id);
 
-        // Begin a transaction on the "mediasi" connection
+        // Mulai transaksi
         DB::connection('mediasi')->beginTransaction();
 
         try {
-            // Fetch the data to be synced
-            $data = $this->getDataSync($request);
-            $result = $data->get();
+            $mappedData = [];
 
-            if (count($result) === 0) {
-                throw new \Exception("Data empty cannot sync");
-            }
+            // Fetch data yang mau di-sync
+            $this->getDataSync($request)->orderBy('tgl_lap', 'ASC')->chunk(1000, function ($chunkData) use (&$mappedData, $invColumns, $investors) {
+                foreach ($chunkData as $item) {
 
-            $cols = "";
-            $variables = "";
-            $investors = Utils::jmto_investor($request->ruas_id);
+                    list($metoda_bayar_sah, $jenis_notran) = Utils::transmetod_jmto_to_jid($item->metoda_bayar_sah, $item->ktp_jenis_id);
 
-            foreach ($investors as $idx => $_) {
-                $cols .= "inv" . ($idx + 1) . ",";
-                $variables .= " ?, ";
-            }
+                    $row = [
+                        'asal_gerbang_id'  => $item->asal_gerbang_id,
+                        'gerbang_id'       => $item->gerbang_id,
+                        'gardu_id'         => $item->gardu_id,
+                        'tgl_lap'          => $item->tgl_lap,
+                        'shift'            => $item->shift,
+                        'perioda'          => $item->perioda,
+                        'no_resi'          => $item->no_resi,
+                        'gol_sah'          => $item->gol_sah,
+                        'etoll_id'         => $item->etoll_id,
+                        'metoda_bayar_sah' => $metoda_bayar_sah,
+                        'jenis_notran'     => $jenis_notran,
+                        'tgl_transaksi'    => $item->tgl_transaksi,
+                        'kspt_id'          => $item->kspt_id,
+                        'pultol_id'        => $item->pultol_id,
+                        'tgl_entrance'     => $item->tgl_entrance,
+                        'etoll_hash'       => $item->etoll_hash,
+                        'tarif'            => $item->tarif,
+                        'trf1'             => $item->trf1,
+                        'trf2'             => $item->trf2,
+                        'trf3'             => $item->trf3,
+                        'trf4'             => $item->trf4,
+                        'trf5'             => $item->trf5,
+                        'trf6'             => $item->trf6,
+                        'trf7'             => $item->trf7,
+                        'trf8'             => $item->trf8,
+                        'trf9'             => $item->trf9,
+                        'trf10'            => $item->trf10,
+                        'create_at'        => $item->datereceived,
+                        'update_at'        => $item->datereceived,
+                    ];
 
-            $variables = rtrim($variables, ", ");
-            $cols = rtrim($cols, ", ");
+                    // Tambahkan investor ke row
+                    foreach ($investors as $idx => $invValue) {
+                        $row['inv' . ($idx + 1)] = $invValue;
+                    }
 
-            foreach ($result as $dataItem) {
-                // Define the SQL query with placeholders for parameterized queries
-                $query = "INSERT INTO jid_transaksi_deteksi (
-                        asal_gerbang_id,
-                        gerbang_id,
-                        gardu_id,
-                        tgl_lap,
-                        shift,
-                        perioda,
-                        no_resi,
-                        gol_sah,
-                        etoll_id,
-                        metoda_bayar_sah,
-                        jenis_notran,
-                        tgl_transaksi,
-                        kspt_id,
-                        pultol_id,
-                        tgl_entrance,
-                        etoll_hash,
-                        tarif,
-                        trf1,
-                        trf2,
-                        trf3,
-                        trf4,
-                        trf5,
-                        trf6,
-                        trf7,
-                        trf8,
-                        trf9,
-                        trf10,
-                        create_at,
-                        update_at,
-                        $cols
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, $variables)
-                    ON DUPLICATE KEY UPDATE 
-                        ruas_id = VALUES(ruas_id),
-                        gerbang_id = VALUES(gerbang_id),
-                        gardu_id = VALUES(gardu_id),
-                        tgl_lap = VALUES(tgl_lap),
-                        shift = VALUES(shift),
-                        no_resi = VALUES(no_resi),
-                        tgl_transaksi = VALUES(tgl_transaksi),
-                        inv1 = VALUES(inv1),
-                        inv2 = VALUES(inv2),
-                        inv3 = VALUES(inv3),
-                        inv4 = VALUES(inv4),
-                        inv5 = VALUES(inv5),
-                        inv6 = VALUES(inv6),
-                        inv7 = VALUES(inv7),
-                        inv8 = VALUES(inv8),
-                        inv9 = VALUES(inv9),
-                        inv10 = VALUES(inv10)
-                    ";
+                    $mappedData[] = $row;
+                }
 
-                $metoda_bayar_sah = in_array($dataItem->metoda_bayar_sah, [13, 3]) ? 21 : $dataItem->metoda_bayar_sah;
-                $jenis_notran = in_array($dataItem->metoda_bayar_sah, [13, 3]) ? 1 : $dataItem->jenis_notran;
+                // Upsert per chunk (1000 data sekali proses)
+                DB::connection('mediasi')->table('jid_transaksi_deteksi')->upsert(
+                    $mappedData,
+                    ['gerbang_id', 'gardu_id', 'tgl_lap', 'shift', 'perioda', 'no_resi', 'tgl_transaksi'], // unique key
+                    [ // columns to update on duplicate
+                        'asal_gerbang_id', 'gol_sah', 'etoll_id', 'metoda_bayar_sah', 'jenis_notran',
+                        'kspt_id', 'pultol_id', 'tgl_entrance', 'etoll_hash', 'tarif',
+                        'trf1', 'trf2', 'trf3', 'trf4', 'trf5', 'trf6', 'trf7', 'trf8', 'trf9', 'trf10',
+                        'create_at', 'update_at',
+                        ...$invColumns // e.x. inv1, inv2, ..., etc.
+                    ]
+                );
 
-                // Bind the data for the prepared statement
-                $params = [
-                    $dataItem->asal_gerbang_id,
-                    $dataItem->gerbang_id,
-                    $dataItem->gardu_id,
-                    $dataItem->tgl_lap,
-                    $dataItem->shift,
-                    $dataItem->perioda,
-                    $dataItem->no_resi,
-                    $dataItem->gol_sah,
-                    $dataItem->etoll_id,
-                    $metoda_bayar_sah,
-                    $jenis_notran,
-                    $dataItem->tgl_transaksi,
-                    $dataItem->kspt_id,
-                    $dataItem->pultol_id,
-                    $dataItem->tgl_entrance,
-                    $dataItem->etoll_hash,
-                    $dataItem->tarif,
-                    $dataItem->trf1,
-                    $dataItem->trf2,
-                    $dataItem->trf3,
-                    $dataItem->trf4,
-                    $dataItem->trf5,
-                    $dataItem->trf6,
-                    $dataItem->trf7,
-                    $dataItem->trf8,
-                    $dataItem->trf9,
-                    $dataItem->trf10,
-                    $dataItem->datereceived,
-                    $dataItem->datereceived,
-                    ...$investors,  // spread the value
-                ];
+                // Reset mappedData for next chunk
+                $mappedData = [];
+            });
 
-                // Execute the statement on the "mediasi" connection
-                DB::connection('mediasi')->statement($query, $params);
-            }
-
-            // If all operations were successful, commit the transaction
+            // Commit jika tidak error
             DB::connection('mediasi')->commit();
 
-            // Return success message
             return response()->json(['message' => "Syncronize data success!"], 201);
         } catch (\Exception $e) {
-            // If an error occurs, roll back the transaction
+            // Rollback jika error
             DB::connection('mediasi')->rollBack();
-            // Throw the exception to be handled elsewhere
             throw new \Exception($e->getMessage());
         }
     }
