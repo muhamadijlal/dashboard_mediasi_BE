@@ -111,116 +111,73 @@ class MIYRepository
         DB::connection('mediasi')->beginTransaction();
 
         try {
+            $mappedData = [];
+
             // Fetch the data to be synced
-            $data = $this->getDataSync($request);
-            $result = $data->get();
+            $this->getDataSync($request)->orderBy('tgl_lap', 'ASC')->chunk(1000, function($chunkData) use(&$mappedData) {
+                foreach ($chunkData as $item) {
+                    list($metoda_bayar, $jenis_notran) = Utils::transmetod_miy_to_jid($item->metoda_bayar_sah);
 
-            if (count($result) === 0) {
-                throw new \Exception("Data empty cannot sync");
-            }
+                    $row = [
+                        'asal_gerbang_id'            => $this->asalGerbang($item->asal_gerbang_id ?? NULL),
+                        'gerbang_id'                 => $item->gerbang_id,
+                        'gardu_id'                   => $item->gardu_id,
+                        'tgl_lap'                    => $item->tgl_lap,
+                        'shift'                      => $item->shift,
+                        'perioda'                    => $item->perioda,
+                        'no_resi'                    => $item->no_resi,
+                        'gol_sah'                    => $item->gol_sah,
+                        'etoll_id'                   => $this->add_zero_cardnum($item->NomorKartu),
+                        'metoda_bayar_sah'           => $metoda_bayar,
+                        'jenis_notran'               => $jenis_notran, # jenis notran
+                        'tgl_transaksi'              => $item->tgl_transaksi,
+                        'kspt_id'                    => $item->KsptId,
+                        'pultol_id'                  => $item->PLTId,
+                        'tgl_entrance'               => $item->tgl_entrance,
+                        'etoll_hash'                 => $item->etoll_hash,
+                        'tarif'                      => $item->tarif,
+                        'sisa_saldo'                 => $item->Saldo,
+                        'trf1'                       => $item->TarifInvestor1 ?? NULL,
+                        'inv1'                       => $item->KodeInvestor1 ?? NULL,
+                        'trf2'                       => $item->TarifInvestor2 ?? NULL,
+                        'inv2'                       => $item->KodeInvestor2 ?? NULL,
+                        'trf3'                       => $item->TarifInvestor3 ?? NULL,
+                        'inv3'                       => $item->KodeInvestor3 ?? NULL,
+                        'trf4'                       => $item->TarifInvestor4 ?? NULL,
+                        'inv4'                       => $item->KodeInvestor4 ?? NULL,
+                        'trf5'                       => $item->TarifInvestor5 ?? NULL,
+                        'inv5'                       => $item->KodeInvestor5 ?? NULL,
+                        'trf6'                       => $item->TarifInvestor6 ?? NULL,
+                        'inv6'                       => $item->KodeInvestor6 ?? NULL,
+                        'trf7'                       => $item->TarifInvestor7 ?? NULL,
+                        'inv7'                       => $item->KodeInvestor7 ?? NULL,
+                        'trf8'                       => $item->TarifInvestor8 ?? NULL,
+                        'inv8'                       => $item->KodeInvestor8 ?? NULL,
+                        'trf9'                       => $item->TarifInvestor9 ?? NULL,
+                        'inv9'                       => $item->KodeInvestor9 ?? NULL,
+                        'trf10'                      => $item->TarifInvestor10 ?? NULL,
+                        'inv10'                      => $item->KodeInvestor10 ?? NULL,
+                        'KodeIntegrator'             => $item->KodeIntegrator ?? NULL
+                    ];
 
-            foreach ($result as $dataItem) {
-                list($metoda_bayar, $jenis_notran) = Utils::transmetod_miy_to_jid($dataItem->metoda_bayar_sah);
+                    $mappedData[] = $row;
+                }
 
-                $query = "INSERT INTO jid_transaksi_deteksi(
-                            asal_gerbang_id,
-                            gerbang_id,
-                            gardu_id,
-                            tgl_lap,
-                            shift,
-                            perioda,
-                            no_resi,
-                            gol_sah,
-                            etoll_id,
-                            metoda_bayar_sah,
-                            jenis_notran,
-                            tgl_transaksi,
-                            kspt_id,
-                            pultol_id,
-                            tgl_entrance,
-                            etoll_hash,
-                            tarif,
-                            sisa_saldo,
-                            trf1,
-                            inv1,
-                            trf2,
-                            inv2,
-                            trf3,
-                            inv3,
-                            trf4,
-                            inv4,
-                            trf5,
-                            inv5,
-                            trf6,
-                            inv6,
-                            trf7,
-                            inv7,
-                            trf8,
-                            inv8,
-                            trf9,
-                            inv9,
-                            trf10,
-                            inv10,
-                            KodeIntegrator
-                        )
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        ON DUPLICATE KEY UPDATE
-                            ruas_id = VALUES(ruas_id),
-                            gardu_id = VALUES(gardu_id),
-                            shift = VALUES(shift),
-                            no_resi = VALUES(no_resi),
-                            metoda_bayar_sah = VALUES(metoda_bayar_sah),
-                            gerbang_id = VALUES(gerbang_id),
-                            tgl_lap = VALUES(tgl_lap),
-                            tgl_transaksi = VALUES(tgl_transaksi)
-                        ";
+                // Upsert per chunk (1000 data sekali proses)
+                DB::connection('mediasi')->table('jid_transaksi_deteksi')->upsert(
+                    $mappedData,
+                    ['gerbang_id', 'gardu_id', 'tgl_lap', 'shift', 'perioda', 'no_resi', 'tgl_transaksi'], // unique key
+                    [ // columns to update on duplicate
+                        'asal_gerbang_id', 'gol_sah', 'etoll_id', 'metoda_bayar_sah', 'jenis_notran',
+                        'kspt_id', 'pultol_id', 'tgl_entrance', 'etoll_hash', 'tarif',
+                        'trf1', 'trf2', 'trf3', 'trf4', 'trf5', 'trf6', 'trf7', 'trf8', 'trf9', 'trf10',
+                        'create_at', 'update_at'
+                    ]
+                );
 
-                // Bind the data for the prepared statement
-                $params = [
-                    $this->asalGerbang($dataItem->asal_gerbang_id ?? NULL),
-                    $dataItem->gerbang_id,
-                    $dataItem->gardu_id,
-                    $dataItem->tgl_lap,
-                    $dataItem->shift,
-                    $dataItem->perioda,
-                    $dataItem->no_resi,
-                    $dataItem->gol_sah,
-                    $this->add_zero_cardnum($dataItem->NomorKartu),
-                    $metoda_bayar,
-                    $jenis_notran, # jenis notran
-                    $dataItem->tgl_transaksi,
-                    $dataItem->KsptId,
-                    $dataItem->PLTId,
-                    $dataItem->tgl_entrance,
-                    $dataItem->etoll_hash,
-                    $dataItem->tarif,
-                    $dataItem->Saldo,
-                    $dataItem->TarifInvestor1 ?? NULL,
-                    $dataItem->KodeInvestor1 ?? NULL,
-                    $dataItem->TarifInvestor2 ?? NULL,
-                    $dataItem->KodeInvestor2 ?? NULL,
-                    $dataItem->TarifInvestor3 ?? NULL,
-                    $dataItem->KodeInvestor3 ?? NULL,
-                    $dataItem->TarifInvestor4 ?? NULL,
-                    $dataItem->KodeInvestor4 ?? NULL,
-                    $dataItem->TarifInvestor5 ?? NULL,
-                    $dataItem->KodeInvestor5 ?? NULL,
-                    $dataItem->TarifInvestor6 ?? NULL,
-                    $dataItem->KodeInvestor6 ?? NULL,
-                    $dataItem->TarifInvestor7 ?? NULL,
-                    $dataItem->KodeInvestor7 ?? NULL,
-                    $dataItem->TarifInvestor8 ?? NULL,
-                    $dataItem->KodeInvestor8 ?? NULL,
-                    $dataItem->TarifInvestor9 ?? NULL,
-                    $dataItem->KodeInvestor9 ?? NULL,
-                    $dataItem->TarifInvestor10 ?? NULL,
-                    $dataItem->KodeInvestor10 ?? NULL,
-                    $dataItem->KodeIntegrator ?? NULL
-                ];
-
-                // Execute the statement
-                DB::connection("mediasi")->statement($query, $params);
-            }
+                // Reset mappedData for next chunk
+                $mappedData = [];
+            });
 
             // Jika semua operasi berhasil, commit transaksi
             DB::connection('mediasi')->commit();
