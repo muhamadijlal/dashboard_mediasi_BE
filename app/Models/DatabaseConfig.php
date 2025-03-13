@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class DatabaseConfig
 {
@@ -25,6 +26,26 @@ class DatabaseConfig
                 database: $credential->database
             );
 
+            return response()->json(['message' => "Connection changed"], 200);
+        } catch (\Exception $e) {
+            // Now return the response with the error message
+            throw new \Exception($e->getMessage()); 
+        }
+    }
+
+    public static function setConnectionMediasi($host, $port, $user, $pass, $database)
+    {
+        try {
+            self::setCredentials(
+                'mediasi',
+                $host,
+                $port,
+                $user,
+                $pass,
+                database: $database
+            );
+
+            Log::info('Connection mediasi change: ' . json_encode($host." - ".$port." - ".$user." - ".$pass." - ".$database));
             return response()->json(['message' => "Connection changed"], 200);
         } catch (\Exception $e) {
             // Now return the response with the error message
