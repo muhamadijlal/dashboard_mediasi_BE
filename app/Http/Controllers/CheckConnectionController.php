@@ -18,13 +18,13 @@ class CheckConnectionController extends Controller
             'ruas_id' => 'required',
             'gerbang_id' => 'required',
             'type' => 'required|in:resi,mediasi',
-            'jenis' => 'required|in:transaction_detail,recap_at4,data_compare'
+            'jenis' => 'required|in:transaction_detail,recap_at4,data_compare,lalin_gerbang_utama'
         ]);
 
         // Get the appropriate data based on the 'type' parametera
         if($request->jenis === 'data_compare') {
             return $this->pingIntegratorAndMediasi($request->type, $request->ruas_id, $request->gerbang_id);
-        } else if($request->jenis === 'transaction_detail' || $request->jenis === 'recap_at4') {
+        } else if($request->jenis === 'transaction_detail' || $request->jenis === 'recap_at4' || $request->jenis === 'lalin_gerbang_utama') {
             return $this->pingMediasi($request->type, $request->ruas_id, $request->gerbang_id);
         }
     }

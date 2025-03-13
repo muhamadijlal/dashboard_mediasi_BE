@@ -94,5 +94,5 @@ class Select2Controller extends Controller
         }catch(\Exception $e){
             return response()->json(['message' => $e->getMessage(), 'error' => true ], 500);
         }
-    }
+    }    
 }

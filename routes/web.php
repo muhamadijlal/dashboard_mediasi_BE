@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SyncDataDigitalReceiptController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataCompareController;
+use App\Http\Controllers\LalinController;
 use App\Http\Controllers\RekapAT4Controller;
 use App\Http\Controllers\Select2Controller;
 use App\Http\Controllers\SyncDataController;
@@ -41,11 +42,18 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
             Route::post("/getData", [DataCompareController::class, "transaction_detail_getData"])->name("getData");
         });
 
+        Route::prefix("lalin_gerbang_utama")->name("lalin_gerbang_utama.")->group(function(){
+            Route::get("/dashboard", [LalinController::class, 'index'])->name("dashboard");
+            Route::post("/getDataEntrance", [LalinController::class, 'getDataEntrance'])->name("getDataEntrance");
+            Route::post("/getDataExit", [LalinController::class, 'getDataExit'])->name("getDataExit");
+        });
+
         Route::prefix("sync")->name("sync.")->group(function () {
             Route::get("/dashboard/{ruas_id?}/{tanggal?}/{gerbang_id?}/{metoda_bayar?}/{shift?}", [SyncDataController::class, "dashboard"])->name("dashboard");
             Route::post("/getData", [SyncDataController::class, "getData"])->name("getData");
             Route::post("/syncData", [SyncDataController::class, "syncData"])->name("syncData");
         });
+
     });
 
     Route::prefix("resi")->name('resi.')->group(function () {

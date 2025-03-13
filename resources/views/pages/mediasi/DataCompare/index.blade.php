@@ -303,7 +303,7 @@
             </div>
         </div>
 
-        <x-button>
+        <x-button :disabled="true">
             Submit
         </x-button>
     </form>

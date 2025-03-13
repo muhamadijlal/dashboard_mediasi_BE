@@ -29,6 +29,9 @@
                     <li>
                         <a href="{{ route("mediasi.data_compare.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('mediasi.data_compare.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Data Compare") }}</a>
                     </li>
+                    <li>
+                        <a href="{{ route("mediasi.lalin_gerbang_utama.dashboard") }}" class="text-base font-normal pl-5 border-l-[1.5px] -ml-[1.5px]  hover:text-blue-950 hover:border-blue-950 {{ request()->routeIs('mediasi.lalin_gerbang_utama.*') ? "text-blue-950 border-blue-950" : "text-gray-400" }}">{{ __("Lalin Gerbang Utama") }}</a>
+                    </li>
                 </ul>
             </details>
         </li>
