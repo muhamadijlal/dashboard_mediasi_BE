@@ -158,7 +158,7 @@
             <div>
                 <label class="mb-2 block font-medium text-sm text-blue-950" for="start_date">{{ __("Start Date") }}</label>
                 <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
                     type="date" 
                     name="start_date" 
                     id="start_date"
@@ -170,7 +170,7 @@
             <div>
                 <label class="mb-2 block font-medium text-sm text-blue-950" for="end_date">{{ __("End Date") }}</label>
                 <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
                     type="date" 
                     name="end_date" 
                     id="end_date"
@@ -187,7 +187,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <h3 class="text-xl font-semibold">Lalin gerbang utama entrance</h3>
+        <h3 class="text-xl font-semibold">Lalin Masuk Jakarta</h3>
 
         <h4 class="h-10"></h4>
 
@@ -208,7 +208,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <h3 class="text-xl font-semibold">Lalin gerbang utama exit</h3>
+        <h3 class="text-xl font-semibold">Lalin Keluar Jakarta</h3>
 
         <h4 class="h-10"></h4>
 
