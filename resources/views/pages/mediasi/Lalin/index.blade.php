@@ -187,7 +187,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <h3 class="text-xl font-semibold">Lalin utama entrance</h3>
+        <h3 class="text-xl font-semibold">Lalin gerbang utama entrance</h3>
 
         <h4 class="h-10"></h4>
 
@@ -208,7 +208,7 @@
     <h4 class="h-10"></h4>
 
     <div class="bg-white rounded-lg shadow-md gap-5 p-5">
-        <h3 class="text-xl font-semibold">Lalin utama exit</h3>
+        <h3 class="text-xl font-semibold">Lalin gerbang utama exit</h3>
 
         <h4 class="h-10"></h4>
 

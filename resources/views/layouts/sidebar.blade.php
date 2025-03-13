@@ -36,7 +36,7 @@
             </details>
         </li>
 
-        <li>
+        <!-- <li>
             <details {{ request()->routeIs('resi.*') ? "open" : ""}}>
                 <summary class="hover:bg-yellow-400 p-1 pr-2 flex items-center justify-between text-base font-medium rounded-lg {{ request()->routeIs('resi.*') ? "bg-yellow-400" : "" }}">
                     <a href="#" class="flex items-center gap-2">
@@ -61,7 +61,7 @@
                     </li>
                 </ul>
             </details>
-        </li>
+        </li> -->
     </ul>
   </div>
 </aside>
