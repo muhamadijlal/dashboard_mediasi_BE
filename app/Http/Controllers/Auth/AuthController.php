@@ -16,10 +16,10 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'name' => ['required'],
             'password' => ['required'],
         ]);
- 
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
  
@@ -27,8 +27,8 @@ class AuthController extends Controller
         }
  
         return back()->withErrors([
-            'email' => 'The credentials do not match our records.',
-        ])->onlyInput('email');
+            'name' => 'The credentials do not match our records.',
+        ])->onlyInput('name');
     }
 
     public function logout(Request $request)

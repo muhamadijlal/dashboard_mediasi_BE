@@ -138,6 +138,7 @@
                         }
                     },
                     columns: columns,
+                    order: [[2, 'desc']],
                     serverSide: true,
                     processing: true,
                     scrollX: true,
