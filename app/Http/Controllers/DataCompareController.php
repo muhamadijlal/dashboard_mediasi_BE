@@ -95,11 +95,11 @@ class DataCompareController extends Controller
                 ->addIndexColumn()
                 ->addColumn('link', function ($row) use ($request) {
                     if ($row->selisih > 0) {
-                        return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/' . $request->ruas_id . '/' . $row->tanggal . '/' . $row->gerbang_id . '/' . $row->metoda_bayar  . '/' . $row->shift . '">' . $row->selisih . '</a>';
+                        return '<a target="_blank" class="text-yellow-400" href="/mediasi/sync/dashboard/' . $request->ruas_id . '/' . $row->tanggal . '/' . $row->gerbang_id . '/' . $row->metoda_bayar  . '/' . $row->shift . '">' . number_format($row->selisih,0,'.','.') . '</a>';
                     } else if ($row->selisih < 0) {
-                        return '<span class="text-red-500">' . $row->selisih . '</span>';
+                        return '<span class="text-red-500">' . number_format($row->selisih,0,'.','.') . '</span>';
                     } else {
-                        return $row->selisih;
+                        return number_format($row->selisih,0,'.','.');
                     }
                 })
                 ->addColumn('jumlah_tarif_mediasi', function ($row) {
@@ -107,6 +107,12 @@ class DataCompareController extends Controller
                 })
                 ->addColumn('jumlah_tarif_integrator', function ($row) {
                     return 'Rp. ' . number_format($row->jumlah_tarif_integrator, 0, '.', '.');
+                })
+                ->addColumn('jumlah_data_mediasi', function($row){
+                    return number_format($row->jumlah_data_mediasi, 0, '.', '.');
+                })
+                ->addColumn('jumlah_data_integrator', function($row){
+                    return number_format($row->jumlah_data_integrator, 0, '.', '.');
                 })
                 ->rawColumns(['link'])
                 ->make();
