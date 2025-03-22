@@ -4,7 +4,6 @@ namespace App\Models\Services\Lalin;
 
 use App\Models\DatabaseConfig;
 use Exception;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class LalinServices
@@ -42,7 +41,7 @@ class LalinServices
                 $data = DB::connection('mediasi')
                             ->table('jid_transaksi_deteksi')
                             ->select('shift', 'tgl_lap', DB::raw('COUNT(id) as jumlah_data'))
-                            ->whereIn('metoda_bayar_sah', [21, 22, 23, 24, 28, 40])
+                            ->whereIn('metoda_bayar_sah', [21, 22, 23, 24, 28, 40, 45])
                             ->whereBetween('tgl_lap', [$start_date, $end_date])
                             ->groupBy('shift','tgl_lap')
                             ->get();
