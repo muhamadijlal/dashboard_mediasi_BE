@@ -84,6 +84,7 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
     Route::prefix("select2")->name("select2.")->group(function () {
         Route::post("/getRuas", [Select2Controller::class, "getRuas"])->name("getRuas");
         Route::post("/getGerbang", [Select2Controller::class, "getGerbang"])->name("getGerbang");
+        Route::post("/getGardu", [Select2Controller::class, "getGardu"])->name("getGardu");
 
         Route::post("/getRuas/resi", [Select2Controller::class, "getRuasResi"])->name("getRuasResi");
         Route::post("/getGerbang/resi", [Select2Controller::class, "getGerbangResi"])->name("getGerbangResi");

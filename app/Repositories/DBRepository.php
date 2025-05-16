@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class DBRepository
 {
-    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date = null, ?string $end_date = null)
+    public function getDataTransakiDetail(string $ruas_id, string $gerbang_id, ?string $start_date = null, ?string $end_date = null, ?string $shift_id = null, ?string $golongan_id = null, ?string $metoda_bayar_id = null)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -31,6 +31,18 @@ class DBRepository
                     "tarif"
                 )
                 ->whereBetween('tgl_lap', [$start_date, $end_date]);
+
+                if($shift_id != '*') {
+                    $query->where("shift", $shift_id);
+                }
+
+                if($golongan_id != '*') {
+                    $query->where("gol_sah", $golongan_id);
+                }
+
+                if($metoda_bayar_id != '*') {
+                    $query->where("metoda_bayar_sah", $metoda_bayar_id);
+                }
 
             return $query;
         } catch (\Exception $e) {

@@ -12,6 +12,50 @@
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
+                // const gardu_id = $('#gardu_id');
+                const shift_id = $('#shift_id');
+                const golongan_id = $('#golongan_id');
+                const metoda_bayar_id = $('#metoda_bayar_id');
+
+                const metodaBayarOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '40', text: 'Tunai (40)' },
+                    { id: '21', text: 'Mandiri (21)' },
+                    { id: '24', text: 'BCA (24)' },
+                    { id: '22', text: 'BRI (22)' },
+                    { id: '23', text: 'BNI (23)' },
+                    { id: '25', text: 'DKI (25)' },
+                    { id: '28', text: 'FLO (28)' },
+                    { id: '11', text: 'JMC OPERASI (11)' },
+                    { id: '12', text: 'JMC KARYAWAN (12)' },
+                    { id: '13', text: 'JMC MITRA (13)' },
+                ];
+
+                // const garduOptions = [
+                //     { id: '*', text: 'All' },
+                //     { id: '12', text: '12' },
+                //     { id: '14', text: '14' },
+                //     { id: '16', text: '16' },
+                //     { id: '18', text: '18' },
+                // ];
+
+                const golonganOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '1', text: 'Golongan 1' },
+                    { id: '2', text: 'Golongan 2' },
+                    { id: '3', text: 'Golongan 3' },
+                    { id: '4', text: 'Golongan 4' },
+                    { id: '5', text: 'Golongan 5' },
+                ];
+
+                const shiftOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '1', text: 'Shift 1' },
+                    { id: '2', text: 'Shift 2' },
+                    { id: '3', text: 'Shift 3' },
+                ];
+
+
                 let columns = @json($columns);
 
                 btnFilter.attr("disabled", ruas_id.val() == null);
@@ -74,6 +118,57 @@
                     placeholder: "-- Pilih Gerbang --",
                 });
 
+                // gardu_id.select2({
+                //     ajax: {
+                //         headers: {
+                //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //         },
+                //         url: "{{ route('select2.getGardu') }}",
+                //         type: 'POST',
+                //         dataType: 'json',
+                //         data: function (params) {
+                //             return {
+                //                 query: params.term,
+                //                 ruas_id: ruas_id.val()
+                //             };
+                //         },
+                //         processResults: function (data) {
+                //             const {data: ruas} = data;
+
+                //             return {
+                //                 results: $.map((ruas), function(item) {
+                //                     return {
+                //                         id: item.value,
+                //                         text: item.label
+                //                     };
+                //                 })
+                //             }
+                //         },
+                //     },
+                //     placeholder: "-- Pilih Gerbang --",
+                // });
+
+
+                metoda_bayar_id.select2({
+                    data: metodaBayarOptions,
+                    placeholder: "-- Pilih Metoda Bayar --",
+                });
+                
+                // gardu_id.select2({
+                //     data: garduOptions,
+                //     placeholder: "-- Pilih Gardu --",
+                // });
+
+                golongan_id.select2({
+                    data: golonganOptions,
+                    placeholder: "-- Pilih Golongan --",
+                });
+
+                shift_id.select2({
+                    data: shiftOptions,
+                    placeholder: "-- Pilih Shift --",
+                });
+
                 // When select2 ruas id on change
                 // Toggle gerbang_id disabled when ruas_id changes
                 ruas_id.on('change', function() {
@@ -110,6 +205,10 @@
                             d.gerbang_id = $('#gerbang_id').val();
                             d.start_date = $('#start_date').val();
                             d.end_date = $('#end_date').val();
+                            // d.gardu_id = $('#gardu_id').val();
+                            d.shift_id = $('#shift_id').val();
+                            d.golongan_id = $('#golongan_id').val();
+                            d.metoda_bayar_id = $('#metoda_bayar_id').val();
                         },
                         error: function (response) {
                             Swal.fire({
@@ -169,7 +268,7 @@
             <!-- Ruas -->
             <div>
                 <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
-                <select name="ruas_id[]" multp id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
             </div>
         
             <!-- Gerbang -->
@@ -200,6 +299,32 @@
                     id="end_date"
                     value="{{ date('Y-m-d') }}"
                 >
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 place-content-between w-full">
+            <!-- Gardu -->
+            {{-- <div>
+                <label class="mb-2 block font-medium text-sm text-blue-950" for="gardu_id">{{ __("Gardu") }}</label>
+                <select name="gardu_id" id="gardu_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+            </div> --}}
+        
+            <!-- Shift -->
+            <div>
+                <label class="mb-2 block font-medium text-sm text-blue-950" for="shift_id">{{ __("Shift") }}</label>
+                <select name="shift_id" id="shift_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+            </div>
+        
+            <!-- Golongan -->
+            <div>
+                <label class="mb-2 block font-medium text-sm text-blue-950" for="golongan_id">{{ __("Golongan") }}</label>
+                <select name="golongan_id" id="golongan_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+            </div>
+        
+            <!-- Metoda Bayar -->
+            <div>
+                <label class="mb-2 block font-medium text-sm text-blue-950" for="metoda_bayar_id">{{ __("Metoda Bayar") }}</label>
+                <select name="metoda_bayar_id" id="metoda_bayar_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
             </div>
         </div>
 

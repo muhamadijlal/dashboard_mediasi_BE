@@ -93,14 +93,15 @@ class TransactionDetailController extends Controller
     public function getData(FilterRequest $request){
         try {
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
-            $query = $repository->getDataTransakiDetail($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date);
-
+            $query = $repository->getDataTransakiDetail($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->shift_id, $request->golongan_id, $request->metoda_bayar_id);
+            
             return DataTables::of($query)
                             ->addColumn('tarif', function ($data) {
                                 return 'Rp. '.number_format($data->tarif, 0, '.', '.');
                             })
                             ->addIndexColumn()
                             ->make();
+
 
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 'error' => true], 500);

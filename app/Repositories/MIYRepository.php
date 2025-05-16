@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class MIYRepository
 {
-    public function getDataTransakiDetail($ruas_id, $gerbang_id, $start_date, $end_date)
+    public function getDataTransakiDetail($ruas_id, $gerbang_id, $start_date, $end_date, $shift_id, $golongan_id, $metoda_bayar_id)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -30,6 +30,18 @@ class MIYRepository
                     "tarif"
                 )
                 ->whereBetween('tgl_lap', values: [$start_date, $end_date]);
+
+                if($shift_id != '*') {
+                    $query->where("shift", $shift_id);
+                }
+
+                if($golongan_id != '*') {
+                    $query->where("gol_sah", $golongan_id);
+                }
+
+                if($metoda_bayar_id != '*') {
+                    $query->where("metoda_bayar_sah", $metoda_bayar_id);
+                }
 
             return $query;
         } catch (\Exception $e) {
