@@ -89,7 +89,7 @@ class DataCompareController extends Controller
     {
         try {
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
-            $query = $repository->getDataCompare($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->selisih);
+            $query = $repository->getDataCompare($request->ruas_id, $request->gerbang_id, $request->shift_id, $request->metoda_bayar_id, $request->start_date, $request->end_date, $request->selisih);
 
             return DataTables::of($query)
                 ->addIndexColumn()

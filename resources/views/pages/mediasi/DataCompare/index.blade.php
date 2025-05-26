@@ -23,8 +23,33 @@
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
+                const shift_id = $('#shift_id');
+                const metoda_bayar_id = $('#metoda_bayar_id');
+
                 let columns = @json($columns);
                 let params = JSON.parse(localStorage.getItem("params"));
+
+                const metodaBayarOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '40', text: 'Tunai (40)' },
+                    { id: '21', text: 'Mandiri (21)' },
+                    { id: '24', text: 'BCA (24)' },
+                    { id: '22', text: 'BRI (22)' },
+                    { id: '23', text: 'BNI (23)' },
+                    { id: '25', text: 'DKI (25)' },
+                    { id: '28', text: 'FLO (28)' },
+                    { id: '11', text: 'JMC OPERASI (11)' },
+                    { id: '12', text: 'JMC KARYAWAN (12)' },
+                    { id: '13', text: 'JMC MITRA (13)' },
+                ];
+
+                const shiftOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '1', text: 'Shift 1' },
+                    { id: '2', text: 'Shift 2' },
+                    { id: '3', text: 'Shift 3' },
+                ];
+
 
                 btnFilter.attr("disabled", ruas_id.val() == null);
 
@@ -33,6 +58,8 @@
                     gerbang_id: params?.gerbang_id ?? null,
                     start_date: params?.start_date ?? null,
                     end_date: params?.end_date ?? null,
+                    shift_id: params?.shift_id ?? null,
+                    metoda_bayar_id: params?.metoda_bayar_id ?? null,
                     selisih: "*",
                 };
 
@@ -115,6 +142,16 @@
                     btnFilter.attr("disabled", true);
                 });
 
+                metoda_bayar_id.select2({
+                    data: metodaBayarOptions,
+                    placeholder: "-- Pilih Metoda Bayar --",
+                });
+
+                shift_id.select2({
+                    data: shiftOptions,
+                    placeholder: "-- Pilih Shift --",
+                });
+
                 tblCompare = new DataTable('#tblCompare', {
                     ajax: {
                         headers: {
@@ -138,6 +175,9 @@
                             d.gerbang_id = $('#gerbang_id').val() ?? stateParams.gerbang_id;
                             d.start_date = $('#start_date').val() ?? stateParams.start_date;
                             d.end_date = $('#end_date').val() ?? stateParams.end_date;
+                            d.shift_id = $('#shift_id').val() ?? stateParams.shift_id;
+                            d.metoda_bayar_id = $('#metoda_bayar_id').val() ?? stateParams.metoda_bayar_id;
+
                             d.selisih = $('#selisih').val();
                         },
                         error: function (response) {
@@ -255,52 +295,68 @@
 
     <form class="bg-white rounded-lg shadow-md flex flex-col items-end gap-5 p-5" onsubmit="handleSubmit(event)">
         <!-- Filter Component -->
-        <div class="grid grid-cols-2 lg:grid-cols-5 gap-5 place-content-between w-full">
-            <!-- Ruas -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
-                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
-            </div>
-        
-            <!-- Gerbang -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="gerbang_id">{{ __("Gerbang") }}</label>
-                <select name="gerbang_id" disabled id="gerbang_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
-            </div>
-        
-            <!-- Start Date -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="start_date">{{ __("Start Date") }}</label>
-                <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
-                    type="date" 
-                    name="start_date" 
-                    id="start_date"
-                    value="{{ date('Y-m-d') }}"
-                >
-            </div>
-        
-            <!-- End Date -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="end_date">{{ __("End Date") }}</label>
-                <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
-                    type="date" 
-                    name="end_date" 
-                    id="end_date"
-                    value="{{ date('Y-m-d') }}"
-                >
+        <div class="grid grid-rows-1 sm:grid-rows-2 gap-5 w-full">
+            <div class="grid grid-cols-1 sm:grid-cols-4 w-full gap-5">
+                <!-- Ruas -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
+                    <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+            
+                <!-- Gerbang -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="gerbang_id">{{ __("Gerbang") }}</label>
+                    <select name="gerbang_id" disabled id="gerbang_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+            
+                <!-- Start Date -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="start_date">{{ __("Start Date") }}</label>
+                    <input 
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                        type="date" 
+                        name="start_date" 
+                        id="start_date"
+                        value="{{ date('Y-m-d') }}"
+                    >
+                </div>
+            
+                <!-- End Date -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="end_date">{{ __("End Date") }}</label>
+                    <input 
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                        type="date" 
+                        name="end_date" 
+                        id="end_date"
+                        value="{{ date('Y-m-d') }}"
+                    >
+                </div>
             </div>
 
-            <!-- Selisih -->
-            <div class="col-span-2 lg:col-span-1">
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="selisih">{{ __("Selisih") }}</label>
-                <select name="selisih" id="selisih" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10">
-                    <option value="*" selected>{{ __("All") }}</option>
-                    <option value="1">{{ __("True") }}</option>
-                    <option value="0">{{ __("False") }}</option>
-                </select>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 w-full gap-5">
+                <!-- Selisih -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="selisih">{{ __("Selisih") }}</label>
+                    <select name="selisih" id="selisih" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10">
+                        <option value="*" selected>{{ __("All") }}</option>
+                        <option value="1">{{ __("True") }}</option>
+                        <option value="0">{{ __("False") }}</option>
+                    </select>
+                </div>
+
+                <!-- Shift -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="shift_id">{{ __("Shift") }}</label>
+                    <select name="shift_id" id="shift_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+
+                <!-- Metoda Bayar -->
+                <div class="w-full">
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="metoda_bayar_id">{{ __("Metoda Bayar") }}</label>
+                    <select name="metoda_bayar_id" id="metoda_bayar_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+            </div>  
         </div>
 
         <x-button :disabled="true">

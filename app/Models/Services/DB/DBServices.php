@@ -36,73 +36,56 @@ class DBServices
         return $groupedData;
     }
 
-    public static function mappingDataDB($ruas_id, $integratorData, $mediasiData, $filterSelisih)
+    public static function mappingDataDB($ruas_id, $shift_id, $metoda_bayar_id, $integratorData, $mediasiData, $filterSelisih)
     {
         $final_results = [];
         $groupedData = Self::reducePaymethodDB($integratorData);
         $groupedMediasi = Utils::reduceNotran($mediasiData);
 
-        if(count($groupedData) === 0) {
-            foreach ($groupedMediasi as $key => $group) {
-                // Hitung jumlah integrator dan selisih
-                $jumlah_data = $group['jumlah_data'];
-                $selisih = (isset($groupedData[$key]) ? $groupedData[$key]['jumlah_data'] : 0) - $jumlah_data;
-    
-                // Membuat objek stdClass untuk hasil
-                $final_result = new \stdClass();
-                $final_result->tanggal = $group['tgl_lap'];
-                $final_result->gerbang_nama = Utils::gerbang_nama($ruas_id, $group['gerbang_id']);
-                $final_result->gerbang_id = $group['gerbang_id'];
-                $final_result->metoda_bayar = $group['metoda_bayar'];
-                $final_result->jenis_notran = $group['jenis_notran'];
-                $final_result->jenis_dinas = $group['jenis_dinas'];
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar']);
-                $final_result->shift = $group['shift'];
-                $final_result->jumlah_data_integrator = 0;
-                $final_result->jumlah_data_mediasi = $jumlah_data;
-                $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = 0;
-                $final_result->jumlah_tarif_mediasi = $group['jumlah_tarif_mediasi'];
+        $source = count($groupedData) === 0 ? $groupedMediasi : $groupedData;
 
-                if ($filterSelisih === '*') {
-                    $final_results[] = $final_result;
-                } elseif ($filterSelisih === '1' && $selisih > 0) {
-                    $final_results[] = $final_result;
-                } elseif ($filterSelisih === '0' && $selisih == 0) {
-                    $final_results[] = $final_result;
-                }        
-            }
-        } else {
-            foreach ($groupedData as $key => $group) {
-                // Hitung jumlah integrator dan selisih
-                $jumlah_data = $group['jumlah_data'];
-                $selisih = $jumlah_data - (isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_data'] : 0);
-    
-                // Membuat objek stdClass untuk hasil
-                $final_result = new \stdClass();
-                $final_result->tanggal = $group['tgl_lap'];
-                $final_result->gerbang_nama = Utils::gerbang_nama($ruas_id, $group['gerbang_id']);
-                $final_result->gerbang_id = $group['gerbang_id'];
-                $final_result->metoda_bayar = $group['metoda_bayar'];
-                $final_result->jenis_notran = $group['jenis_notran'];
-                $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar']);
-                $final_result->shift = $group['shift'];
-                $final_result->jumlah_data_integrator = $jumlah_data ?? 0;
-                $final_result->jumlah_data_mediasi = isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_data'] : 0;
-                $final_result->selisih = $selisih;
-                $final_result->jumlah_tarif_integrator = isset($groupedMediasi[$key]) ? $group['jumlah_tarif_integrator'] : 0;
-                $final_result->jumlah_tarif_mediasi = isset($groupedMediasi[$key]) ? $groupedMediasi[$key]['jumlah_tarif_mediasi'] : 0;
+        foreach ($source as $key => $group) {
+            $isFromMediasi = count($groupedData) === 0;
 
-                if ($filterSelisih === '*') {
-                    $final_results[] = $final_result;
-                } elseif ($filterSelisih === '1' && $selisih > 0) {
-                    $final_results[] = $final_result;
-                } elseif ($filterSelisih === '0' && $selisih == 0) {
-                    $final_results[] = $final_result;
-                }        
+            $jumlah_integrator = $isFromMediasi ? 0 : ($group['jumlah_data'] ?? 0);
+            $jumlah_mediasi = $isFromMediasi ? $group['jumlah_data'] : ($groupedMediasi[$key]['jumlah_data'] ?? 0);
+            $selisih = $jumlah_integrator - $jumlah_mediasi;
+
+            $final_result = new \stdClass();
+            $final_result->tanggal = $group['tgl_lap'];
+            $final_result->gerbang_id = $group['gerbang_id'];
+            $final_result->gerbang_nama = Utils::gerbang_nama($ruas_id, $group['gerbang_id']);
+            $final_result->metoda_bayar = $group['metoda_bayar'];
+            $final_result->metoda_bayar_name = Utils::metode_bayar_jid($group['metoda_bayar']);
+            $final_result->jenis_notran = $group['jenis_notran'];
+            $final_result->jenis_dinas = $group['jenis_dinas'] ?? null;
+            $final_result->shift = $group['shift'];
+            $final_result->jumlah_data_integrator = $jumlah_integrator;
+            $final_result->jumlah_data_mediasi = $jumlah_mediasi;
+            $final_result->selisih = $selisih;
+            $final_result->jumlah_tarif_integrator = $isFromMediasi ? 0 : ($group['jumlah_tarif_integrator'] ?? 0);
+            $final_result->jumlah_tarif_mediasi = $isFromMediasi ? $group['jumlah_tarif_mediasi'] : ($groupedMediasi[$key]['jumlah_tarif_mediasi'] ?? 0);
+
+            // Filter selisih
+            $shouldIncludeBySelisih =
+                $filterSelisih === '*' ||
+                ($filterSelisih === '1' && $selisih > 0) ||
+                ($filterSelisih === '0' && $selisih == 0);
+
+            // Filter shift
+            $shouldIncludeByShift =
+                $shift_id === '*' || $shift_id === (string)$group['shift'];
+
+            // Filter metoda bayar
+            $shouldIncludeByMetodaBayar =
+                $metoda_bayar_id === '*' || $metoda_bayar_id === (string)$group['metoda_bayar'];
+
+            if ($shouldIncludeBySelisih && $shouldIncludeByShift && $shouldIncludeByMetodaBayar) {
+                $final_results[] = $final_result;
             }
         }
 
         return $final_results;
     }
+
 }

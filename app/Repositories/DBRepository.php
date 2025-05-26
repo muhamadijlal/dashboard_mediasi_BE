@@ -93,7 +93,7 @@ class DBRepository
         }
     }
 
-    public function getDataCompare($ruas_id, $gerbang_id, $start_date, $end_date, $isSelisih)
+    public function getDataCompare($ruas_id, $gerbang_id, $shift_id, $metoda_bayar_id, $start_date, $end_date, $isSelisih)
     {
         try {
             DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator_pgsql');
@@ -124,7 +124,7 @@ class DBRepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
             
-            $final_results = DBServices::mappingDataDB($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
+            $final_results = DBServices::mappingDataDB($ruas_id, $shift_id, $metoda_bayar_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {

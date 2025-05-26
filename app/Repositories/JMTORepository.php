@@ -49,7 +49,7 @@ class JMTORepository
         }
     }
 
-    public function getDataRekapAT4($ruas_id, $gerbang_id, $start_date, $end_date)
+    public function getDataRekapAT4($ruas_id, $gerbang_id,  $shift_id, $start_date, $end_date)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -59,13 +59,18 @@ class JMTORepository
                 ->select("Shift", "Tunai", "Tanggal", "DinasOpr", "DinasMitra", "DinasKary", "eMandiri", "eBri", "eBni", "eBca", "eFlo", "RpTunai", DB::raw("0 AS RpDinasOpr"), "RpDinasMitra", "RpDinasKary", "RpeMandiri", "RpeBri", "RpeBni", "RpeBca", "RpeFlo")
                 ->whereBetween('Tanggal', [$start_date, $end_date]);
 
+            if($shift_id && $shift_id != '*')
+            {
+                $query = $query->where('shift', $shift_id);
+            }
+
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
 
-    public function getDataCompare($ruas_id, $gerbang_id, $start_date, $end_date, $isSelisih)
+    public function getDataCompare($ruas_id, $gerbang_id, $shift_id, $metoda_bayar_id, $start_date, $end_date, $isSelisih)
     {
         try {
             DatabaseConfig::switchMultiConnection($ruas_id, $gerbang_id, 'integrator');
@@ -118,7 +123,7 @@ class JMTORepository
             $results_mediasi = $query_mediasi->get();
             $results_integrator = $query_integrator->get();
 
-            $final_results = JMTOServices::mappingDataJMTO($ruas_id, $results_integrator, $results_mediasi, $isSelisih);
+            $final_results = JMTOServices::mappingDataJMTO($ruas_id, $shift_id, $metoda_bayar_id, $results_integrator, $results_mediasi, $isSelisih);
 
             return $final_results;
         } catch (\Exception $e) {
