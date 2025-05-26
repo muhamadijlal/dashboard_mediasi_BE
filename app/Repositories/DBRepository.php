@@ -50,7 +50,7 @@ class DBRepository
         }
     }
 
-    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, ?string $start_date = null, ?string $end_date = null)
+    public function getDataRekapAT4(string $ruas_id, string $gerbang_id, string $shift_id, ?string $start_date = null, ?string $end_date = null)
     {
         try {
             DatabaseConfig::switchConnection($ruas_id, $gerbang_id);
@@ -81,6 +81,11 @@ class DBRepository
                     "RpeFlo"
                 )
                 ->whereBetween('Tanggal', [$start_date, $end_date]);
+
+            if($shift_id && $shift_id != '*')
+            {
+                $query = $query->where('shift', $shift_id);
+            }
 
             return $query;
         } catch (\Exception $e) {

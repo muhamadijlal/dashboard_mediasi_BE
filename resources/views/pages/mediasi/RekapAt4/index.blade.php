@@ -13,7 +13,16 @@
             $(document).ready(function() {
                 const ruas_id = $('#ruas_id');
                 const gerbang_id = $('#gerbang_id');
+                const shift_id = $('#shift_id');
+
                 let columns = @json($columns);
+
+                const shiftOptions = [
+                    { id: '*', text: 'All' },
+                    { id: '1', text: 'Shift 1' },
+                    { id: '2', text: 'Shift 2' },
+                    { id: '3', text: 'Shift 3' },
+                ];
 
                 btnFilter.attr("disabled", ruas_id.val() == null);
 
@@ -76,6 +85,11 @@
                     placeholder: "-- Pilih Gerbang --",
                 });
 
+                shift_id.select2({
+                    data: shiftOptions,
+                    placeholder: "-- Pilih Shift --",
+                });
+
                 // When select2 ruas id on change
                 // Toggle gerbang_id disabled when ruas_id changes
                 ruas_id.on('change', function() {
@@ -111,6 +125,7 @@
                             d.ruas_id = $('#ruas_id').val();
                             d.gerbang_id = $('#gerbang_id').val();
                             d.start_date = $('#start_date').val();
+                            d.shift_id = $('#shift_id').val();
                             d.end_date = $('#end_date').val();
                         },
                         error: function (response) {
@@ -167,41 +182,51 @@
 
     <form class="bg-white rounded-lg shadow-md flex flex-col items-end gap-5 p-5" onsubmit="handleSubmit(event)">
         <!-- Filter Component -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 place-content-between w-full">
-            <!-- Ruas -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
-                <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+        <div class="grid grid-rows-1 sm:grid-rows-2 w-full gap-5">
+            <div class='grid grid-cols-1 sm:grid-cols-3 w-full gap-5'>
+                <!-- Ruas -->
+                <div class=w-full>
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="ruas_id">{{ __("Ruas") }}</label>
+                    <select name="ruas_id" id="ruas_id" class="select2-ruas px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+            
+                <!-- Gerbang -->
+                <div class=w-full>
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="gerbang_id">{{ __("Gerbang") }}</label>
+                    <select name="gerbang_id" disabled id="gerbang_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
+
+                <!-- Shift -->
+                <div class=w-full>
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="shift_id">{{ __("Shift") }}</label>
+                    <select name="shift_id" disabled id="shift_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
+                </div>
             </div>
         
-            <!-- Gerbang -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="gerbang_id">{{ __("Gerbang") }}</label>
-                <select name="gerbang_id" disabled id="gerbang_id" class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10"></select>
-            </div>
-        
-            <!-- Start Date -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="start_date">{{ __("Start Date") }}</label>
-                <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
-                    type="date" 
-                    name="start_date" 
-                    id="start_date"
-                    value="{{ date('Y-m-d') }}"
-                >
-            </div>
-        
-            <!-- End Date -->
-            <div>
-                <label class="mb-2 block font-medium text-sm text-blue-950" for="end_date">{{ __("End Date") }}</label>
-                <input 
-                    class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full max-w-md focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
-                    type="date" 
-                    name="end_date" 
-                    id="end_date"
-                    value="{{ date('Y-m-d') }}"
-                >
+            <div class='grid grid-cols-1 sm:grid-cols-2 w-full gap-5'>
+                <!-- Start Date -->
+                <div class=w-full>
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="start_date">{{ __("Start Date") }}</label>
+                    <input 
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                        type="date" 
+                        name="start_date" 
+                        id="start_date"
+                        value="{{ date('Y-m-d') }}"
+                    >
+                </div>
+
+                <!-- End Date -->
+                <div class=w-full>
+                    <label class="mb-2 block font-medium text-sm text-blue-950" for="end_date">{{ __("End Date") }}</label>
+                    <input 
+                        class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950 focus:text-blue-950 h-10" 
+                        type="date" 
+                        name="end_date" 
+                        id="end_date"
+                        value="{{ date('Y-m-d') }}"
+                    >
+                </div>
             </div>
         </div>
 

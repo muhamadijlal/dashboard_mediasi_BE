@@ -139,7 +139,7 @@ class RekapAT4Controller extends Controller
     public function getData(FilterRequest $request){
         try {
             $repository = Integrator::get($request->ruas_id, $request->gerbang_id);
-            $query = $repository->getDataRekapAT4($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date);
+            $query = $repository->getDataRekapAT4($request->ruas_id, $request->gerbang_id, $request->shift_id, $request->start_date, $request->end_date);
 
             return DataTables::of($query)
                             ->addIndexColumn()
