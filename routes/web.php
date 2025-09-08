@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AsalGerbangController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CheckConnectionController;
 use App\Http\Controllers\ProfileController;
@@ -66,6 +67,7 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
         Route::prefix("transaction_detail")->name("transaction_detail.")->group(function () {
             Route::get("/dashboard", [TransactionDetailController::class, "dashboard_resi"])->name("dashboard");
             Route::post("/getData", [TransactionDetailController::class, "getData_resi"])->name("getData");
+
         });
 
         Route::prefix("sync")->name("sync.")->group(function () {
@@ -79,6 +81,17 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
                 Route::post("/syncData", [SyncDataDigitalReceiptController::class, "transcation_detail_syncData"])->name("syncData");
             });
         });
+
+        Route::prefix("asal_gerbang")->name("asal_gerbang.")->group(function () {
+            Route::get("/index", [AsalGerbangController::class, "index"])->name("index");
+            Route::post("/getData", [AsalGerbangController::class, "getData"])->name("getData");
+            Route::post("/store", [AsalGerbangController::class, "store"])->name("store");
+            // Route::get('/show/{id}', [AsalGerbangController::class, 'show'])->name('show');
+            Route::post('/update/', [AsalGerbangController::class, 'update'])->name('update');
+            Route::delete('/destroy', [AsalGerbangController::class, 'destroy'])->name('destroy');
+            Route::get('/show-with-ruas', [AsalGerbangController::class, 'show'])->name('show');
+
+        });
     });
 
     Route::prefix("select2")->name("select2.")->group(function () {
@@ -88,6 +101,8 @@ Route::middleware(["revalidateHistory", "authenticated"])->group(function () {
 
         Route::post("/getRuas/resi", [Select2Controller::class, "getRuasResi"])->name("getRuasResi");
         Route::post("/getGerbang/resi", [Select2Controller::class, "getGerbangResi"])->name("getGerbangResi");
+
+        Route::post("/getKoneksi", [Select2Controller::class, "getKoneksi"])->name("getKoneksi");
     });
 
     Route::prefix("profile")->name("profile.")->group(function () {
