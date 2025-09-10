@@ -283,7 +283,7 @@ class DigitalReceiptRepository
                     ->select("tgl_report",
                         "tgl_transaksi",
                         "nama_gerbang",
-                        "tgl_lap",
+                        // "tgl_lap",
                         "tgl_transaksi",
                         "kode_gardu",
                         "nama_gerbang_asal",

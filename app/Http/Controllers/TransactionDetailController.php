@@ -20,12 +20,12 @@ class TransactionDetailController extends Controller
                     'orderable' => false,
                     'searchable' => false,
                 ],
-                [
-                    'title' => 'Tanggal Laporan',
-                    'data' => 'tgl_lap',
-                    'orderable' => true,
-                    'searchable' => true,
-                ],
+                // [
+                //     'title' => 'Tanggal Laporan',
+                //     'data' => 'tgl_lap',
+                //     'orderable' => true,
+                //     'searchable' => true,
+                // ],
                 [
                     'title' => 'Waktu Transaksi',
                     'data' => 'tgl_transaksi',
@@ -180,9 +180,9 @@ class TransactionDetailController extends Controller
     {
         try {
             // add custome validated field
-            $request->validate([
-                'card_num' => 'required|string'
-            ]);
+            // $request->validate([
+            //     'card_num' => 'required|string'
+            // ]);
            
             $query = DigitalReceiptRepository::getDataTransakiDetail($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->card_num);
 

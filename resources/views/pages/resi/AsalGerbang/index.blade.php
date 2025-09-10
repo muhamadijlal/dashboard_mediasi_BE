@@ -766,73 +766,73 @@
 
 
     <!-- Modal Tambah Asal Gerbang -->
-<div id="modalAsalGerbang" class="fixed inset-0 z-50 hidden items-center justify-center">
-  <div id="modalBackdrop" class="absolute inset-0 bg-black/50"></div>
+    <div id="modalAsalGerbang" class="fixed inset-0 z-50 hidden items-center justify-center">
+    <div id="modalBackdrop" class="absolute inset-0 bg-black/50"></div>
 
-  <div class="relative bg-white rounded-xl w-full max-w-lg shadow-xl">
-    <div class="flex items-center justify-between p-4 border-b">
-        <h3 id="modalTitle" class="font-semibold text-blue-950">Tambah Asal Gerbang</h3>
-        <button id="btnCloseModal" class="p-2 hover:bg-gray-100 rounded-lg" aria-label="Tutup">✕</button>
+    <div class="relative bg-white rounded-xl w-full max-w-lg shadow-xl">
+        <div class="flex items-center justify-between p-4 border-b">
+            <h3 id="modalTitle" class="font-semibold text-blue-950">Tambah Asal Gerbang</h3>
+            <button id="btnCloseModal" class="p-2 hover:bg-gray-100 rounded-lg" aria-label="Tutup">✕</button>
+        </div>
+
+        <form id="formAsalGerbang" class="p-5 space-y-4">
+            <input type="hidden" id="formMode" value="create">
+            <input type="hidden" id="original_id" value="">
+            <input type="hidden" id="original_ruas_id" value="">
+            <input type="hidden" id="original_ruas_nama" value="">
+
+
+        <div>
+            <label for="ruas_id_modal" class="mb-1 block font-medium text-sm text-blue-950">
+                Ruas
+            </label>
+            <select
+                id="ruas_id_modal"
+                name="ruas_id_modal"
+                class="w-full"
+                style="width: 100%;"
+            ></select>
+        </div>
+
+        <div>
+            <label for="id_asal_gerbang" class="mb-1 block font-medium text-sm text-blue-950">
+            ID Asal Gerbang
+            </label>
+            <input
+            type="text"
+            id="id_asal_gerbang"
+            name="id_asal_gerbang"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950"
+            required
+            />
+        </div>
+
+        <div>
+            <label for="nama_asal_gerbang" class="mb-1 block font-medium text-sm text-blue-950">
+            Nama Asal Gerbang
+            </label>
+            <input
+            type="text"
+            id="nama_asal_gerbang"
+            name="nama_asal_gerbang"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950"
+            required
+            />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+            <button type="button" id="btnCancelModal"
+                    class="px-4 py-2 border rounded-lg text-blue-950 hover:bg-gray-100">
+            Batal
+            </button>
+            <button type="submit" id="btnSaveAsalGerbang"
+                    class="px-4 py-2 bg-blue-950 text-white rounded-lg hover:opacity-90">
+            Simpan
+            </button>
+        </div>
+        </form>
     </div>
-
-    <form id="formAsalGerbang" class="p-5 space-y-4">
-        <input type="hidden" id="formMode" value="create">
-        <input type="hidden" id="original_id" value="">
-        <input type="hidden" id="original_ruas_id" value="">
-        <input type="hidden" id="original_ruas_nama" value="">
-
-
-    <div>
-        <label for="ruas_id_modal" class="mb-1 block font-medium text-sm text-blue-950">
-            Ruas
-        </label>
-        <select
-            id="ruas_id_modal"
-            name="ruas_id_modal"
-            class="w-full"
-            style="width: 100%;"
-        ></select>
     </div>
-
-      <div>
-        <label for="id_asal_gerbang" class="mb-1 block font-medium text-sm text-blue-950">
-          ID Asal Gerbang
-        </label>
-        <input
-          type="text"
-          id="id_asal_gerbang"
-          name="id_asal_gerbang"
-          class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950"
-          required
-        />
-      </div>
-
-      <div>
-        <label for="nama_asal_gerbang" class="mb-1 block font-medium text-sm text-blue-950">
-          Nama Asal Gerbang
-        </label>
-        <input
-          type="text"
-          id="nama_asal_gerbang"
-          name="nama_asal_gerbang"
-          class="px-3 py-2 border border-gray-300 rounded-lg text-blue-950 w-full focus:ring-2 focus:ring-blue-950"
-          required
-        />
-      </div>
-
-      <div class="flex justify-end gap-3 pt-2">
-        <button type="button" id="btnCancelModal"
-                class="px-4 py-2 border rounded-lg text-blue-950 hover:bg-gray-100">
-          Batal
-        </button>
-        <button type="submit" id="btnSaveAsalGerbang"
-                class="px-4 py-2 bg-blue-950 text-white rounded-lg hover:opacity-90">
-          Simpan
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
 
 
