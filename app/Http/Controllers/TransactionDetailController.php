@@ -185,7 +185,6 @@ class TransactionDetailController extends Controller
             // ]);
            
             $query = DigitalReceiptRepository::getDataTransakiDetail($request->ruas_id, $request->gerbang_id, $request->start_date, $request->end_date, $request->card_num);
-
             return DataTables::of($query)
                             ->addIndexColumn()
                             ->addColumn('tarif', function($row){

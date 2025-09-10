@@ -11,7 +11,6 @@ class DigitalReceipt
     {
         try {
             $credential = self::getCredential();
-
             self::setCredentials(
                 'mediasi',
                 $credential->host,

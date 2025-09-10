@@ -302,10 +302,11 @@ class DigitalReceiptRepository
 
             if($ruas_id != "*")
             {
-                $query->where("kode_cabang", $ruas_id);
-                $query->where("gerbang", $gerbang_id*1);
+                $query = $query->where("kode_cabang", $ruas_id);
+                $query = $query->where("gerbang", $gerbang_id*1);
             }
 
+            $query = $query->limit(1);
             return $query;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage()); 
