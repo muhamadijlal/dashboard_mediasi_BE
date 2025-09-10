@@ -295,7 +295,7 @@ class DigitalReceiptRepository
                     )
                     ->whereBetween("tgl_report", [$start_date, $end_date]);
                     // ->where("no_kartu", $card_num);
-            if($card_num != "*")
+            if($card_num != "" && $card_num != null)
             {
                 $query->where("no_kartu", $card_num);
             }
