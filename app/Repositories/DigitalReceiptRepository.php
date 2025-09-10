@@ -293,8 +293,12 @@ class DigitalReceiptRepository
                         "no_resi",
                         "saldo"
                     )
-                    ->whereBetween("tgl_report", [$start_date, $end_date])
-                    ->where("no_kartu", $card_num);
+                    ->whereBetween("tgl_report", [$start_date, $end_date]);
+                    // ->where("no_kartu", $card_num);
+            if($card_num != "*")
+            {
+                $query->where("no_kartu", $card_num);
+            }
 
             if($ruas_id != "*")
             {
