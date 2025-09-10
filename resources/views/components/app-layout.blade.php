@@ -2,7 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {{-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> --}}
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ str_replace("_"," ", config('app.name')) }} | {{ config('app.version') }}</title>
   <link rel="icon" href="{{asset("assets/image/logojm.ico")}}">
